@@ -6,6 +6,7 @@ type MemorialProfile = {
   name: string;
   dateRange: string;
   avatarUrl: string;
+  coverUrl?: string;
   biography: string;
   roles: string[];
 };
@@ -967,21 +968,35 @@ export default function MemorialProfileWeb({
         }
       `}</style>
 
-      {/* Banner Header with Navy Gradient */}
+      {/* Banner Header with Cover Image */}
       <div
         className="relative w-full"
         style={{
           height: '28vh',
           minHeight: '180px',
-          background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))',
           zIndex: 2
         }}
       >
-        {/* Soft overlay gradient blending into cream background */}
+        {/* Cover Image or Gradient Fallback */}
+        {profile.coverUrl ? (
+          <img
+            src={profile.coverUrl}
+            alt="Cover"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
+            }}
+          />
+        )}
+        {/* Dark Overlay for better text contrast */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to bottom, transparent 40%, #FDFCF8 100%)'
+            background: 'linear-gradient(to bottom, rgba(30, 58, 95, 0.4) 0%, rgba(30, 58, 95, 0.6) 50%, #FDFCF8 100%)'
           }}
         />
       </div>
