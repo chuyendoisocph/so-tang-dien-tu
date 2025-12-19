@@ -1,5 +1,7 @@
-import { Share2, PenLine, Calendar, QrCode, Briefcase, Star } from "lucide-react";
+import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type MemorialProfile = {
   id: string;
@@ -19,6 +21,13 @@ type Tribute = {
   date: string;
 };
 
+type Photo = {
+  id: string;
+  url: string;
+  caption: string | null;
+  display_order: number | null;
+};
+
 // Muted Gold accent color
 const GOLD_ACCENT = '#C5A059';
 const NAVY_PRIMARY = '#1e3a5f';
@@ -31,6 +40,7 @@ function buildPublicProfileUrl(profileId: string) {
 export default function MemorialProfileWeb({
   profile,
   tributes,
+  photos = [],
   formData,
   onChangeForm,
   onSubmitTribute,
@@ -40,6 +50,7 @@ export default function MemorialProfileWeb({
 }: {
   profile: MemorialProfile;
   tributes: Tribute[];
+  photos?: Photo[];
   formData: { name: string; phone: string; message: string };
   onChangeForm: (patch: Partial<{ name: string; phone: string; message: string }>) => void;
   onSubmitTribute: (e: React.FormEvent) => void;
@@ -47,6 +58,7 @@ export default function MemorialProfileWeb({
   slideshowMode?: boolean;
   kioskMode?: boolean;
 }) {
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const publicUrl = buildPublicProfileUrl(profile.id);
 
   // Extract years from dateRange
@@ -1074,6 +1086,68 @@ export default function MemorialProfileWeb({
           />
         </div>
 
+        {/* ============ PHOTO GALLERY SECTION ============ */}
+        {photos.length > 0 && (
+          <>
+            {/* Subtle Divider */}
+            <div
+              style={{
+                height: '1px',
+                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+                marginBottom: 'clamp(20px, 3vh, 28px)'
+              }}
+            />
+
+            <div
+              className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                borderRadius: 'clamp(14px, 2vw, 20px)',
+                padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`
+              }}
+            >
+              <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
+                <Image className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
+                <h2
+                  className="text-lg sm:text-xl md:text-2xl font-bold text-center"
+                  style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
+                >
+                  Hình ảnh kỷ niệm
+                </h2>
+              </div>
+              
+              {/* Photo Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                {photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    className="relative aspect-square cursor-pointer group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                    onClick={() => setSelectedPhoto(photo)}
+                    style={{
+                      border: `1px solid rgba(197, 160, 89, 0.2)`
+                    }}
+                  >
+                    <img
+                      src={photo.url}
+                      alt={photo.caption || "Ảnh kỷ niệm"}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    {photo.caption && (
+                      <div
+                        className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      >
+                        {photo.caption}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Subtle Divider */}
         <div
           style={{
@@ -1293,6 +1367,28 @@ export default function MemorialProfileWeb({
           </div>
         </div>
       </div>
+
+      {/* Photo Lightbox Dialog */}
+      <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
+        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+          {selectedPhoto && (
+            <div className="relative">
+              <img
+                src={selectedPhoto.url}
+                alt={selectedPhoto.caption || "Ảnh kỷ niệm"}
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+              {selectedPhoto.caption && (
+                <div
+                  className="absolute bottom-0 left-0 right-0 p-4 text-white text-center bg-gradient-to-t from-black/80 to-transparent rounded-b-lg"
+                >
+                  {selectedPhoto.caption}
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
