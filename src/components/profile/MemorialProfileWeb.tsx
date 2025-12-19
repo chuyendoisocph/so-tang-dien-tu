@@ -80,7 +80,7 @@ export default function MemorialProfileWeb({
   if (kioskMode) {
     return (
       <div
-        className="relative flex flex-col"
+        className="memorial-profile relative flex flex-col"
         style={{
           fontFamily: "'Inter', sans-serif",
           width: '1080px',
@@ -538,10 +538,11 @@ export default function MemorialProfileWeb({
   if (slideshowMode) {
     return (
       <div
-        className="relative flex flex-col"
+        className="memorial-profile relative flex flex-col"
         style={{
           fontFamily: "'Inter', sans-serif",
-          minHeight: '100vh',
+          minHeight: '1920px',
+          width: '1080px',
           overflow: 'hidden'
         }}
       >

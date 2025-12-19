@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Play, Pause, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAllProfiles } from "@/hooks/useProfiles";
+import "../styles/slideshow.css";
 
 const SlideshowProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -108,7 +109,7 @@ const SlideshowProfilePage = () => {
 
   return (
     <div
-      className="min-h-screen bg-foreground overflow-hidden relative"
+      className="slideshow-container"
       onMouseMove={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -122,14 +123,13 @@ const SlideshowProfilePage = () => {
         </div>
       )}
 
-      {/* Slideshow Container */}
-      <div className="w-screen h-screen relative">
+      {/* Slideshow Frame - 1080x1920 Portrait */}
+      <div className="slideshow-frame">
         {profiles.map((profile, index) => (
           <iframe
             key={profile.id}
             src={`/profile/${profile.id}?${useKioskMode ? 'kiosk=1' : 'slideshow=1'}`}
             className={`
-              w-full h-full border-none absolute top-0 left-0
               transition-opacity duration-1000 ease-in-out
               ${index === currentIndex ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
             `}
