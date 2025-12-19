@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { toast } from "sonner";
 import { Play, Settings, Monitor, Clock, RotateCcw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
 export const SlideshowTab = () => {
+  const [slideSeconds, setSlideSeconds] = useState(15);
+
+  const openStandee = () => {
+    const url = `/slideshow?time=${slideSeconds}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    toast.success("Đã mở Standee Mode");
+  };
+
+  const openProfileMode = () => {
+    const url = `/slideshow-profile?time=${slideSeconds}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    toast.success("Đã mở Profile Mode");
+  };
+
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -15,11 +31,18 @@ export const SlideshowTab = () => {
           <p className="text-muted-foreground">Thiết lập hiển thị cho màn hình TV Standee.</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <Button variant="outline" className="flex-1 sm:flex-initial">
+          <Button
+            variant="outline"
+            className="flex-1 sm:flex-initial"
+            onClick={openStandee}
+          >
             <Monitor className="h-4 w-4 mr-2" />
             Standee Mode
           </Button>
-          <Button className="flex-1 sm:flex-initial shadow-sm">
+          <Button
+            className="flex-1 sm:flex-initial shadow-sm"
+            onClick={openProfileMode}
+          >
             <Play className="h-4 w-4 mr-2" />
             Profile Mode
           </Button>
@@ -57,7 +80,13 @@ export const SlideshowTab = () => {
                 <Clock className="h-4 w-4" />
                 Thời gian mỗi slide (giây)
               </Label>
-              <Input type="number" defaultValue={15} min={5} max={60} />
+              <Input
+                type="number"
+                value={slideSeconds}
+                min={5}
+                max={60}
+                onChange={(e) => setSlideSeconds(Math.max(5, Math.min(60, Number(e.target.value) || 0)))}
+              />
             </div>
           </CardContent>
         </Card>
@@ -72,7 +101,13 @@ export const SlideshowTab = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Standee Mode */}
-            <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+            <div
+              className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+              role="button"
+              tabIndex={0}
+              onClick={openStandee}
+              onKeyDown={(e) => e.key === 'Enter' && openStandee()}
+            >
               <div className="flex items-start gap-4">
                 <div className="w-16 h-28 bg-gradient-to-b from-memorial-hero-from to-memorial-hero-to rounded flex-shrink-0 flex flex-col items-center justify-center p-2">
                   <div className="text-gold text-[6px] font-semibold uppercase">Tưởng Niệm</div>
@@ -91,7 +126,13 @@ export const SlideshowTab = () => {
             </div>
 
             {/* Profile Mode */}
-            <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+            <div
+              className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+              role="button"
+              tabIndex={0}
+              onClick={openProfileMode}
+              onKeyDown={(e) => e.key === 'Enter' && openProfileMode()}
+            >
               <div className="flex items-start gap-4">
                 <div className="w-16 h-28 bg-gradient-to-b from-memorial-standee-from to-memorial-standee-to rounded flex-shrink-0 flex flex-col items-center p-2">
                   <div className="w-full h-6 bg-foreground/20 rounded-t" />
