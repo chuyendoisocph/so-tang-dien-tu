@@ -1,4 +1,4 @@
-import { Share2, PenLine, Calendar, QrCode } from "lucide-react";
+import { Share2, PenLine, Calendar, QrCode, Briefcase, Star } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 type MemorialProfile = {
@@ -62,10 +62,7 @@ export default function MemorialProfileWeb({
   // Check if career/roles data exists
   const hasCareerData = profile.roles && profile.roles.length > 0;
 
-  // Calculate how many tribute cards to show based on available space
-  const kioskTributeCount = hasCareerData ? 4 : 8;
-
-  // KIOSK MODE - Optimized for 1080x1920 Vertical Advertising Standee (No Cover Image)
+  // KIOSK MODE - Professional Digital Signage (1080x1920 Vertical Stack)
   if (kioskMode) {
     return (
       <div
@@ -80,16 +77,16 @@ export default function MemorialProfileWeb({
           overflow: 'hidden'
         }}
       >
-        {/* Premium CSS Gradient Background with Noise Texture */}
+        {/* Premium CSS Gradient Background (Cream to Muted Gold) */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(180deg, #FDFCF8 0%, #F5ECD7 50%, #F3E5AB 100%)',
+            background: 'linear-gradient(180deg, #FDFCF8 0%, #F8F3E3 40%, #F3E5AB 100%)',
             zIndex: 0
           }}
         />
-        {/* Noise/Grain Texture Overlay */}
+        {/* Subtle Noise/Grain Texture Overlay (3%) */}
         <div
           style={{
             position: 'absolute',
@@ -100,39 +97,31 @@ export default function MemorialProfileWeb({
           }}
         />
 
-        {/* Kiosk-specific animation styles */}
+        {/* Kiosk Animation Styles */}
         <style>{`
           @keyframes float-kiosk {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
           }
           .float-kiosk {
             animation: float-kiosk 5s ease-in-out infinite;
           }
-          @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
-            50% { box-shadow: 0 0 50px rgba(14, 165, 233, 0.6); }
-          }
-          .pulse-glow {
-            animation: pulse-glow 3s ease-in-out infinite;
-          }
         `}</style>
 
-        {/* Main Content Wrapper - Full Height Flex */}
+        {/* Main Content Wrapper - Full Height Flex Column */}
         <div
           style={{
             position: 'relative',
             zIndex: 2,
             display: 'flex',
             flexDirection: 'column',
-            height: '100%',
-            padding: '0'
+            height: '100%'
           }}
         >
-          {/* ============ HEADER - Snapped to Top ============ */}
+          {/* ============ HEADER - Profile + Name + Dates ============ */}
           <div
             style={{
-              padding: '48px 50px 40px',
+              padding: '50px 60px 36px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -140,31 +129,30 @@ export default function MemorialProfileWeb({
             }}
           >
             {/* Profile Picture */}
-            <div className="float-kiosk" style={{ marginBottom: '28px' }}>
+            <div className="float-kiosk" style={{ marginBottom: '24px' }}>
               <img
                 src={profile.avatarUrl}
                 alt={profile.name}
                 style={{
-                  width: '320px',
-                  height: '400px',
+                  width: '280px',
+                  height: '350px',
                   objectFit: 'cover',
                   borderRadius: '20px',
                   border: `5px solid ${GOLD_ACCENT}`,
-                  boxShadow: '0 30px 70px rgba(0,0,0,0.2)'
+                  boxShadow: '0 24px 60px rgba(0,0,0,0.18)'
                 }}
               />
             </div>
 
-            {/* Name - Bold & Dark for Contrast */}
+            {/* Name - Bold & Dark */}
             <h1
               style={{
-                fontSize: '72px',
+                fontSize: '64px',
                 fontWeight: 900,
                 color: NAVY_PRIMARY,
                 textAlign: 'center',
                 letterSpacing: '-2px',
-                marginBottom: '14px',
-                fontFamily: "'Inter', sans-serif",
+                marginBottom: '12px',
                 textTransform: 'uppercase'
               }}
             >
@@ -174,7 +162,7 @@ export default function MemorialProfileWeb({
             {/* Dates */}
             <div
               style={{
-                fontSize: '34px',
+                fontSize: '32px',
                 color: GOLD_ACCENT,
                 fontWeight: 700,
                 display: 'flex',
@@ -182,155 +170,179 @@ export default function MemorialProfileWeb({
                 gap: '14px'
               }}
             >
-              <Calendar style={{ width: '34px', height: '34px' }} />
+              <Calendar style={{ width: '32px', height: '32px' }} />
               {years}
             </div>
           </div>
 
-          {/* Gold Divider */}
+          {/* Elegant Gold Divider */}
           <div
             style={{
               height: '2px',
-              background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT} 20%, ${GOLD_ACCENT} 80%, transparent 100%)`,
-              margin: '0 60px',
+              background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
+              margin: '0 80px',
               flexShrink: 0
             }}
           />
 
-          {/* ============ BODY - Flex Grow to Fill Space ============ */}
+          {/* ============ SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
           <div
             style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '36px 50px',
-              gap: '28px',
-              overflow: 'hidden',
-              minHeight: 0
+              padding: '36px 60px 28px',
+              flexShrink: 0
             }}
           >
-            {/* Biography Card */}
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
                 borderRadius: '24px',
-                padding: '32px 40px',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
-                border: `1px solid rgba(197, 160, 89, 0.2)`,
-                flexShrink: 0
+                padding: '36px 48px',
+                boxShadow: '0 12px 48px rgba(0,0,0,0.06)',
+                border: `1px solid rgba(197, 160, 89, 0.25)`
               }}
             >
               <h2
                 style={{
-                  fontSize: '32px',
+                  fontSize: '30px',
                   fontWeight: 800,
                   color: NAVY_PRIMARY,
-                  marginBottom: '16px',
+                  marginBottom: '20px',
+                  textAlign: 'center',
                   letterSpacing: '-0.5px'
                 }}
               >
-                Tiểu sử
+                Tiểu sử & Cuộc đời
               </h2>
               <div
                 style={{
-                  fontSize: '22px',
+                  fontSize: '24px',
                   color: '#374151',
-                  lineHeight: 1.8
+                  lineHeight: 1.9,
+                  textAlign: 'center'
                 }}
                 dangerouslySetInnerHTML={{ __html: profile.biography }}
               />
             </div>
+          </div>
 
-            {/* Career/Roles Card - CONDITIONAL RENDERING */}
-            {hasCareerData && (
-              <>
-                {/* Gold Divider */}
-                <div
-                  style={{
-                    height: '1px',
-                    background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT}50 30%, ${GOLD_ACCENT}50 70%, transparent 100%)`,
-                    flexShrink: 0
-                  }}
-                />
-                <div
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                    borderRadius: '24px',
-                    padding: '32px 40px',
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
-                    border: `1px solid rgba(197, 160, 89, 0.2)`,
-                    flexShrink: 0
-                  }}
-                >
-                  <h2
-                    style={{
-                      fontSize: '32px',
-                      fontWeight: 800,
-                      color: NAVY_PRIMARY,
-                      marginBottom: '16px',
-                      letterSpacing: '-0.5px'
-                    }}
-                  >
-                    Quá trình công tác
-                  </h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {profile.roles.map((role, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '14px'
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '10px',
-                            height: '10px',
-                            borderRadius: '50%',
-                            backgroundColor: GOLD_ACCENT,
-                            marginTop: '10px',
-                            flexShrink: 0
-                          }}
-                        />
-                        <p style={{ fontSize: '20px', color: '#374151', lineHeight: 1.55 }}>
-                          {role}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+          {/* Subtle Divider */}
+          <div
+            style={{
+              height: '1px',
+              background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+              margin: '0 100px',
+              flexShrink: 0
+            }}
+          />
 
-            {/* Gold Divider */}
+          {/* ============ SECTION B: CAREER HISTORY (Full Width, 2-Column Grid) ============ */}
+          {hasCareerData && (
             <div
               style={{
-                height: '1px',
-                background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT}50 30%, ${GOLD_ACCENT}50 70%, transparent 100%)`,
+                padding: '28px 60px',
                 flexShrink: 0
               }}
-            />
+            >
+              <div
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                  borderRadius: '24px',
+                  padding: '32px 44px',
+                  boxShadow: '0 12px 48px rgba(0,0,0,0.06)',
+                  border: `1px solid rgba(197, 160, 89, 0.25)`
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 800,
+                    color: NAVY_PRIMARY,
+                    marginBottom: '24px',
+                    textAlign: 'center',
+                    letterSpacing: '-0.5px'
+                  }}
+                >
+                  Quá trình công tác
+                </h2>
+                {/* 2-Column Grid for Roles */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px 32px'
+                  }}
+                >
+                  {profile.roles.map((role, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '14px',
+                        padding: '14px 18px',
+                        backgroundColor: 'rgba(253, 252, 248, 0.8)',
+                        borderRadius: '14px',
+                        border: `1px solid rgba(197, 160, 89, 0.15)`
+                      }}
+                    >
+                      <Briefcase
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          color: GOLD_ACCENT,
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}
+                      />
+                      <p style={{ fontSize: '19px', color: '#374151', lineHeight: 1.5 }}>
+                        {role}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
-            {/* Guestbook/Tributes Card - FLEX GROW to fill remaining space */}
+          {/* Subtle Divider */}
+          <div
+            style={{
+              height: '1px',
+              background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+              margin: '0 100px',
+              flexShrink: 0
+            }}
+          />
+
+          {/* ============ SECTION C: GUESTBOOK (Flex Grow - Space Filler) ============ */}
+          <div
+            style={{
+              flex: 1,
+              padding: '28px 60px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0,
+              overflow: 'hidden'
+            }}
+          >
             <div
               style={{
                 flex: 1,
-                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
                 borderRadius: '24px',
-                padding: '28px 36px',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
-                border: `1px solid rgba(197, 160, 89, 0.2)`,
+                padding: '28px 40px',
+                boxShadow: '0 12px 48px rgba(0,0,0,0.06)',
+                border: `1px solid rgba(197, 160, 89, 0.25)`,
                 display: 'flex',
                 flexDirection: 'column',
-                overflow: 'hidden',
-                minHeight: 0
+                overflow: 'hidden'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexShrink: 0 }}>
                 <h2
                   style={{
-                    fontSize: '32px',
+                    fontSize: '28px',
                     fontWeight: 800,
                     color: NAVY_PRIMARY,
                     letterSpacing: '-0.5px'
@@ -340,51 +352,55 @@ export default function MemorialProfileWeb({
                 </h2>
                 <span
                   style={{
-                    fontSize: '18px',
-                    padding: '8px 18px',
+                    fontSize: '17px',
+                    padding: '8px 20px',
                     borderRadius: '9999px',
-                    backgroundColor: `${GOLD_ACCENT}20`,
+                    backgroundColor: `${GOLD_ACCENT}18`,
                     color: GOLD_ACCENT,
                     fontWeight: 700,
-                    border: `1px solid ${GOLD_ACCENT}40`
+                    border: `1px solid ${GOLD_ACCENT}30`
                   }}
                 >
                   {tributes.length} lời nhắn
                 </span>
               </div>
 
-              {/* Tribute Cards - Show 6-8 to fill space */}
-              <div style={{ 
-                flex: 1, 
-                display: 'grid', 
-                gridTemplateColumns: '1fr 1fr',
-                gap: '14px', 
-                overflow: 'hidden',
-                alignContent: 'start'
-              }}>
-                {tributes.slice(0, kioskTributeCount).map((t) => (
+              {/* 2-Column Masonry-Style Grid (6-8 messages) */}
+              <div
+                style={{
+                  flex: 1,
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                  overflow: 'hidden',
+                  alignContent: 'start'
+                }}
+              >
+                {tributes.slice(0, hasCareerData ? 6 : 8).map((t, idx) => (
                   <div
                     key={t.id}
                     style={{
-                      padding: '16px 20px',
-                      borderRadius: '16px',
-                      backgroundColor: 'rgba(253, 252, 248, 0.9)',
-                      border: `1px solid rgba(197, 160, 89, 0.15)`
+                      padding: '18px 22px',
+                      borderRadius: '18px',
+                      backgroundColor: '#ffffff',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+                      border: `1px solid rgba(226, 232, 240, 0.8)`
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                       <div
                         style={{
-                          width: '40px',
-                          height: '40px',
+                          width: '44px',
+                          height: '44px',
                           borderRadius: '50%',
                           background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#ffffff',
-                          fontSize: '17px',
-                          fontWeight: 700
+                          fontSize: '18px',
+                          fontWeight: 700,
+                          boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)'
                         }}
                       >
                         {t.name.charAt(0)}
@@ -398,8 +414,8 @@ export default function MemorialProfileWeb({
                         </p>
                       </div>
                     </div>
-                    <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.5 }}>
-                      {t.message.length > 80 ? t.message.slice(0, 80) + '...' : t.message}
+                    <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.55 }}>
+                      {t.message.length > 90 ? t.message.slice(0, 90) + '...' : t.message}
                     </p>
                   </div>
                 ))}
@@ -407,57 +423,64 @@ export default function MemorialProfileWeb({
             </div>
           </div>
 
-          {/* ============ FOOTER - QR Code (Anchored Bottom with mt-auto) ============ */}
+          {/* ============ FOOTER - QR Code (Full Width Bar, Anchored Bottom) ============ */}
           <div
             style={{
               marginTop: 'auto',
               backgroundColor: NAVY_PRIMARY,
-              padding: '32px 50px',
+              padding: '36px 60px',
               flexShrink: 0
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '50px' }}>
-              {/* QR Code - Large */}
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '16px',
-                  borderRadius: '20px',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
-                }}
-              >
-                <QRCodeSVG
-                  value={publicUrl}
-                  size={200}
-                  level="H"
-                  fgColor={NAVY_PRIMARY}
-                />
-              </div>
-
-              {/* QR Label */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <QrCode style={{ width: '40px', height: '40px', color: GOLD_ACCENT }} />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '20px'
+              }}
+            >
+              {/* Title Above QR */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
+                  <Star style={{ width: '32px', height: '32px', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
                   <span
                     style={{
                       fontSize: '34px',
                       fontWeight: 800,
-                      color: '#ffffff'
+                      color: '#ffffff',
+                      letterSpacing: '-0.5px'
                     }}
                   >
-                    Quét mã QR
+                    Quét để lưu giữ kỷ niệm
                   </span>
+                  <Star style={{ width: '32px', height: '32px', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
                 </div>
                 <p
                   style={{
-                    fontSize: '24px',
-                    color: 'rgba(255,255,255,0.85)',
-                    maxWidth: '380px',
-                    lineHeight: 1.45
+                    fontSize: '20px',
+                    color: 'rgba(255,255,255,0.75)'
                   }}
                 >
-                  Tôn vinh và lưu giữ kỷ niệm trên điện thoại của bạn
+                  Tôn vinh và gửi lời chia buồn trên điện thoại
                 </p>
+              </div>
+
+              {/* QR Code - Centered */}
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  padding: '18px',
+                  borderRadius: '22px',
+                  boxShadow: '0 12px 48px rgba(0,0,0,0.3)'
+                }}
+              >
+                <QRCodeSVG
+                  value={publicUrl}
+                  size={180}
+                  level="H"
+                  fgColor={NAVY_PRIMARY}
+                />
               </div>
             </div>
           </div>
