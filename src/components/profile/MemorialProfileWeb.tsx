@@ -87,7 +87,7 @@ export default function MemorialProfileWeb({
           height: '1920px',
           minHeight: '1920px',
           maxHeight: '1920px',
-          margin: '0 auto',
+          margin: '0',
           overflow: 'hidden'
         }}
       >
@@ -541,8 +541,9 @@ export default function MemorialProfileWeb({
         className="memorial-profile relative flex flex-col"
         style={{
           fontFamily: "'Inter', sans-serif",
-          minHeight: '1920px',
           width: '1080px',
+          height: '1920px',
+          maxHeight: '1920px',
           overflow: 'hidden'
         }}
       >
