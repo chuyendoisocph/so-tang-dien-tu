@@ -7,7 +7,10 @@ import DOMPurify from 'dompurify';
 export function sanitizeHtml(dirty: string | null | undefined): string {
   if (!dirty) return '';
   
-  return DOMPurify.sanitize(dirty, {
+  // Convert newlines to <br> tags before sanitizing
+  const withLineBreaks = dirty.replace(/\n/g, '<br>');
+  
+  return DOMPurify.sanitize(withLineBreaks, {
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'span', 'div'],
     ALLOWED_ATTR: ['class', 'style'],
     ALLOW_DATA_ATTR: false,
