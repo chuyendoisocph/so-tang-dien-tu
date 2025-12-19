@@ -1,10 +1,11 @@
-import { ArrowLeft, Plus, X, CloudUpload, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 interface CreateEditTabProps {
   onBack: () => void;
@@ -18,6 +19,8 @@ interface CreateEditTabProps {
 export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) => {
   const [roles, setRoles] = useState<string[]>([""]);
   const [locations, setLocations] = useState<string[]>([""]);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [coverUrl, setCoverUrl] = useState<string>("");
 
   const addRole = () => setRoles([...roles, ""]);
   const removeRole = (index: number) => setRoles(roles.filter((_, i) => i !== index));
@@ -89,22 +92,24 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="space-y-2">
                 <Label>Ảnh chân dung (Avatar)</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                  <CloudUpload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    <span className="text-primary font-semibold">Nhấn để chọn</span> hoặc kéo thả ảnh vào đây
-                  </p>
-                </div>
+                <ImageUpload
+                  value={avatarUrl}
+                  onChange={setAvatarUrl}
+                  onRemove={() => setAvatarUrl("")}
+                  aspectRatio="portrait"
+                  placeholder="Nhấn hoặc kéo thả ảnh vào đây"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label>Ảnh bìa (Cover)</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                  <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    <span className="text-primary font-semibold">Nhấn để chọn</span> hoặc kéo thả ảnh vào đây
-                  </p>
-                </div>
+                <ImageUpload
+                  value={coverUrl}
+                  onChange={setCoverUrl}
+                  onRemove={() => setCoverUrl("")}
+                  aspectRatio="video"
+                  placeholder="Nhấn hoặc kéo thả ảnh vào đây"
+                />
               </div>
             </div>
 
