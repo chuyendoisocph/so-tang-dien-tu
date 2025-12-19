@@ -740,11 +740,11 @@ export default function MemorialProfileWeb({
             />
           )}
 
-          {/* ============ 4. SECTION C: GUESTBOOK (Flex Grow - Space Filler) ============ */}
+          {/* ============ 4. SECTION C: GUESTBOOK with QR Action Card (Flex Grow - Space Filler) ============ */}
           <div
             style={{
               flex: 1,
-              padding: 'clamp(24px, 3vh, 36px) 0 clamp(16px, 2vh, 24px)',
+              padding: 'clamp(24px, 3vh, 36px) 0 clamp(32px, 4vh, 48px)',
               display: 'flex',
               flexDirection: 'column',
               minHeight: 0
@@ -790,7 +790,7 @@ export default function MemorialProfileWeb({
                 </span>
               </div>
 
-              {/* 2-Column Masonry-Style Grid (6-8 messages) */}
+              {/* 2-Column Grid with QR Action Card as First Item */}
               <div
                 style={{
                   flex: 1,
@@ -801,7 +801,70 @@ export default function MemorialProfileWeb({
                   alignContent: 'start'
                 }}
               >
-                {tributes.slice(0, hasCareerData ? 6 : 8).map((t) => (
+                {/* ===== QR ACTION CARD (First Item - Call to Action) ===== */}
+                <div
+                  style={{
+                    gridColumn: '1 / -1',
+                    padding: 'clamp(20px, 2.5vw, 32px)',
+                    borderRadius: 'clamp(14px, 1.8vw, 20px)',
+                    background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
+                    border: `2px solid ${GOLD_ACCENT}`,
+                    boxShadow: `0 8px 32px rgba(197, 160, 89, 0.2), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 'clamp(24px, 3vw, 40px)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  }}
+                >
+                  {/* QR Code */}
+                  <div
+                    style={{
+                      backgroundColor: '#ffffff',
+                      padding: 'clamp(10px, 1.2vw, 14px)',
+                      borderRadius: 'clamp(12px, 1.5vw, 16px)',
+                      boxShadow: '0 6px 24px rgba(0,0,0,0.1)',
+                      border: `1px solid rgba(197, 160, 89, 0.3)`
+                    }}
+                  >
+                    <QRCodeSVG
+                      value={publicUrl}
+                      size={Math.max(120, Math.min(150, window.innerWidth * 0.1))}
+                      level="H"
+                      fgColor={NAVY_PRIMARY}
+                    />
+                  </div>
+
+                  {/* Text Content */}
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 1vw, 12px)', marginBottom: 'clamp(6px, 0.8vh, 10px)' }}>
+                      <QrCode style={{ width: 'clamp(22px, 2.5vw, 28px)', height: 'clamp(22px, 2.5vw, 28px)', color: GOLD_ACCENT }} />
+                      <span
+                        style={{
+                          fontSize: 'clamp(18px, 2.2vw, 26px)',
+                          fontWeight: 800,
+                          color: NAVY_PRIMARY,
+                          letterSpacing: '-0.5px'
+                        }}
+                      >
+                        Quét để gửi lời chia buồn
+                      </span>
+                    </div>
+                    <p
+                      style={{
+                        fontSize: 'clamp(13px, 1.4vw, 17px)',
+                        color: '#64748b',
+                        fontWeight: 500
+                      }}
+                    >
+                      Lưu giữ kỷ niệm mãi mãi
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tribute Messages */}
+                {tributes.slice(0, hasCareerData ? 4 : 6).map((t) => (
                   <div
                     key={t.id}
                     style={{
@@ -844,70 +907,6 @@ export default function MemorialProfileWeb({
                     </p>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ============ 5. FOOTER - QR Code (Full Width Bar, Anchored Bottom) ============ */}
-          <div
-            style={{
-              marginTop: 'auto',
-              backgroundColor: NAVY_PRIMARY,
-              padding: 'clamp(28px, 3.5vh, 44px) clamp(24px, 4vw, 60px)',
-              marginLeft: 'calc(-1 * clamp(24px, 5vw, 80px))',
-              marginRight: 'calc(-1 * clamp(24px, 5vw, 80px))',
-              flexShrink: 0
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 'clamp(14px, 2vh, 22px)'
-              }}
-            >
-              {/* Title Above QR */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(10px, 1.2vw, 16px)', marginBottom: '6px' }}>
-                  <Star style={{ width: 'clamp(24px, 2.8vw, 34px)', height: 'clamp(24px, 2.8vw, 34px)', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
-                  <span
-                    style={{
-                      fontSize: 'clamp(22px, 2.8vw, 36px)',
-                      fontWeight: 800,
-                      color: '#ffffff',
-                      letterSpacing: '-0.5px'
-                    }}
-                  >
-                    Quét để lưu giữ kỷ niệm
-                  </span>
-                  <Star style={{ width: 'clamp(24px, 2.8vw, 34px)', height: 'clamp(24px, 2.8vw, 34px)', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
-                </div>
-                <p
-                  style={{
-                    fontSize: 'clamp(14px, 1.6vw, 20px)',
-                    color: 'rgba(255,255,255,0.75)'
-                  }}
-                >
-                  Tôn vinh và gửi lời chia buồn trên điện thoại
-                </p>
-              </div>
-
-              {/* QR Code - Centered & Large (200px+) */}
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: 'clamp(14px, 1.8vw, 20px)',
-                  borderRadius: 'clamp(16px, 2vw, 24px)',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.25)'
-                }}
-              >
-                <QRCodeSVG
-                  value={publicUrl}
-                  size={Math.max(160, Math.min(220, window.innerWidth * 0.15))}
-                  level="H"
-                  fgColor={NAVY_PRIMARY}
-                />
               </div>
             </div>
           </div>
