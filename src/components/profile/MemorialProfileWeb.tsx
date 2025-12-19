@@ -112,6 +112,30 @@ export default function MemorialProfileWeb({
           }}
         />
 
+        {/* ============ BRAND HEADER (Fixed Top) ============ */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            padding: '20px 0 10px',
+            textAlign: 'center',
+            flexShrink: 0
+          }}
+        >
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: GOLD_ACCENT,
+              textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}
+          >
+            HOA VIÊN BÌNH DƯƠNG
+          </div>
+        </div>
+
         {/* Kiosk Animation Styles */}
         <style>{`
           @keyframes float-kiosk {
@@ -250,7 +274,7 @@ export default function MemorialProfileWeb({
                   fontSize: '32px',
                   fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: '28px',
+                  marginBottom: '16px',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
                   position: 'relative',
@@ -265,6 +289,27 @@ export default function MemorialProfileWeb({
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
+              
+              {/* Resting Place Note */}
+              <div
+                style={{
+                  textAlign: 'center',
+                  marginBottom: '24px',
+                  flexShrink: 0
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '20px',
+                    fontStyle: 'italic',
+                    color: '#555555',
+                    margin: 0,
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Ông đã được An Nghỉ ở Hoa viên Bình Dương
+                </p>
+              </div>
               
               {/* Auto-scrolling Biography */}
               <BiographyScroll
@@ -474,64 +519,128 @@ export default function MemorialProfileWeb({
             </div>
           </div>
 
-          {/* ============ FOOTER - QR Code (Full Width Bar, Anchored Bottom) ============ */}
+          {/* ============ FOOTER - DUAL QR CODE SECTION (Fixed Bottom) ============ */}
           <div
             style={{
               marginTop: 'auto',
               backgroundColor: NAVY_PRIMARY,
-              padding: '36px 60px',
+              padding: '32px 40px 40px',
               flexShrink: 0
             }}
           >
+            {/* Dual QR Grid */}
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '20px'
+                display: 'grid',
+                gridTemplateColumns: '1fr 2px 1fr',
+                gap: '20px',
+                alignItems: 'center'
               }}
             >
-              {/* Title Above QR */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
-                  <Star style={{ width: '32px', height: '32px', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
-                  <span
-                    style={{
-                      fontSize: '34px',
-                      fontWeight: 800,
-                      color: '#ffffff',
-                      letterSpacing: '-0.5px'
-                    }}
-                  >
-                    Quét để lưu giữ kỷ niệm
-                  </span>
-                  <Star style={{ width: '32px', height: '32px', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
-                </div>
-                <p
-                  style={{
-                    fontSize: '20px',
-                    color: 'rgba(255,255,255,0.75)'
-                  }}
-                >
-                  Tôn vinh và gửi lời chia buồn trên điện thoại
-                </p>
-              </div>
-
-              {/* QR Code - Centered */}
+              {/* Left Column - Memorial Tribute */}
               <div
                 style={{
-                  backgroundColor: '#ffffff',
-                  padding: '18px',
-                  borderRadius: '22px',
-                  boxShadow: '0 12px 48px rgba(0,0,0,0.3)'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '16px'
                 }}
               >
-                <QRCodeSVG
-                  value={publicUrl}
-                  size={180}
-                  level="H"
-                  fgColor={NAVY_PRIMARY}
-                />
+                <div style={{ textAlign: 'center' }}>
+                  <h3
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      margin: '0 0 8px 0',
+                      letterSpacing: '-0.3px'
+                    }}
+                  >
+                    Gửi lời chia buồn
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '16px',
+                      color: 'rgba(255,255,255,0.75)',
+                      margin: 0
+                    }}
+                  >
+                    Quét để để lại kỷ niệm
+                  </p>
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+                  }}
+                >
+                  <QRCodeSVG
+                    value={publicUrl}
+                    size={140}
+                    level="H"
+                    fgColor={NAVY_PRIMARY}
+                  />
+                </div>
+              </div>
+
+              {/* Vertical Divider */}
+              <div
+                style={{
+                  width: '2px',
+                  height: '200px',
+                  background: `linear-gradient(to bottom, transparent, ${GOLD_ACCENT}60, transparent)`,
+                  justifySelf: 'center'
+                }}
+              />
+
+              {/* Right Column - Homepage */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>
+                  <h3
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      margin: '0 0 8px 0',
+                      letterSpacing: '-0.3px'
+                    }}
+                  >
+                    Trang chủ CPHACO
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '16px',
+                      color: 'rgba(255,255,255,0.75)',
+                      margin: 0
+                    }}
+                  >
+                    Quét để truy cập cphaco.vn
+                  </p>
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+                  }}
+                >
+                  <QRCodeSVG
+                    value="https://cphaco.vn"
+                    size={140}
+                    level="H"
+                    fgColor={NAVY_PRIMARY}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -572,6 +681,30 @@ export default function MemorialProfileWeb({
             zIndex: 1
           }}
         />
+
+        {/* ============ BRAND HEADER (Fixed Top) ============ */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            padding: '20px 0 10px',
+            textAlign: 'center',
+            flexShrink: 0
+          }}
+        >
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: GOLD_ACCENT,
+              textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}
+          >
+            HOA VIÊN BÌNH DƯƠNG
+          </div>
+        </div>
 
         {/* Animation Styles */}
         <style>{`
@@ -712,7 +845,7 @@ export default function MemorialProfileWeb({
                   fontSize: 'clamp(22px, 2.8vw, 32px)',
                   fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(18px, 2.5vh, 26px)',
+                  marginBottom: 'clamp(12px, 1.5vh, 16px)',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
                   position: 'relative',
@@ -727,6 +860,27 @@ export default function MemorialProfileWeb({
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
+              
+              {/* Resting Place Note */}
+              <div
+                style={{
+                  textAlign: 'center',
+                  marginBottom: 'clamp(18px, 2vh, 24px)',
+                  flexShrink: 0
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 'clamp(16px, 2vw, 20px)',
+                    fontStyle: 'italic',
+                    color: '#555555',
+                    margin: 0,
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Ông đã được An Nghỉ ở Hoa viên Bình Dương
+                </p>
+              </div>
               
               {/* Auto-scrolling Biography */}
               <BiographyScroll
@@ -890,7 +1044,7 @@ export default function MemorialProfileWeb({
                   alignContent: 'start'
                 }}
               >
-                {/* ===== QR ACTION CARD (First Item - Call to Action) ===== */}
+                {/* ===== DUAL QR ACTION CARD (First Item - Call to Action) ===== */}
                 <div
                   style={{
                     gridColumn: '1 / -1',
@@ -899,56 +1053,118 @@ export default function MemorialProfileWeb({
                     background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
                     border: `2px solid ${GOLD_ACCENT}`,
                     boxShadow: `0 8px 32px rgba(197, 160, 89, 0.2), inset 0 1px 0 rgba(255,255,255,0.8)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 'clamp(24px, 3vw, 40px)',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 2px 1fr',
+                    gap: 'clamp(16px, 2vw, 24px)',
+                    alignItems: 'center'
                   }}
                 >
-                  {/* QR Code */}
+                  {/* Left Column - Memorial Tribute */}
                   <div
                     style={{
-                      backgroundColor: '#ffffff',
-                      padding: 'clamp(10px, 1.2vw, 14px)',
-                      borderRadius: 'clamp(12px, 1.5vw, 16px)',
-                      boxShadow: '0 6px 24px rgba(0,0,0,0.1)',
-                      border: `1px solid rgba(197, 160, 89, 0.3)`
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 'clamp(12px, 1.5vw, 16px)'
                     }}
                   >
-                    <QRCodeSVG
-                      value={publicUrl}
-                      size={Math.max(120, Math.min(150, window.innerWidth * 0.1))}
-                      level="H"
-                      fgColor={NAVY_PRIMARY}
-                    />
-                  </div>
-
-                  {/* Text Content */}
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 1vw, 12px)', marginBottom: 'clamp(6px, 0.8vh, 10px)' }}>
-                      <QrCode style={{ width: 'clamp(22px, 2.5vw, 28px)', height: 'clamp(22px, 2.5vw, 28px)', color: GOLD_ACCENT }} />
-                      <span
+                    <div style={{ textAlign: 'center' }}>
+                      <h3
                         style={{
-                          fontSize: 'clamp(18px, 2.2vw, 26px)',
-                          fontWeight: 800,
+                          fontSize: 'clamp(16px, 2vw, 20px)',
+                          fontWeight: 700,
                           color: NAVY_PRIMARY,
-                          letterSpacing: '-0.5px'
+                          margin: '0 0 4px 0',
+                          letterSpacing: '-0.3px'
                         }}
                       >
-                        Quét để gửi lời chia buồn
-                      </span>
+                        Gửi lời chia buồn
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: 'clamp(12px, 1.3vw, 14px)',
+                          color: '#64748b',
+                          margin: 0
+                        }}
+                      >
+                        Quét để để lại kỷ niệm
+                      </p>
                     </div>
-                    <p
+                    <div
                       style={{
-                        fontSize: 'clamp(13px, 1.4vw, 17px)',
-                        color: '#64748b',
-                        fontWeight: 500
+                        backgroundColor: '#ffffff',
+                        padding: 'clamp(8px, 1vw, 12px)',
+                        borderRadius: 'clamp(10px, 1.2vw, 14px)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                        border: `1px solid rgba(197, 160, 89, 0.3)`
                       }}
                     >
-                      Lưu giữ kỷ niệm mãi mãi
-                    </p>
+                      <QRCodeSVG
+                        value={publicUrl}
+                        size={Math.max(80, Math.min(100, window.innerWidth * 0.08))}
+                        level="H"
+                        fgColor={NAVY_PRIMARY}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Vertical Divider */}
+                  <div
+                    style={{
+                      width: '2px',
+                      height: '120px',
+                      background: `linear-gradient(to bottom, transparent, ${GOLD_ACCENT}60, transparent)`,
+                      justifySelf: 'center'
+                    }}
+                  />
+
+                  {/* Right Column - Homepage */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 'clamp(12px, 1.5vw, 16px)'
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <h3
+                        style={{
+                          fontSize: 'clamp(16px, 2vw, 20px)',
+                          fontWeight: 700,
+                          color: NAVY_PRIMARY,
+                          margin: '0 0 4px 0',
+                          letterSpacing: '-0.3px'
+                        }}
+                      >
+                        Trang chủ CPHACO
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: 'clamp(12px, 1.3vw, 14px)',
+                          color: '#64748b',
+                          margin: 0
+                        }}
+                      >
+                        Quét để truy cập cphaco.vn
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        backgroundColor: '#ffffff',
+                        padding: 'clamp(8px, 1vw, 12px)',
+                        borderRadius: 'clamp(10px, 1.2vw, 14px)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                        border: `1px solid rgba(197, 160, 89, 0.3)`
+                      }}
+                    >
+                      <QRCodeSVG
+                        value="https://cphaco.vn"
+                        size={Math.max(80, Math.min(100, window.innerWidth * 0.08))}
+                        level="H"
+                        fgColor={NAVY_PRIMARY}
+                      />
+                    </div>
                   </div>
                 </div>
 
