@@ -1,12 +1,68 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import { Sidebar, MobileHeader } from "@/components/layout/Sidebar";
+import { ProfilesTab } from "@/components/admin/ProfilesTab";
+import { CreateEditTab } from "@/components/admin/CreateEditTab";
+import { SlideshowTab } from "@/components/admin/SlideshowTab";
+
+interface EditingProfile {
+  id: string;
+  jobId: string;
+  name: string;
+}
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("profiles");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<EditingProfile | null>(null);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab !== "create") {
+      setEditingProfile(null);
+    }
+  };
+
+  const handleCreateNew = () => {
+    setEditingProfile(null);
+    setActiveTab("create");
+  };
+
+  const handleEdit = (profile: EditingProfile) => {
+    setEditingProfile(profile);
+    setActiveTab("create");
+  };
+
+  const handleBackToProfiles = () => {
+    setEditingProfile(null);
+    setActiveTab("profiles");
+  };
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  useEffect(() => {
+    document.title = "CPHACO Admin | Quản trị Sổ Tang";
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <MobileHeader onToggle={toggleSidebar} />
+
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        isOpen={sidebarOpen}
+        onToggle={toggleSidebar}
+      />
+
+      <main className="lg:ml-64 pt-16 lg:pt-0 p-4 sm:p-6 lg:p-10 min-h-screen">
+        {activeTab === "profiles" && (
+          <ProfilesTab onCreateNew={handleCreateNew} onEdit={handleEdit} />
+        )}
+        {activeTab === "create" && (
+          <CreateEditTab onBack={handleBackToProfiles} editingProfile={editingProfile} />
+        )}
+        {activeTab === "slideshow" && <SlideshowTab />}
+      </main>
     </div>
   );
 };
