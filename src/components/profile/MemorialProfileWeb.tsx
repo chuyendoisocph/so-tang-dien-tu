@@ -62,7 +62,10 @@ export default function MemorialProfileWeb({
   // Check if career/roles data exists
   const hasCareerData = profile.roles && profile.roles.length > 0;
 
-  // KIOSK MODE - Optimized for 1080x1920 Vertical Advertising Standee
+  // Calculate how many tribute cards to show based on available space
+  const kioskTributeCount = hasCareerData ? 4 : 8;
+
+  // KIOSK MODE - Optimized for 1080x1920 Vertical Advertising Standee (No Cover Image)
   if (kioskMode) {
     return (
       <div
@@ -74,11 +77,30 @@ export default function MemorialProfileWeb({
           minHeight: '1920px',
           maxHeight: '1920px',
           margin: '0 auto',
-          overflow: 'hidden',
-          backgroundColor: '#FDFCF8'
+          overflow: 'hidden'
         }}
       >
-        {/* Kiosk-specific styles with Ken Burns effect */}
+        {/* Premium CSS Gradient Background with Noise Texture */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, #FDFCF8 0%, #F5ECD7 50%, #F3E5AB 100%)',
+            zIndex: 0
+          }}
+        />
+        {/* Noise/Grain Texture Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.03,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            zIndex: 1
+          }}
+        />
+
+        {/* Kiosk-specific animation styles */}
         <style>{`
           @keyframes float-kiosk {
             0%, 100% { transform: translateY(0px); }
@@ -94,385 +116,349 @@ export default function MemorialProfileWeb({
           .pulse-glow {
             animation: pulse-glow 3s ease-in-out infinite;
           }
-          @keyframes ken-burns {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-          }
-          .ken-burns-bg {
-            animation: ken-burns 20s ease-in-out infinite alternate;
-          }
         `}</style>
 
-        {/* ============ HERO SECTION - 38% of screen with Ken Burns ============ */}
+        {/* Main Content Wrapper - Full Height Flex */}
         <div
           style={{
             position: 'relative',
-            height: '730px', /* ~38% of 1920px */
-            overflow: 'hidden'
+            zIndex: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            padding: '0'
           }}
         >
-          {/* Background with Ken Burns animation */}
-          <div
-            className="ken-burns-bg"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'url("https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1920&h=1200&fit=crop")',
-              backgroundPosition: 'center top',
-              backgroundSize: 'cover',
-              transformOrigin: 'center center'
-            }}
-          />
-
-          {/* Gradient overlay for seamless fade */}
+          {/* ============ HEADER - Snapped to Top ============ */}
           <div
             style={{
-              position: 'absolute',
-              inset: 0,
-              background: `linear-gradient(
-                180deg,
-                rgba(15, 30, 50, 0.85) 0%,
-                rgba(30, 58, 95, 0.75) 50%,
-                rgba(253, 252, 248, 1) 100%
-              )`
-            }}
-          />
-
-          {/* Hero Content */}
-          <div
-            style={{
-              position: 'relative',
-              height: '100%',
+              padding: '48px 50px 40px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              paddingTop: '40px'
+              flexShrink: 0
             }}
           >
-            {/* Large Profile Picture */}
-            <div className="float-kiosk" style={{ marginBottom: '24px' }}>
+            {/* Profile Picture */}
+            <div className="float-kiosk" style={{ marginBottom: '28px' }}>
               <img
                 src={profile.avatarUrl}
                 alt={profile.name}
                 style={{
-                  width: '340px',
-                  height: '420px',
+                  width: '320px',
+                  height: '400px',
                   objectFit: 'cover',
                   borderRadius: '20px',
-                  border: '5px solid #ffffff',
-                  boxShadow: '0 30px 70px rgba(0,0,0,0.4)'
+                  border: `5px solid ${GOLD_ACCENT}`,
+                  boxShadow: '0 30px 70px rgba(0,0,0,0.2)'
                 }}
               />
             </div>
 
-            {/* Name - Extra Large for Distance Reading */}
+            {/* Name - Bold & Dark for Contrast */}
             <h1
               style={{
-                fontSize: '68px',
-                fontWeight: 800,
-                color: '#ffffff',
+                fontSize: '72px',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
                 textAlign: 'center',
-                letterSpacing: '-1px',
-                textShadow: '0 4px 24px rgba(0,0,0,0.4)',
+                letterSpacing: '-2px',
                 marginBottom: '14px',
-                fontFamily: "'Inter', sans-serif"
+                fontFamily: "'Inter', sans-serif",
+                textTransform: 'uppercase'
               }}
             >
               {profile.name}
             </h1>
 
-            {/* Dates - Large */}
+            {/* Dates */}
             <div
               style={{
                 fontSize: '34px',
                 color: GOLD_ACCENT,
-                fontWeight: 600,
+                fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px',
-                textShadow: '0 2px 12px rgba(0,0,0,0.3)'
+                gap: '14px'
               }}
             >
               <Calendar style={{ width: '34px', height: '34px' }} />
               {years}
             </div>
           </div>
-        </div>
 
-        {/* ============ MAIN CONTENT - Fills remaining space ============ */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            padding: '32px 40px 20px',
-            gap: hasCareerData ? '20px' : '28px',
-            overflow: 'hidden'
-          }}
-        >
-          {/* Biography Card */}
+          {/* Gold Divider */}
           <div
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.98)',
-              borderRadius: '24px',
-              padding: '32px 36px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.06)',
-              flex: hasCareerData ? 'none' : 1
+              height: '2px',
+              background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT} 20%, ${GOLD_ACCENT} 80%, transparent 100%)`,
+              margin: '0 60px',
+              flexShrink: 0
+            }}
+          />
+
+          {/* ============ BODY - Flex Grow to Fill Space ============ */}
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '36px 50px',
+              gap: '28px',
+              overflow: 'hidden',
+              minHeight: 0
             }}
           >
-            <h2
-              style={{
-                fontSize: '34px',
-                fontWeight: 700,
-                color: NAVY_PRIMARY,
-                marginBottom: '18px'
-              }}
-            >
-              Tiểu sử
-            </h2>
+            {/* Biography Card */}
             <div
               style={{
-                fontSize: '23px',
-                color: '#475569',
-                lineHeight: 1.75
-              }}
-              dangerouslySetInnerHTML={{ __html: profile.biography }}
-            />
-          </div>
-
-          {/* Career/Roles Card - CONDITIONAL RENDERING */}
-          {hasCareerData && (
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
                 borderRadius: '24px',
-                padding: '32px 36px',
-                boxShadow: '0 16px 48px rgba(0,0,0,0.06)'
+                padding: '32px 40px',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`,
+                flexShrink: 0
               }}
             >
               <h2
                 style={{
-                  fontSize: '34px',
-                  fontWeight: 700,
+                  fontSize: '32px',
+                  fontWeight: 800,
                   color: NAVY_PRIMARY,
-                  marginBottom: '18px'
+                  marginBottom: '16px',
+                  letterSpacing: '-0.5px'
                 }}
               >
-                Quá trình công tác
+                Tiểu sử
               </h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {profile.roles.map((role, index) => (
-                  <div
-                    key={index}
+              <div
+                style={{
+                  fontSize: '22px',
+                  color: '#374151',
+                  lineHeight: 1.8
+                }}
+                dangerouslySetInnerHTML={{ __html: profile.biography }}
+              />
+            </div>
+
+            {/* Career/Roles Card - CONDITIONAL RENDERING */}
+            {hasCareerData && (
+              <>
+                {/* Gold Divider */}
+                <div
+                  style={{
+                    height: '1px',
+                    background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT}50 30%, ${GOLD_ACCENT}50 70%, transparent 100%)`,
+                    flexShrink: 0
+                  }}
+                />
+                <div
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: '24px',
+                    padding: '32px 40px',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
+                    border: `1px solid rgba(197, 160, 89, 0.2)`,
+                    flexShrink: 0
+                  }}
+                >
+                  <h2
                     style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '14px'
+                      fontSize: '32px',
+                      fontWeight: 800,
+                      color: NAVY_PRIMARY,
+                      marginBottom: '16px',
+                      letterSpacing: '-0.5px'
                     }}
                   >
-                    <div
-                      style={{
-                        width: '11px',
-                        height: '11px',
-                        borderRadius: '50%',
-                        backgroundColor: GOLD_ACCENT,
-                        marginTop: '10px',
-                        flexShrink: 0
-                      }}
-                    />
-                    <p style={{ fontSize: '21px', color: '#475569', lineHeight: 1.55 }}>
-                      {role}
+                    Quá trình công tác
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {profile.roles.map((role, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '14px'
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            backgroundColor: GOLD_ACCENT,
+                            marginTop: '10px',
+                            flexShrink: 0
+                          }}
+                        />
+                        <p style={{ fontSize: '20px', color: '#374151', lineHeight: 1.55 }}>
+                          {role}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Gold Divider */}
+            <div
+              style={{
+                height: '1px',
+                background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT}50 30%, ${GOLD_ACCENT}50 70%, transparent 100%)`,
+                flexShrink: 0
+              }}
+            />
+
+            {/* Guestbook/Tributes Card - FLEX GROW to fill remaining space */}
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                borderRadius: '24px',
+                padding: '28px 36px',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                minHeight: 0
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
+                <h2
+                  style={{
+                    fontSize: '32px',
+                    fontWeight: 800,
+                    color: NAVY_PRIMARY,
+                    letterSpacing: '-0.5px'
+                  }}
+                >
+                  Lời chia buồn
+                </h2>
+                <span
+                  style={{
+                    fontSize: '18px',
+                    padding: '8px 18px',
+                    borderRadius: '9999px',
+                    backgroundColor: `${GOLD_ACCENT}20`,
+                    color: GOLD_ACCENT,
+                    fontWeight: 700,
+                    border: `1px solid ${GOLD_ACCENT}40`
+                  }}
+                >
+                  {tributes.length} lời nhắn
+                </span>
+              </div>
+
+              {/* Tribute Cards - Show 6-8 to fill space */}
+              <div style={{ 
+                flex: 1, 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr',
+                gap: '14px', 
+                overflow: 'hidden',
+                alignContent: 'start'
+              }}>
+                {tributes.slice(0, kioskTributeCount).map((t) => (
+                  <div
+                    key={t.id}
+                    style={{
+                      padding: '16px 20px',
+                      borderRadius: '16px',
+                      backgroundColor: 'rgba(253, 252, 248, 0.9)',
+                      border: `1px solid rgba(197, 160, 89, 0.15)`
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#ffffff',
+                          fontSize: '17px',
+                          fontWeight: 700
+                        }}
+                      >
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p style={{ fontSize: '18px', fontWeight: 700, color: NAVY_PRIMARY }}>
+                          {t.name}
+                        </p>
+                        <p style={{ fontSize: '13px', color: '#94a3b8' }}>
+                          {t.date}
+                        </p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.5 }}>
+                      {t.message.length > 80 ? t.message.slice(0, 80) + '...' : t.message}
                     </p>
                   </div>
                 ))}
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Guestbook/Tributes Card - Flex grow to fill space */}
+          {/* ============ FOOTER - QR Code (Anchored Bottom with mt-auto) ============ */}
           <div
             style={{
-              flex: 1,
-              backgroundColor: 'rgba(255, 255, 255, 0.98)',
-              borderRadius: '24px',
-              padding: '32px 36px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.06)',
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              minHeight: 0
+              marginTop: 'auto',
+              backgroundColor: NAVY_PRIMARY,
+              padding: '32px 50px',
+              flexShrink: 0
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-              <h2
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '50px' }}>
+              {/* QR Code - Large */}
+              <div
                 style={{
-                  fontSize: '34px',
-                  fontWeight: 700,
-                  color: NAVY_PRIMARY
+                  backgroundColor: '#ffffff',
+                  padding: '16px',
+                  borderRadius: '20px',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
                 }}
               >
-                Lời chia buồn
-              </h2>
-              <span
-                style={{
-                  fontSize: '20px',
-                  padding: '8px 18px',
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(241,245,249,0.9)',
-                  color: '#64748b',
-                  fontWeight: 600
-                }}
-              >
-                {tributes.length} lời nhắn
-              </span>
-            </div>
-
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', overflow: 'hidden' }}>
-              {tributes.slice(0, hasCareerData ? 3 : 4).map((t) => (
-                <div
-                  key={t.id}
-                  style={{
-                    padding: '18px 22px',
-                    borderRadius: '16px',
-                    backgroundColor: 'rgba(248,250,252,0.9)',
-                    border: '1px solid rgba(226,232,240,0.7)',
-                    flex: 1
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
-                    <div
-                      style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '50%',
-                        background: `linear-gradient(135deg, ${SKY_BLUE}, #38bdf8)`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#ffffff',
-                        fontSize: '19px',
-                        fontWeight: 700
-                      }}
-                    >
-                      {t.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p style={{ fontSize: '21px', fontWeight: 600, color: NAVY_PRIMARY }}>
-                        {t.name}
-                      </p>
-                      <p style={{ fontSize: '15px', color: '#94a3b8' }}>
-                        {t.date}
-                      </p>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '19px', color: '#475569', lineHeight: 1.65 }}>
-                    {t.message}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Full Width Action Buttons */}
-          <div style={{ display: 'flex', gap: '18px', flexShrink: 0 }}>
-            <button
-              onClick={() => (document.getElementById("tributeName") as HTMLInputElement | null)?.focus()}
-              className="pulse-glow"
-              style={{
-                flex: 1,
-                height: '76px',
-                borderRadius: '20px',
-                backgroundColor: SKY_BLUE,
-                color: '#ffffff',
-                fontSize: '26px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <PenLine style={{ width: '28px', height: '28px', color: GOLD_ACCENT }} />
-              Gửi lời chia buồn
-            </button>
-            <button
-              onClick={onOpenShare}
-              style={{
-                flex: 1,
-                height: '76px',
-                borderRadius: '20px',
-                backgroundColor: 'rgba(255,255,255,0.95)',
-                color: NAVY_PRIMARY,
-                fontSize: '26px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                border: '3px solid rgba(226,232,240,0.8)',
-                cursor: 'pointer'
-              }}
-            >
-              <Share2 style={{ width: '28px', height: '28px', color: GOLD_ACCENT }} />
-              Chia sẻ
-            </button>
-          </div>
-        </div>
-
-        {/* ============ FOOTER - QR Code Section (Anchored Bottom) ============ */}
-        <div
-          style={{
-            backgroundColor: NAVY_PRIMARY,
-            padding: '28px 40px',
-            flexShrink: 0
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
-            {/* QR Code - Larger */}
-            <div
-              style={{
-                backgroundColor: '#ffffff',
-                padding: '14px',
-                borderRadius: '18px',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
-              }}
-            >
-              <QRCodeSVG
-                value={publicUrl}
-                size={180}
-                level="H"
-                fgColor={NAVY_PRIMARY}
-              />
-            </div>
-
-            {/* QR Label */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-                <QrCode style={{ width: '36px', height: '36px', color: GOLD_ACCENT }} />
-                <span
-                  style={{
-                    fontSize: '30px',
-                    fontWeight: 700,
-                    color: '#ffffff'
-                  }}
-                >
-                  Quét mã QR
-                </span>
+                <QRCodeSVG
+                  value={publicUrl}
+                  size={200}
+                  level="H"
+                  fgColor={NAVY_PRIMARY}
+                />
               </div>
-              <p
-                style={{
-                  fontSize: '22px',
-                  color: 'rgba(255,255,255,0.8)',
-                  maxWidth: '320px',
-                  lineHeight: 1.4
-                }}
-              >
-                để lưu giữ kỷ niệm trên điện thoại của bạn
-              </p>
+
+              {/* QR Label */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <QrCode style={{ width: '40px', height: '40px', color: GOLD_ACCENT }} />
+                  <span
+                    style={{
+                      fontSize: '34px',
+                      fontWeight: 800,
+                      color: '#ffffff'
+                    }}
+                  >
+                    Quét mã QR
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontSize: '24px',
+                    color: 'rgba(255,255,255,0.85)',
+                    maxWidth: '380px',
+                    lineHeight: 1.45
+                  }}
+                >
+                  Tôn vinh và lưu giữ kỷ niệm trên điện thoại của bạn
+                </p>
+              </div>
             </div>
           </div>
         </div>
