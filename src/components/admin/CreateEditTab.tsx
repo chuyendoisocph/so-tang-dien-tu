@@ -1,11 +1,13 @@
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { useState, useEffect } from "react";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { useProfile, useCreateProfile, useUpdateProfile } from "@/hooks/useProfiles";
 
 interface CreateEditTabProps {
   onBack: () => void;
@@ -17,16 +19,65 @@ interface CreateEditTabProps {
 }
 
 export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) => {
-  const [roles, setRoles] = useState<string[]>([""]);
-  const [locations, setLocations] = useState<string[]>([""]);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
-  const [coverUrl, setCoverUrl] = useState<string>("");
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [deathDate, setDeathDate] = useState("");
+  const [biography, setBiography] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
+  const [isPublished, setIsPublished] = useState(false);
 
-  const addRole = () => setRoles([...roles, ""]);
-  const removeRole = (index: number) => setRoles(roles.filter((_, i) => i !== index));
+  const { data: existingProfile, isLoading: isLoadingProfile } = useProfile(editingProfile?.id || null);
+  const createProfile = useCreateProfile();
+  const updateProfile = useUpdateProfile();
 
-  const addLocation = () => setLocations([...locations, ""]);
-  const removeLocation = (index: number) => setLocations(locations.filter((_, i) => i !== index));
+  const isSubmitting = createProfile.isPending || updateProfile.isPending;
+
+  // Load existing profile data when editing
+  useEffect(() => {
+    if (existingProfile) {
+      setName(existingProfile.name || "");
+      setSlug(existingProfile.slug || "");
+      setBirthDate(existingProfile.birth_date || "");
+      setDeathDate(existingProfile.death_date || "");
+      setBiography(existingProfile.biography || "");
+      setAvatarUrl(existingProfile.avatar_url || "");
+      setCoverUrl(existingProfile.cover_url || "");
+      setIsPublished(existingProfile.is_published || false);
+    }
+  }, [existingProfile]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = {
+      name,
+      slug,
+      birth_date: birthDate || undefined,
+      death_date: deathDate || undefined,
+      biography,
+      avatar_url: avatarUrl || undefined,
+      cover_url: coverUrl || undefined,
+      is_published: isPublished,
+    };
+
+    if (editingProfile?.id) {
+      await updateProfile.mutateAsync({ id: editingProfile.id, formData });
+    } else {
+      await createProfile.mutateAsync(formData);
+    }
+
+    onBack();
+  };
+
+  if (isLoadingProfile && editingProfile?.id) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in">
@@ -49,24 +100,24 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       {/* Form Card */}
       <Card className="shadow-card">
         <CardContent className="p-6 sm:p-8">
-          <form>
+          <form onSubmit={handleSubmit}>
             {/* Basic Info Section */}
             <h5 className="text-primary font-bold mb-6 text-lg">Thông tin cơ bản</h5>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="space-y-2">
-                <Label htmlFor="job_id">
-                  Mã Hồ Sơ <span className="text-destructive">*</span>
+                <Label htmlFor="slug">
+                  Mã Hồ Sơ
                 </Label>
                 <Input
-                  id="job_id"
-                  placeholder="Tự động tạo..."
-                  readOnly
+                  id="slug"
+                  placeholder="Tự động tạo nếu để trống..."
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
                   className="bg-muted"
-                  defaultValue={editingProfile?.jobId}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Mã dùng cho link QR (Không sửa được).
+                  Mã dùng cho link QR.
                 </p>
               </div>
 
@@ -78,13 +129,45 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                   id="full_name"
                   placeholder="VD: Hoàng Nam Tiến"
                   className="font-semibold"
-                  defaultValue={editingProfile?.name}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date_range">Niên khóa</Label>
-                <Input id="date_range" placeholder="1969 - 2025" />
+                <div className="flex items-center justify-between">
+                  <Label>Xuất bản</Label>
+                  <Switch
+                    checked={isPublished}
+                    onCheckedChange={setIsPublished}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Hiển thị công khai trên trang web.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="space-y-2">
+                <Label htmlFor="birth_date">Ngày sinh</Label>
+                <Input
+                  id="birth_date"
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="death_date">Ngày mất</Label>
+                <Input
+                  id="death_date"
+                  type="date"
+                  value={deathDate}
+                  onChange={(e) => setDeathDate(e.target.value)}
+                />
               </div>
             </div>
 
@@ -116,84 +199,25 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
             {/* Detail Section */}
             <h5 className="text-primary font-bold mb-6 text-lg">Nội dung chi tiết</h5>
 
-            <div className="mb-6">
-              <Label htmlFor="biography">Tiểu sử (Web)</Label>
+            <div className="mb-8">
+              <Label htmlFor="biography">Tiểu sử</Label>
               <Textarea
                 id="biography"
                 className="mt-2 min-h-[200px]"
                 placeholder="Nhập tiểu sử..."
+                value={biography}
+                onChange={(e) => setBiography(e.target.value)}
               />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Roles */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label>Danh sách Chức vụ (TV)</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addRole}>
-                    <Plus className="h-4 w-4 mr-1" />
-                    Thêm
-                  </Button>
-                </div>
-                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
-                  {roles.map((_, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
-                      <Input
-                        placeholder={`Chức vụ ${index + 1}`}
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeRole(index)}
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Locations */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label>Địa điểm tổ chức (TV)</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addLocation}>
-                    <Plus className="h-4 w-4 mr-1" />
-                    Thêm
-                  </Button>
-                </div>
-                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
-                  {locations.map((_, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
-                      <Input
-                        placeholder={`Địa điểm ${index + 1}`}
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeLocation(index)}
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-              <Button type="button" variant="secondary" onClick={onBack} className="sm:order-1">
+              <Button type="button" variant="secondary" onClick={onBack} className="sm:order-1" disabled={isSubmitting}>
                 Hủy
               </Button>
-              <Button type="submit" className="shadow-sm sm:order-2">
-                Lưu Hồ Sơ
+              <Button type="submit" className="shadow-sm sm:order-2" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {editingProfile ? "Cập nhật Hồ Sơ" : "Lưu Hồ Sơ"}
               </Button>
             </div>
           </form>

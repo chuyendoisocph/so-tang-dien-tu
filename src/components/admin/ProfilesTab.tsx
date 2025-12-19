@@ -1,4 +1,4 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,28 +17,59 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-
-interface Profile {
-  id: string;
-  jobId: string;
-  name: string;
-  createdAt: string;
-}
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { useAllProfiles, useDeleteProfile } from "@/hooks/useProfiles";
+import { format } from "date-fns";
 
 interface ProfilesTabProps {
   onCreateNew: () => void;
-  onEdit: (profile: Profile) => void;
+  onEdit: (profile: { id: string; jobId: string; name: string }) => void;
 }
-
-// Mock data
-const mockProfiles: Profile[] = [
-  { id: "1", jobId: "HNT2025", name: "Hoàng Nam Tiến", createdAt: "15/12/2025" },
-  { id: "2", jobId: "NVA2025", name: "Nguyễn Văn An", createdAt: "14/12/2025" },
-  { id: "3", jobId: "TTB2025", name: "Trần Thị Bình", createdAt: "13/12/2025" },
-];
 
 export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
   const navigate = useNavigate();
+  const { data: profiles, isLoading, error } = useAllProfiles();
+  const deleteProfile = useDeleteProfile();
+
+  const handleDelete = async (id: string) => {
+    await deleteProfile.mutateAsync(id);
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "-";
+    try {
+      return format(new Date(dateString), "dd/MM/yyyy");
+    } catch {
+      return dateString;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-destructive">
+        <p>Lỗi khi tải dữ liệu. Vui lòng thử lại.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in">
@@ -64,29 +95,53 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                   <TableHead className="font-semibold text-muted-foreground uppercase text-xs">#</TableHead>
                   <TableHead className="font-semibold text-muted-foreground uppercase text-xs">Mã Hồ Sơ</TableHead>
                   <TableHead className="font-semibold text-muted-foreground uppercase text-xs">Người mất</TableHead>
+                  <TableHead className="font-semibold text-muted-foreground uppercase text-xs">Trạng thái</TableHead>
                   <TableHead className="font-semibold text-muted-foreground uppercase text-xs">Ngày tạo</TableHead>
                   <TableHead className="font-semibold text-muted-foreground uppercase text-xs text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockProfiles.map((profile, index) => (
+                {profiles?.map((profile, index) => (
                   <TableRow key={profile.id} className="hover:bg-muted/30 transition-colors">
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>
                       <span className="px-2 py-1 bg-primary/10 text-primary rounded font-mono text-sm">
-                        {profile.jobId}
+                        {profile.slug || profile.id.slice(0, 8)}
                       </span>
                     </TableCell>
-                    <TableCell className="font-semibold">{profile.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{profile.createdAt}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {profile.avatar_url && (
+                          <img
+                            src={profile.avatar_url}
+                            alt={profile.name}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        )}
+                        <span className="font-semibold">{profile.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {profile.is_published ? (
+                        <Badge variant="default" className="bg-green-500/10 text-green-600 hover:bg-green-500/20">
+                          Đã xuất bản
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">
+                          Nháp
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {formatDate(profile.created_at)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        {/* Always-visible actions (work even if dropdown is blocked) */}
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => navigate(`/profile/${profile.jobId}`)}
+                          onClick={() => navigate(`/profile/${profile.slug || profile.id}`)}
                           aria-label={`Xem trang ${profile.name}`}
                         >
                           <Eye className="h-4 w-4" />
@@ -95,13 +150,12 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => navigate(`/profile/${profile.jobId}?kiosk=1`)}
+                          onClick={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
                           aria-label={`Xem kiosk ${profile.name}`}
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
 
-                        {/* Overflow menu */}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -109,23 +163,56 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="cursor-pointer" onSelect={() => navigate(`/profile/${profile.jobId}`)}>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={() => navigate(`/profile/${profile.slug || profile.id}`)}
+                            >
                               <Eye className="h-4 w-4 mr-2" />
                               Xem trang
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer" onSelect={() => navigate(`/profile/${profile.jobId}?kiosk=1`)}>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
+                            >
                               <ExternalLink className="h-4 w-4 mr-2" />
                               Xem chế độ Kiosk
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer" onSelect={() => onEdit(profile)}>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={() => onEdit({ id: profile.id, jobId: profile.slug || profile.id, name: profile.name })}
+                            >
                               <Edit className="h-4 w-4 mr-2" />
                               Sửa
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer text-destructive">
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Xóa
-                            </DropdownMenuItem>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem
+                                  className="cursor-pointer text-destructive"
+                                  onSelect={(e) => e.preventDefault()}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Xóa
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Xác nhận xóa?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Bạn có chắc muốn xóa hồ sơ "{profile.name}"? Hành động này không thể hoàn tác.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(profile.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Xóa
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -136,7 +223,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
             </Table>
           </div>
 
-          {mockProfiles.length === 0 && (
+          {(!profiles || profiles.length === 0) && (
             <div className="text-center py-12 text-muted-foreground">
               <p>Chưa có hồ sơ nào. Nhấn "Tạo mới" để bắt đầu.</p>
             </div>
