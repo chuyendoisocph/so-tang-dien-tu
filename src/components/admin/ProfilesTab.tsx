@@ -1,4 +1,4 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface Profile {
@@ -83,10 +84,15 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.open(`/profile/${profile.jobId}`, '_blank')}>
                             <Eye className="h-4 w-4 mr-2" />
                             Xem trang
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.open(`/profile/${profile.jobId}?kiosk=1`, '_blank')}>
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Xem chế độ Kiosk
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => onEdit(profile)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Sửa
