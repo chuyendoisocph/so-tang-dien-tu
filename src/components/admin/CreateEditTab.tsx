@@ -1,4 +1,4 @@
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,12 +27,32 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   const [avatarUrl, setAvatarUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [isPublished, setIsPublished] = useState(false);
+  const [roles, setRoles] = useState<string[]>([""]);
+  const [locations, setLocations] = useState<string[]>([""]);
 
   const { data: existingProfile, isLoading: isLoadingProfile } = useProfile(editingProfile?.id || null);
   const createProfile = useCreateProfile();
   const updateProfile = useUpdateProfile();
 
   const isSubmitting = createProfile.isPending || updateProfile.isPending;
+
+  // Role handlers
+  const addRole = () => setRoles([...roles, ""]);
+  const removeRole = (index: number) => setRoles(roles.filter((_, i) => i !== index));
+  const updateRole = (index: number, value: string) => {
+    const newRoles = [...roles];
+    newRoles[index] = value;
+    setRoles(newRoles);
+  };
+
+  // Location handlers
+  const addLocation = () => setLocations([...locations, ""]);
+  const removeLocation = (index: number) => setLocations(locations.filter((_, i) => i !== index));
+  const updateLocation = (index: number, value: string) => {
+    const newLocations = [...locations];
+    newLocations[index] = value;
+    setLocations(newLocations);
+  };
 
   // Load existing profile data when editing
   useEffect(() => {
@@ -45,6 +65,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       setAvatarUrl(existingProfile.avatar_url || "");
       setCoverUrl(existingProfile.cover_url || "");
       setIsPublished(existingProfile.is_published || false);
+      // TODO: Load roles and locations when those fields are added to database
     }
   }, [existingProfile]);
 
@@ -107,17 +128,17 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="space-y-2">
                 <Label htmlFor="slug">
-                  Mã Hồ Sơ
+                  Mã Hồ Sơ <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="slug"
-                  placeholder="Tự động tạo nếu để trống..."
+                  placeholder="Tự động tạo..."
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Mã dùng cho link QR.
+                  Mã dùng cho link QR (Không sửa được).
                 </p>
               </div>
 
@@ -199,8 +220,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
             {/* Detail Section */}
             <h5 className="text-primary font-bold mb-6 text-lg">Nội dung chi tiết</h5>
 
-            <div className="mb-8">
-              <Label htmlFor="biography">Tiểu sử</Label>
+            <div className="mb-6">
+              <Label htmlFor="biography">Tiểu sử (Web)</Label>
               <Textarea
                 id="biography"
                 className="mt-2 min-h-[200px]"
@@ -208,6 +229,72 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 value={biography}
                 onChange={(e) => setBiography(e.target.value)}
               />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Roles */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label>Danh sách Chức vụ (TV)</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={addRole}>
+                    <Plus className="h-4 w-4 mr-1" />
+                    Thêm
+                  </Button>
+                </div>
+                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
+                  {roles.map((role, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
+                      <Input
+                        placeholder={`Chức vụ ${index + 1}`}
+                        className="flex-1"
+                        value={role}
+                        onChange={(e) => updateRole(index, e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeRole(index)}
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Locations */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label>Địa điểm tổ chức (TV)</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={addLocation}>
+                    <Plus className="h-4 w-4 mr-1" />
+                    Thêm
+                  </Button>
+                </div>
+                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
+                  {locations.map((location, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
+                      <Input
+                        placeholder={`Địa điểm ${index + 1}`}
+                        className="flex-1"
+                        value={location}
+                        onChange={(e) => updateLocation(index, e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeLocation(index)}
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Actions */}
