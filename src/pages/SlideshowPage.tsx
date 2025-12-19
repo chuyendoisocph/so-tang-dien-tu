@@ -1,29 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Play, Pause, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Play, Pause, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-// Mock data - replace with real API data
-const mockProfiles = [
-  {
-    id: "HNT2025",
-    name: "Hoàng Nam Tiến",
-    dateRange: "1969 - 2025",
-    avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=820&fit=crop&crop=face"
-  },
-  {
-    id: "NVA2025",
-    name: "Nguyễn Văn An",
-    dateRange: "1955 - 2025",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=820&fit=crop&crop=face"
-  },
-  {
-    id: "TTB2025",
-    name: "Trần Thị Bình",
-    dateRange: "1948 - 2025",
-    avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&h=820&fit=crop&crop=face"
-  },
-];
+import { QRCodeSVG } from "qrcode.react";
+import { useAllProfiles } from "@/hooks/useProfiles";
 
 const SlideshowPage = () => {
   const [searchParams] = useSearchParams();
@@ -37,12 +17,27 @@ const SlideshowPage = () => {
   const [showControls, setShowControls] = useState(false);
 
   const intervalTime = parseInt(searchParams.get("time") || "15") * 1000;
-  const profiles = mockProfiles;
+  const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
+
+  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfiles();
+
+  // Filter to only published profiles, and optionally filter by selected IDs
+  const profiles = (allProfiles || [])
+    .filter(p => p.is_published)
+    .filter(p => selectedProfileIds.length === 0 || selectedProfileIds.includes(p.id))
+    .map(p => ({
+      id: p.slug || p.id,
+      name: p.name,
+      dateRange: `${p.birth_date ? new Date(p.birth_date).getFullYear() : '?'} - ${p.death_date ? new Date(p.death_date).getFullYear() : '?'}`,
+      avatarUrl: p.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=820&fit=crop&crop=face",
+    }));
 
   useEffect(() => {
     document.title = "Trình Chiếu Tưởng Niệm";
-    setIsVisible(true);
-  }, []);
+    if (!isLoadingProfiles) {
+      setIsVisible(true);
+    }
+  }, [isLoadingProfiles]);
 
   // Clock update
   useEffect(() => {
@@ -104,11 +99,27 @@ const SlideshowPage = () => {
     return date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
   };
 
+  const getProfileUrl = (profileId: string) => {
+    return `${window.location.origin}/profile/${profileId}`;
+  };
+
+  if (isLoadingProfiles) {
+    return (
+      <div className="min-h-screen bg-foreground flex items-center justify-center">
+        <div className="text-center text-card">
+          <Loader2 className="w-12 h-12 animate-spin text-amber-400 mx-auto mb-4" />
+          <p className="text-lg text-slate-400">Đang tải danh sách...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (profiles.length === 0) {
     return (
       <div className="min-h-screen bg-foreground flex items-center justify-center">
         <div className="text-center text-card">
-          <p className="text-xl mb-4">Không có hồ sơ nào được chọn</p>
+          <p className="text-xl mb-4 text-amber-400">Không có hồ sơ nào được xuất bản</p>
+          <p className="text-slate-400 mb-6">Vui lòng xuất bản ít nhất một hồ sơ trước khi trình chiếu.</p>
           <Button onClick={exitSlideshow}>Quay lại</Button>
         </div>
       </div>
@@ -190,9 +201,12 @@ const SlideshowPage = () => {
             Sổ Tang Điện Tử
           </h3>
           <div className="bg-card p-4 rounded-xl shadow-lg">
-            <div className="w-36 h-36 bg-slate-200 flex items-center justify-center text-slate-500 text-sm">
-              QR Code
-            </div>
+            <QRCodeSVG
+              value={getProfileUrl(currentProfile.id)}
+              size={144}
+              level="H"
+              fgColor="#1e293b"
+            />
           </div>
           <p className="text-xl text-slate-300 text-center leading-relaxed">
             Quét mã để gửi lời chia buồn<br />
