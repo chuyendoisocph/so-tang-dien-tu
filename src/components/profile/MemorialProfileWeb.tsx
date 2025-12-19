@@ -1,4 +1,4 @@
-import { Share2, PenLine, Calendar } from "lucide-react";
+import { Share2, PenLine, Calendar, QrCode } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 type MemorialProfile = {
@@ -35,6 +35,7 @@ export default function MemorialProfileWeb({
   onSubmitTribute,
   onOpenShare,
   slideshowMode = false,
+  kioskMode = false,
 }: {
   profile: MemorialProfile;
   tributes: Tribute[];
@@ -43,6 +44,7 @@ export default function MemorialProfileWeb({
   onSubmitTribute: (e: React.FormEvent) => void;
   onOpenShare: () => void;
   slideshowMode?: boolean;
+  kioskMode?: boolean;
 }) {
   const publicUrl = buildPublicProfileUrl(profile.id);
 
@@ -56,6 +58,348 @@ export default function MemorialProfileWeb({
     boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
     border: '1px solid rgba(255,255,255,0.8)'
   };
+
+  // KIOSK MODE - Optimized for 1080x1920 Vertical Advertising Standee
+  if (kioskMode) {
+    return (
+      <div
+        className="min-h-screen relative flex flex-col"
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          width: '1080px',
+          minHeight: '1920px',
+          margin: '0 auto',
+          background: `linear-gradient(180deg, rgba(15, 30, 50, 0.95) 0%, rgba(30, 58, 95, 0.9) 30%, rgba(253, 252, 248, 1) 50%), url("https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1920&h=1920&fit=crop") center top/cover fixed`
+        }}
+      >
+        {/* Kiosk-specific styles */}
+        <style>{`
+          @keyframes float-kiosk {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+          }
+          .float-kiosk {
+            animation: float-kiosk 5s ease-in-out infinite;
+          }
+          @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(14, 165, 233, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(14, 165, 233, 0.6); }
+          }
+          .pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+          }
+        `}</style>
+
+        {/* Hero Section - Large Centered Portrait */}
+        <div className="flex flex-col items-center pt-20 pb-12">
+          {/* Large Profile Picture */}
+          <div className="float-kiosk mb-10">
+            <img
+              src={profile.avatarUrl}
+              alt={profile.name}
+              style={{
+                width: '380px',
+                height: '480px',
+                objectFit: 'cover',
+                borderRadius: '24px',
+                border: '6px solid #ffffff',
+                boxShadow: '0 30px 80px rgba(0,0,0,0.35)'
+              }}
+            />
+          </div>
+
+          {/* Name - Extra Large for Distance Reading */}
+          <h1
+            style={{
+              fontSize: '72px',
+              fontWeight: 800,
+              color: '#ffffff',
+              textAlign: 'center',
+              letterSpacing: '-1px',
+              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              marginBottom: '16px',
+              fontFamily: "'Inter', sans-serif"
+            }}
+          >
+            {profile.name}
+          </h1>
+
+          {/* Dates - Large */}
+          <div
+            style={{
+              fontSize: '36px',
+              color: GOLD_ACCENT,
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px'
+            }}
+          >
+            <Calendar style={{ width: '36px', height: '36px' }} />
+            {years}
+          </div>
+        </div>
+
+        {/* Main Content - Single Column with Large Gaps */}
+        <div className="flex-1 flex flex-col gap-14 px-12">
+
+          {/* Biography Card */}
+          <div
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              borderRadius: '28px',
+              padding: '48px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)'
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '40px',
+                fontWeight: 700,
+                color: NAVY_PRIMARY,
+                marginBottom: '28px'
+              }}
+            >
+              Tiểu sử
+            </h2>
+            <div
+              style={{
+                fontSize: '26px',
+                color: '#475569',
+                lineHeight: 1.9
+              }}
+              dangerouslySetInnerHTML={{ __html: profile.biography }}
+            />
+          </div>
+
+          {/* Career/Roles Card */}
+          <div
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              borderRadius: '28px',
+              padding: '48px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)'
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '40px',
+                fontWeight: 700,
+                color: NAVY_PRIMARY,
+                marginBottom: '28px'
+              }}
+            >
+              Quá trình công tác
+            </h2>
+            <div className="space-y-5">
+              {profile.roles.map((role, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '20px'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '50%',
+                      backgroundColor: GOLD_ACCENT,
+                      marginTop: '12px',
+                      flexShrink: 0
+                    }}
+                  />
+                  <p style={{ fontSize: '24px', color: '#475569', lineHeight: 1.7 }}>
+                    {role}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Guestbook/Tributes Card */}
+          <div
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              borderRadius: '28px',
+              padding: '48px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)'
+            }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h2
+                style={{
+                  fontSize: '40px',
+                  fontWeight: 700,
+                  color: NAVY_PRIMARY
+                }}
+              >
+                Lời chia buồn
+              </h2>
+              <span
+                style={{
+                  fontSize: '24px',
+                  padding: '10px 24px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(241,245,249,0.9)',
+                  color: '#64748b',
+                  fontWeight: 600
+                }}
+              >
+                {tributes.length} lời nhắn
+              </span>
+            </div>
+
+            <div className="space-y-6">
+              {tributes.slice(0, 3).map((t) => (
+                <div
+                  key={t.id}
+                  style={{
+                    padding: '28px',
+                    borderRadius: '20px',
+                    backgroundColor: 'rgba(248,250,252,0.9)',
+                    border: '1px solid rgba(226,232,240,0.7)'
+                  }}
+                >
+                  <div className="flex items-center gap-5 mb-4">
+                    <div
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${SKY_BLUE}, #38bdf8)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        fontSize: '24px',
+                        fontWeight: 700
+                      }}
+                    >
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '24px', fontWeight: 600, color: NAVY_PRIMARY }}>
+                        {t.name}
+                      </p>
+                      <p style={{ fontSize: '18px', color: '#94a3b8' }}>
+                        {t.date}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '22px', color: '#475569', lineHeight: 1.8 }}>
+                    {t.message}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Full Width Action Buttons */}
+          <div className="flex flex-col gap-6">
+            <button
+              onClick={() => (document.getElementById("tributeName") as HTMLInputElement | null)?.focus()}
+              className="pulse-glow"
+              style={{
+                width: '100%',
+                height: '96px',
+                borderRadius: '24px',
+                backgroundColor: SKY_BLUE,
+                color: '#ffffff',
+                fontSize: '32px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <PenLine style={{ width: '36px', height: '36px', color: GOLD_ACCENT }} />
+              Gửi lời chia buồn
+            </button>
+            <button
+              onClick={onOpenShare}
+              style={{
+                width: '100%',
+                height: '96px',
+                borderRadius: '24px',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                color: NAVY_PRIMARY,
+                fontSize: '32px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                border: '3px solid rgba(226,232,240,0.8)',
+                cursor: 'pointer'
+              }}
+            >
+              <Share2 style={{ width: '36px', height: '36px', color: GOLD_ACCENT }} />
+              Chia sẻ
+            </button>
+          </div>
+        </div>
+
+        {/* Fixed Bottom QR Code Section */}
+        <div
+          style={{
+            backgroundColor: NAVY_PRIMARY,
+            padding: '48px',
+            marginTop: '48px'
+          }}
+        >
+          <div className="flex items-center justify-center gap-16">
+            {/* QR Code */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                padding: '20px',
+                borderRadius: '24px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.2)'
+              }}
+            >
+              <QRCodeSVG
+                value={publicUrl}
+                size={280}
+                level="H"
+                fgColor={NAVY_PRIMARY}
+              />
+            </div>
+
+            {/* QR Label */}
+            <div className="text-center">
+              <div className="flex items-center gap-4 mb-4">
+                <QrCode style={{ width: '48px', height: '48px', color: GOLD_ACCENT }} />
+                <span
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 700,
+                    color: '#ffffff'
+                  }}
+                >
+                  Quét mã QR
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '28px',
+                  color: 'rgba(255,255,255,0.8)',
+                  maxWidth: '400px'
+                }}
+              >
+                để lưu giữ kỷ niệm trên điện thoại của bạn
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // SLIDESHOW MODE - MyKeeper Premium Style (Optimized for TV display)
   if (slideshowMode) {

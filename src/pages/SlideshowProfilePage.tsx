@@ -22,6 +22,7 @@ const SlideshowProfilePage = () => {
   const [loadedFrames, setLoadedFrames] = useState<Set<number>>(new Set());
 
   const intervalTime = parseInt(searchParams.get("time") || "30") * 1000;
+  const useKioskMode = searchParams.get("kiosk") === "1";
   const profiles = mockProfiles;
 
   useEffect(() => {
@@ -106,7 +107,7 @@ const SlideshowProfilePage = () => {
         {profiles.map((profile, index) => (
           <iframe
             key={profile.id}
-            src={`/profile/${profile.id}?slideshow=1`}
+            src={`/profile/${profile.id}?${useKioskMode ? 'kiosk=1' : 'slideshow=1'}`}
             className={`
               w-full h-full border-none absolute top-0 left-0
               transition-opacity duration-1000 ease-in-out
