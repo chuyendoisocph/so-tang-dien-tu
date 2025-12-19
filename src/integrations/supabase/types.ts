@@ -14,7 +14,127 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      photos: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          profile_id: string
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          profile_id: string
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          profile_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          biography: string | null
+          birth_date: string | null
+          cover_url: string | null
+          created_at: string | null
+          death_date: string | null
+          id: string
+          is_published: boolean | null
+          name: string
+          qr_code_url: string | null
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          biography?: string | null
+          birth_date?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          death_date?: string | null
+          id?: string
+          is_published?: boolean | null
+          name: string
+          qr_code_url?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          biography?: string | null
+          birth_date?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          death_date?: string | null
+          id?: string
+          is_published?: boolean | null
+          name?: string
+          qr_code_url?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      timeline_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          event_date: string | null
+          id: string
+          image_url: string | null
+          profile_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          event_date?: string | null
+          id?: string
+          image_url?: string | null
+          profile_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          event_date?: string | null
+          id?: string
+          image_url?: string | null
+          profile_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeline_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
