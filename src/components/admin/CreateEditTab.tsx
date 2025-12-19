@@ -18,23 +18,51 @@ interface CreateEditTabProps {
   } | null;
 }
 
+// Generate slug from name
+function generateSlug(name: string): string {
+  if (!name.trim()) return "";
+  const timestamp = Date.now().toString(36).slice(-4).toUpperCase();
+  const initials = name
+    .trim()
+    .split(' ')
+    .map((word) => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 3);
+  return `${initials}${timestamp}`;
+}
+
 export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [deathDate, setDeathDate] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+  const [deathYear, setDeathYear] = useState("");
   const [biography, setBiography] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [isPublished, setIsPublished] = useState(false);
   const [roles, setRoles] = useState<string[]>([""]);
   const [locations, setLocations] = useState<string[]>([""]);
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const { data: existingProfile, isLoading: isLoadingProfile } = useProfile(editingProfile?.id || null);
   const createProfile = useCreateProfile();
   const updateProfile = useUpdateProfile();
 
   const isSubmitting = createProfile.isPending || updateProfile.isPending;
+
+  // Auto-generate slug when name changes (only if not manually edited)
+  const handleNameChange = (newName: string) => {
+    setName(newName);
+    if (!slugManuallyEdited && !editingProfile) {
+      setSlug(generateSlug(newName));
+    }
+  };
+
+  const handleSlugChange = (newSlug: string) => {
+    setSlug(newSlug);
+    setSlugManuallyEdited(true);
+  };
 
   // Role handlers
   const addRole = () => setRoles([...roles, ""]);
@@ -59,24 +87,29 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
     if (existingProfile) {
       setName(existingProfile.name || "");
       setSlug(existingProfile.slug || "");
-      setBirthDate(existingProfile.birth_date || "");
-      setDeathDate(existingProfile.death_date || "");
+      setSlugManuallyEdited(true); // Don't auto-generate when editing
+      // Extract year from date strings
+      setBirthYear(existingProfile.birth_date ? new Date(existingProfile.birth_date).getFullYear().toString() : "");
+      setDeathYear(existingProfile.death_date ? new Date(existingProfile.death_date).getFullYear().toString() : "");
       setBiography(existingProfile.biography || "");
       setAvatarUrl(existingProfile.avatar_url || "");
       setCoverUrl(existingProfile.cover_url || "");
       setIsPublished(existingProfile.is_published || false);
-      // TODO: Load roles and locations when those fields are added to database
     }
   }, [existingProfile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Convert year to date format (using January 1st of that year)
+    const birthDate = birthYear ? `${birthYear}-01-01` : undefined;
+    const deathDate = deathYear ? `${deathYear}-01-01` : undefined;
+
     const formData = {
       name,
       slug,
-      birth_date: birthDate || undefined,
-      death_date: deathDate || undefined,
+      birth_date: birthDate,
+      death_date: deathDate,
       biography,
       avatar_url: avatarUrl || undefined,
       cover_url: coverUrl || undefined,
@@ -125,23 +158,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
             {/* Basic Info Section */}
             <h5 className="text-primary font-bold mb-6 text-lg">Thông tin cơ bản</h5>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="space-y-2">
-                <Label htmlFor="slug">
-                  Mã Hồ Sơ <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="slug"
-                  placeholder="Tự động tạo..."
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  className="bg-muted"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Mã dùng cho link QR (Không sửa được).
-                </p>
-              </div>
-
+            {/* Row 1: Name and Slug */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-2">
                 <Label htmlFor="full_name">
                   Họ và Tên <span className="text-destructive">*</span>
@@ -151,44 +169,69 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                   placeholder="VD: Hoàng Nam Tiến"
                   className="font-semibold"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value)}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Xuất bản</Label>
+                <Label htmlFor="slug">Mã Hồ Sơ</Label>
+                <Input
+                  id="slug"
+                  placeholder="Tự động tạo từ họ tên..."
+                  value={slug}
+                  onChange={(e) => handleSlugChange(e.target.value.toUpperCase())}
+                  className="font-mono uppercase"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Mã dùng cho link QR. Tự động tạo hoặc nhập tùy chỉnh.
+                </p>
+              </div>
+            </div>
+
+            {/* Row 2: Years and Publish */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="space-y-2">
+                <Label htmlFor="birth_year">Năm sinh</Label>
+                <Input
+                  id="birth_year"
+                  type="number"
+                  placeholder="1960"
+                  min={1800}
+                  max={new Date().getFullYear()}
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value)}
+                  className="text-center"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="death_year">Năm mất</Label>
+                <Input
+                  id="death_year"
+                  type="number"
+                  placeholder="2025"
+                  min={1800}
+                  max={new Date().getFullYear() + 1}
+                  value={deathYear}
+                  onChange={(e) => setDeathYear(e.target.value)}
+                  className="text-center"
+                />
+              </div>
+
+              <div className="col-span-2 flex items-end">
+                <div className="flex items-center justify-between w-full p-3 rounded-lg border bg-muted/30">
+                  <div>
+                    <Label className="font-medium">Xuất bản</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Hiển thị công khai
+                    </p>
+                  </div>
                   <Switch
                     checked={isPublished}
                     onCheckedChange={setIsPublished}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Hiển thị công khai trên trang web.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="space-y-2">
-                <Label htmlFor="birth_date">Ngày sinh</Label>
-                <Input
-                  id="birth_date"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="death_date">Ngày mất</Label>
-                <Input
-                  id="death_date"
-                  type="date"
-                  value={deathDate}
-                  onChange={(e) => setDeathDate(e.target.value)}
-                />
               </div>
             </div>
 
