@@ -2,6 +2,7 @@ import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image } from "lucid
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type MemorialProfile = {
   id: string;
@@ -233,7 +234,7 @@ export default function MemorialProfileWeb({
                   lineHeight: 1.9,
                   textAlign: 'center'
                 }}
-                dangerouslySetInnerHTML={{ __html: profile.biography }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
               />
             </div>
           </div>
@@ -657,7 +658,7 @@ export default function MemorialProfileWeb({
                   lineHeight: 1.85,
                   textAlign: 'center'
                 }}
-                dangerouslySetInnerHTML={{ __html: profile.biography }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
               />
             </div>
           </div>
@@ -1086,7 +1087,7 @@ export default function MemorialProfileWeb({
           <div
             className="text-sm sm:text-base md:text-lg text-center"
             style={{ color: '#374151', lineHeight: 1.85 }}
-            dangerouslySetInnerHTML={{ __html: profile.biography }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
           />
         </div>
 
