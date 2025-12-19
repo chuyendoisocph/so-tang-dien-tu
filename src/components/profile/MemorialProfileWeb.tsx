@@ -916,15 +916,15 @@ export default function MemorialProfileWeb({
     );
   }
 
-  // NORMAL MODE - MyKeeper Premium Style (Interactive Web View)
+  // NORMAL MODE - Vertical Stack Layout (Same as Slideshow, with Form instead of QR)
   return (
     <div
-      className="min-h-screen relative"
+      className="relative flex flex-col min-h-screen"
       style={{
         fontFamily: "'Inter', sans-serif"
       }}
     >
-      {/* Premium CSS Gradient Background (Cream to Muted Gold) - Same as slideshow */}
+      {/* Premium CSS Gradient Background (Cream to Muted Gold) */}
       <div
         style={{
           position: 'fixed',
@@ -945,22 +945,18 @@ export default function MemorialProfileWeb({
         }}
       />
 
-      {/* Floating animation and hover effects */}
+      {/* Animation Styles */}
       <style>{`
-        @keyframes float {
+        @keyframes float-normal {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-6px); }
         }
-        .float-animation {
-          animation: float 4s ease-in-out infinite;
+        .float-normal {
+          animation: float-normal 4s ease-in-out infinite;
         }
         .btn-hover:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4) !important;
-        }
-        .btn-outline-hover:hover {
-          background-color: rgba(255,255,255,0.95) !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
         }
         .card-hover:hover {
           transform: translateY(-2px);
@@ -968,363 +964,334 @@ export default function MemorialProfileWeb({
         }
       `}</style>
 
-      {/* Banner Header with Cover Image */}
+      {/* Main Content Wrapper - Vertical Stack */}
       <div
-        className="relative w-full"
-        style={{
-          height: '28vh',
-          minHeight: '180px',
-          zIndex: 2
-        }}
+        className="relative z-10 flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+        style={{ zIndex: 2 }}
       >
-        {/* Cover Image or Gradient Fallback */}
-        {profile.coverUrl ? (
-          <img
-            src={profile.coverUrl}
-            alt="Cover"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
-            }}
-          />
-        )}
-        {/* Dark Overlay for better text contrast */}
+        {/* ============ 1. HEADER - Profile + Name + Dates ============ */}
         <div
-          className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to bottom, rgba(30, 58, 95, 0.4) 0%, rgba(30, 58, 95, 0.6) 50%, #FDFCF8 100%)'
-          }}
-        />
-      </div>
-
-      {/* Main Content Container */}
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6" style={{ marginTop: '-90px', zIndex: 10 }}>
-
-        {/* Profile Header Card - Glassmorphism */}
-        <div
-          className="rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-8 mb-5 sm:mb-8"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
-            backdropFilter: 'blur(20px)',
-            boxShadow: '0 15px 50px rgba(0,0,0,0.1)',
-            border: '1px solid rgba(255,255,255,0.8)'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: 'clamp(20px, 3vh, 32px)'
           }}
         >
-          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-5 md:gap-8">
-            {/* Portrait - Responsive with floating animation */}
-            <div
-              className="flex-shrink-0 float-animation"
-              style={{ marginTop: '-60px' }}
-            >
-              <img
-                src={profile.avatarUrl}
-                alt={profile.name}
-                className="w-[120px] h-[150px] sm:w-[140px] sm:h-[175px] md:w-[175px] md:h-[220px] object-cover"
-                style={{
-                  borderRadius: '14px',
-                  border: '4px solid #ffffff',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.18)'
-                }}
-              />
-            </div>
-
-            {/* Name & Info */}
-            <div className="flex-1 text-center sm:text-left pb-1 sm:pb-2">
-              <h1
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1.5 sm:mb-2"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  color: NAVY_PRIMARY,
-                  letterSpacing: '-0.5px'
-                }}
-              >
-                {profile.name}
-              </h1>
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm" style={{ color: '#64748b' }}>
-                <span className="flex items-center gap-1.5 sm:gap-2">
-                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: GOLD_ACCENT }} />
-                  {profile.dateRange}
-                </span>
-              </div>
-            </div>
-
-            {/* Action Buttons - Desktop/Tablet - Pill shaped */}
-            <div className="hidden sm:flex gap-2 md:gap-3">
-              <button
-                onClick={() => (document.getElementById("tributeName") as HTMLInputElement | null)?.focus()}
-                className="btn-hover flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300"
-                style={{
-                  backgroundColor: SKY_BLUE,
-                  color: '#ffffff',
-                  boxShadow: '0 6px 20px rgba(14, 165, 233, 0.35)'
-                }}
-              >
-                <PenLine className="w-3.5 h-3.5 md:w-4 md:h-4" style={{ color: GOLD_ACCENT }} />
-                Gửi lời chia buồn
-              </button>
-              <button
-                onClick={onOpenShare}
-                className="btn-outline-hover flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.7)',
-                  color: NAVY_PRIMARY,
-                  border: '1.5px solid rgba(226,232,240,0.8)'
-                }}
-              >
-                <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" style={{ color: GOLD_ACCENT }} />
-                Chia sẻ
-              </button>
-            </div>
+          {/* Profile Picture */}
+          <div className="float-normal" style={{ marginBottom: 'clamp(14px, 2vh, 24px)' }}>
+            <img
+              src={profile.avatarUrl}
+              alt={profile.name}
+              className="w-32 h-40 sm:w-40 sm:h-52 md:w-48 md:h-60 object-cover"
+              style={{
+                borderRadius: 'clamp(12px, 1.5vw, 18px)',
+                border: `4px solid ${GOLD_ACCENT}`,
+                boxShadow: '0 16px 40px rgba(0,0,0,0.15)'
+              }}
+            />
           </div>
 
-          {/* Action Buttons - Mobile only */}
-          <div className="flex sm:hidden gap-2 mt-4 justify-center">
+          {/* Name - Bold & Dark */}
+          <h1
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-center uppercase mb-2 sm:mb-3"
+            style={{
+              color: NAVY_PRIMARY,
+              letterSpacing: '-1px'
+            }}
+          >
+            {profile.name}
+          </h1>
+
+          {/* Dates */}
+          <div
+            className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl md:text-2xl font-bold"
+            style={{ color: GOLD_ACCENT }}
+          >
+            <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
+            {years}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 mt-4 sm:mt-5">
             <button
-              onClick={() => (document.getElementById("tributeName") as HTMLInputElement | null)?.focus()}
-              className="btn-hover flex items-center gap-1.5 px-4 py-2.5 rounded-full font-semibold text-xs transition-all duration-300"
+              onClick={() => (document.getElementById("tributeNameNormal") as HTMLInputElement | null)?.focus()}
+              className="btn-hover flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm transition-all duration-300"
               style={{
                 backgroundColor: SKY_BLUE,
                 color: '#ffffff',
-                boxShadow: '0 4px 15px rgba(14, 165, 233, 0.3)'
+                boxShadow: '0 6px 20px rgba(14, 165, 233, 0.35)'
               }}
             >
-              <PenLine className="w-3.5 h-3.5" style={{ color: GOLD_ACCENT }} />
+              <PenLine className="w-4 h-4" style={{ color: GOLD_ACCENT }} />
               Gửi lời chia buồn
             </button>
             <button
               onClick={onOpenShare}
-              className="btn-outline-hover flex items-center gap-1.5 px-4 py-2.5 rounded-full font-semibold text-xs transition-all duration-300"
+              className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white/90"
               style={{
                 backgroundColor: 'rgba(255,255,255,0.8)',
                 color: NAVY_PRIMARY,
                 border: '1.5px solid rgba(226,232,240,0.8)'
               }}
             >
-              <Share2 className="w-3.5 h-3.5" style={{ color: GOLD_ACCENT }} />
+              <Share2 className="w-4 h-4" style={{ color: GOLD_ACCENT }} />
               Chia sẻ
             </button>
           </div>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 lg:gap-8">
+        {/* Elegant Gold Divider */}
+        <div
+          style={{
+            height: '2px',
+            background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
+            marginBottom: 'clamp(20px, 3vh, 32px)'
+          }}
+        />
 
-          {/* Left Column - Sidebar */}
-          <div className="w-full md:w-2/5 lg:w-1/3 space-y-4 sm:space-y-6 order-2 md:order-1">
+        {/* ============ 2. SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
+        <div
+          className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            borderRadius: 'clamp(14px, 2vw, 20px)',
+            padding: 'clamp(20px, 3vw, 32px) clamp(24px, 4vw, 40px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
+            border: `1px solid rgba(197, 160, 89, 0.2)`
+          }}
+        >
+          <h2
+            className="text-lg sm:text-xl md:text-2xl font-bold text-center mb-4 sm:mb-5"
+            style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
+          >
+            Tiểu sử & Cuộc đời
+          </h2>
+          <div
+            className="text-sm sm:text-base md:text-lg text-center"
+            style={{ color: '#374151', lineHeight: 1.85 }}
+            dangerouslySetInnerHTML={{ __html: profile.biography }}
+          />
+        </div>
 
-            {/* Work History Card */}
+        {/* Subtle Divider */}
+        <div
+          style={{
+            height: '1px',
+            background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+            marginBottom: 'clamp(20px, 3vh, 28px)'
+          }}
+        />
+
+        {/* ============ 3. SECTION B: CAREER HISTORY (Full Width, Grid) ============ */}
+        {hasCareerData && (
+          <>
             <div
-              className="rounded-xl sm:rounded-2xl overflow-hidden card-hover transition-all duration-300"
-              style={cardStyle}
-            >
-              <div className="p-4 sm:p-5">
-                <h3 className="font-semibold text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: NAVY_PRIMARY }}>
-                  Quá trình công tác
-                </h3>
-                <div className="space-y-2 sm:space-y-3">
-                  {profile.roles.map((role, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 sm:gap-3"
-                    >
-                      <div
-                        className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mt-1.5 flex-shrink-0"
-                        style={{ backgroundColor: GOLD_ACCENT }}
-                      />
-                      <p className="text-xs sm:text-sm" style={{ color: '#475569', lineHeight: 1.6 }}>
-                        {role}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* QR Code Widget - Hidden on mobile */}
-            <div
-              className="hidden sm:block rounded-xl sm:rounded-2xl p-4 sm:p-5 card-hover transition-all duration-300"
-              style={cardStyle}
-            >
-              <div className="flex justify-center">
-                <div
-                  className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl"
-                  style={{ backgroundColor: 'rgba(248,250,252,0.8)', border: '1px solid rgba(226,232,240,0.6)' }}
-                >
-                  <QRCodeSVG
-                    value={publicUrl}
-                    className="w-[60px] h-[60px] sm:w-[75px] sm:h-[75px]"
-                    level="H"
-                    fgColor={NAVY_PRIMARY}
-                  />
-                </div>
-              </div>
-              <p className="text-[10px] sm:text-xs text-center mt-2 sm:mt-3 font-medium" style={{ color: '#94a3b8' }}>
-                Lưu giữ kỷ niệm trên di động
-              </p>
-            </div>
-          </div>
-
-          {/* Right Column - Main Content */}
-          <div className="w-full md:w-3/5 lg:w-2/3 space-y-4 sm:space-y-6 order-1 md:order-2">
-
-            {/* Biography Card */}
-            <div
-              className="rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-7 card-hover transition-all duration-300"
-              style={cardStyle}
+              className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                borderRadius: 'clamp(14px, 2vw, 20px)',
+                padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`
+              }}
             >
               <h2
-                className="text-base sm:text-lg font-bold mb-4 sm:mb-5"
-                style={{ color: NAVY_PRIMARY }}
+                className="text-base sm:text-lg md:text-xl font-bold text-center mb-4 sm:mb-5"
+                style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
               >
-                Tiểu sử & Cuộc đời
+                Quá trình công tác
               </h2>
-              <div
-                className="prose prose-slate max-w-none prose-sm sm:prose-base"
-                style={{
-                  color: '#475569',
-                  lineHeight: 1.8,
-                  fontSize: 'inherit'
-                }}
-                dangerouslySetInnerHTML={{ __html: profile.biography }}
-              />
-            </div>
-
-            {/* Tribute Form Card */}
-            <div
-              className="rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-7 card-hover transition-all duration-300"
-              style={cardStyle}
-            >
-              <div className="flex items-center gap-2 mb-4 sm:mb-5">
-                <PenLine className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: GOLD_ACCENT }} />
-                <h2 className="text-base sm:text-lg font-bold" style={{ color: NAVY_PRIMARY }}>
-                  Gửi lời chia buồn
-                </h2>
-              </div>
-
-              <form onSubmit={onSubmitTribute}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <input
-                    id="tributeName"
-                    placeholder="Họ và tên..."
-                    value={formData.name}
-                    onChange={(e) => onChangeForm({ name: e.target.value })}
-                    required
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
-                    style={{
-                      backgroundColor: 'rgba(248,250,252,0.8)',
-                      border: '1px solid rgba(226,232,240,0.6)',
-                      color: '#334155'
-                    }}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Số điện thoại..."
-                    value={formData.phone}
-                    onChange={(e) => onChangeForm({ phone: e.target.value })}
-                    required
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
-                    style={{
-                      backgroundColor: 'rgba(248,250,252,0.8)',
-                      border: '1px solid rgba(226,232,240,0.6)',
-                      color: '#334155'
-                    }}
-                  />
-                </div>
-                <textarea
-                  placeholder="Viết lời chia buồn..."
-                  value={formData.message}
-                  onChange={(e) => onChangeForm({ message: e.target.value })}
-                  rows={3}
-                  required
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 resize-none mb-3 sm:mb-4"
-                  style={{
-                    backgroundColor: 'rgba(248,250,252,0.8)',
-                    border: '1px solid rgba(226,232,240,0.6)',
-                    color: '#334155'
-                  }}
-                />
-                <button
-                  type="submit"
-                  className="btn-hover w-full py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300"
-                  style={{
-                    backgroundColor: SKY_BLUE,
-                    color: '#ffffff',
-                    boxShadow: '0 6px 20px rgba(14, 165, 233, 0.3)'
-                  }}
-                >
-                  Gửi lời chia buồn
-                </button>
-              </form>
-            </div>
-
-            {/* Tributes Card */}
-            <div
-              className="rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-7 card-hover transition-all duration-300"
-              style={cardStyle}
-            >
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h2
-                  className="text-base sm:text-lg font-bold"
-                  style={{ color: NAVY_PRIMARY }}
-                >
-                  Lời chia buồn
-                </h2>
-                <span
-                  className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium"
-                  style={{ backgroundColor: 'rgba(241,245,249,0.8)', color: '#64748b' }}
-                >
-                  {tributes.length} lời nhắn
-                </span>
-              </div>
-
-              <div className="space-y-3 sm:space-y-4">
-                {tributes.map((t) => (
+              {/* 2-Column Grid for Roles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {profile.roles.map((role, index) => (
                   <div
-                    key={t.id}
-                    className="p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-default"
+                    key={index}
+                    className="flex items-start gap-3 p-3 sm:p-4 rounded-xl transition-colors"
                     style={{
-                      backgroundColor: 'rgba(248,250,252,0.8)',
-                      border: '1px solid rgba(226,232,240,0.6)'
+                      backgroundColor: 'rgba(253, 252, 248, 0.8)',
+                      border: `1px solid rgba(197, 160, 89, 0.15)`
                     }}
                   >
-                    <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                      <div
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm"
-                        style={{
-                          background: `linear-gradient(135deg, ${SKY_BLUE}, #38bdf8)`,
-                          color: '#ffffff'
-                        }}
-                      >
-                        {t.name.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-xs sm:text-sm truncate" style={{ color: NAVY_PRIMARY }}>
-                          {t.name}
-                        </p>
-                        <p className="text-[10px] sm:text-xs" style={{ color: '#94a3b8' }}>
-                          {t.date} • {t.phone}
-                        </p>
-                      </div>
-                    </div>
-                    <p
-                      className="text-xs sm:text-sm"
-                      style={{ color: '#475569', lineHeight: 1.8 }}
-                    >
-                      {t.message}
+                    <Briefcase
+                      className="w-5 h-5 flex-shrink-0 mt-0.5"
+                      style={{ color: GOLD_ACCENT }}
+                    />
+                    <p className="text-sm sm:text-base" style={{ color: '#374151', lineHeight: 1.5 }}>
+                      {role}
                     </p>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* Subtle Divider */}
+            <div
+              style={{
+                height: '1px',
+                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+                marginBottom: 'clamp(20px, 3vh, 28px)'
+              }}
+            />
+          </>
+        )}
+
+        {/* ============ 4. SECTION C: TRIBUTE FORM (Instead of QR) ============ */}
+        <div
+          className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: 'clamp(14px, 2vw, 20px)',
+            padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
+            border: `2px solid ${GOLD_ACCENT}40`
+          }}
+        >
+          <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
+            <PenLine className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
+            <h2
+              className="text-base sm:text-lg md:text-xl font-bold"
+              style={{ color: NAVY_PRIMARY }}
+            >
+              Gửi lời chia buồn
+            </h2>
           </div>
+
+          <form onSubmit={onSubmitTribute}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <input
+                id="tributeNameNormal"
+                placeholder="Họ và tên..."
+                value={formData.name}
+                onChange={(e) => onChangeForm({ name: e.target.value })}
+                required
+                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
+                style={{
+                  backgroundColor: 'rgba(248,250,252,0.9)',
+                  border: '1px solid rgba(226,232,240,0.6)',
+                  color: '#334155'
+                }}
+              />
+              <input
+                type="tel"
+                placeholder="Số điện thoại..."
+                value={formData.phone}
+                onChange={(e) => onChangeForm({ phone: e.target.value })}
+                required
+                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
+                style={{
+                  backgroundColor: 'rgba(248,250,252,0.9)',
+                  border: '1px solid rgba(226,232,240,0.6)',
+                  color: '#334155'
+                }}
+              />
+            </div>
+            <textarea
+              placeholder="Viết lời chia buồn..."
+              value={formData.message}
+              onChange={(e) => onChangeForm({ message: e.target.value })}
+              rows={3}
+              required
+              className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 resize-none mb-4"
+              style={{
+                backgroundColor: 'rgba(248,250,252,0.9)',
+                border: '1px solid rgba(226,232,240,0.6)',
+                color: '#334155'
+              }}
+            />
+            <button
+              type="submit"
+              className="btn-hover w-full py-3 rounded-full font-semibold text-sm transition-all duration-300"
+              style={{
+                backgroundColor: SKY_BLUE,
+                color: '#ffffff',
+                boxShadow: '0 6px 20px rgba(14, 165, 233, 0.3)'
+              }}
+            >
+              Gửi lời chia buồn
+            </button>
+          </form>
         </div>
 
-        {/* Bottom spacing */}
-        <div className="h-8 sm:h-12" />
+        {/* Subtle Divider */}
+        <div
+          style={{
+            height: '1px',
+            background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+            marginBottom: 'clamp(20px, 3vh, 28px)'
+          }}
+        />
+
+        {/* ============ 5. SECTION D: GUESTBOOK (Tributes List) ============ */}
+        <div
+          className="card-hover transition-all duration-300 mb-8"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            borderRadius: 'clamp(14px, 2vw, 20px)',
+            padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
+            border: `1px solid rgba(197, 160, 89, 0.2)`
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <h2
+              className="text-base sm:text-lg md:text-xl font-bold"
+              style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
+            >
+              Lời chia buồn
+            </h2>
+            <span
+              className="text-xs sm:text-sm px-3 py-1.5 rounded-full font-semibold"
+              style={{
+                backgroundColor: `${GOLD_ACCENT}18`,
+                color: GOLD_ACCENT,
+                border: `1px solid ${GOLD_ACCENT}30`
+              }}
+            >
+              {tributes.length} lời nhắn
+            </span>
+          </div>
+
+          {/* 2-Column Grid for Tributes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            {tributes.map((t) => (
+              <div
+                key={t.id}
+                className="p-4 rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                style={{
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+                  border: `1px solid rgba(226, 232, 240, 0.8)`
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm"
+                    style={{
+                      background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                      color: '#ffffff',
+                      boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)'
+                    }}
+                  >
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm" style={{ color: NAVY_PRIMARY }}>
+                      {t.name}
+                    </p>
+                    <p className="text-xs" style={{ color: '#94a3b8' }}>
+                      {t.date}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm" style={{ color: '#475569', lineHeight: 1.6 }}>
+                  {t.message}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
