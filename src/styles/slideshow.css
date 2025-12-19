@@ -1,3 +1,6 @@
+/* Import biography scroll styles */
+@import './biography-scroll.css';
+
 /* Slideshow Portrait Mode - Exact 1080x1920 */
 .slideshow-container {
   width: 100vw;

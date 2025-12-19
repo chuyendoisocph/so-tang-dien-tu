@@ -1,0 +1,121 @@
+/* Biography Auto-Scroll Animation for Slideshow/Kiosk Mode */
+
+/* Keyframe for smooth vertical scroll */
+@keyframes biography-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  5% {
+    transform: translateY(0); /* Pause at start for 2-3 seconds */
+  }
+  95% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(-100%); /* Pause at end briefly */
+  }
+}
+
+/* Container with gradient mask */
+.biography-scroll-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  /* Gradient masks for smooth fade in/out */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+}
+
+/* Scrolling content wrapper */
+.biography-scroll-content {
+  animation: biography-scroll 60s linear infinite;
+  padding: 2rem 0;
+  will-change: transform;
+}
+
+/* Pause animation on hover (for testing) */
+.biography-scroll-container:hover .biography-scroll-content {
+  animation-play-state: paused;
+}
+
+/* Adjust speed based on content length */
+.biography-scroll-content.short {
+  animation-duration: 30s;
+}
+
+.biography-scroll-content.medium {
+  animation-duration: 45s;
+}
+
+.biography-scroll-content.long {
+  animation-duration: 60s;
+}
+
+.biography-scroll-content.extra-long {
+  animation-duration: 90s;
+}
+
+/* Seamless loop - duplicate content */
+.biography-scroll-content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Enhanced readability for scrolling text */
+.biography-scroll-text {
+  font-size: 1.5rem; /* text-2xl */
+  line-height: 2rem; /* leading-8 */
+  padding: 0 3rem;
+  text-align: justify;
+  color: #4a5568; /* gray-700 */
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Responsive font sizes */
+@media (max-width: 1080px) {
+  .biography-scroll-text {
+    font-size: 1.25rem; /* text-xl */
+    line-height: 1.75rem;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .biography-scroll-text {
+    font-size: 1.75rem; /* larger for big screens */
+    line-height: 2.25rem;
+  }
+}
+
+/* Smooth start/end with easing */
+.biography-scroll-content.smooth {
+  animation-timing-function: ease-in-out;
+}
+
+/* Alternative: Continuous loop without pause */
+@keyframes biography-scroll-continuous {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%); /* Only move half since content is duplicated */
+  }
+}
+
+.biography-scroll-content.continuous {
+  animation-name: biography-scroll-continuous;
+  animation-timing-function: linear;
+}

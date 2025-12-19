@@ -3,6 +3,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { BiographyScroll } from "@/components/BiographyScroll";
 
 type MemorialProfile = {
   id: string;
@@ -199,22 +200,29 @@ export default function MemorialProfileWeb({
             }}
           />
 
-          {/* ============ SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
+          {/* ============ SECTION A: BIOGRAPHY WITH AUTO-SCROLL (Full Width, Center-Aligned) ============ */}
           <div
             style={{
               padding: '36px 60px 28px',
-              flexShrink: 0
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0
             }}
           >
             <div
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '24px',
-                padding: '40px 52px',
+                padding: '40px 52px 20px',
                 boxShadow: '0 16px 56px rgba(0,0,0,0.08)',
                 border: `2px solid rgba(197, 160, 89, 0.3)`,
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                minHeight: 0
               }}
             >
               {/* Decorative corner accents */}
@@ -245,7 +253,8 @@ export default function MemorialProfileWeb({
                   marginBottom: '28px',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
-                  position: 'relative'
+                  position: 'relative',
+                  flexShrink: 0
                 }}
               >
                 <span style={{
@@ -256,16 +265,13 @@ export default function MemorialProfileWeb({
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
-              <div
-                className="biography-content"
-                style={{
-                  fontSize: '24px',
-                  color: '#374151',
-                  lineHeight: 2.1,
-                  textAlign: 'justify',
-                  position: 'relative'
-                }}
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
+              
+              {/* Auto-scrolling Biography */}
+              <BiographyScroll
+                biography={profile.biography}
+                className="flex-1"
+                seamlessLoop={true}
+                pauseOnHover={false}
               />
             </div>
           </div>
@@ -656,22 +662,29 @@ export default function MemorialProfileWeb({
             }}
           />
 
-          {/* ============ 2. SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
+          {/* ============ 2. SECTION A: BIOGRAPHY WITH AUTO-SCROLL (Full Width, Center-Aligned) ============ */}
           <div
             style={{
               padding: 'clamp(24px, 3vh, 40px) 0',
-              flexShrink: 0
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0
             }}
           >
             <div
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.96)',
                 borderRadius: 'clamp(16px, 2vw, 24px)',
-                padding: 'clamp(28px, 3.5vw, 44px) clamp(32px, 4.5vw, 56px)',
+                padding: 'clamp(28px, 3.5vw, 44px) clamp(32px, 4.5vw, 56px) clamp(20px, 2vh, 32px)',
                 boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
                 border: `2px solid rgba(197, 160, 89, 0.3)`,
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                minHeight: 0
               }}
             >
               {/* Decorative accents */}
@@ -702,7 +715,8 @@ export default function MemorialProfileWeb({
                   marginBottom: 'clamp(18px, 2.5vh, 26px)',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
-                  position: 'relative'
+                  position: 'relative',
+                  flexShrink: 0
                 }}
               >
                 <span style={{
@@ -713,16 +727,13 @@ export default function MemorialProfileWeb({
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
-              <div
-                className="biography-content"
-                style={{
-                  fontSize: 'clamp(16px, 2vw, 24px)',
-                  color: '#374151',
-                  lineHeight: 2.0,
-                  textAlign: 'justify',
-                  position: 'relative'
-                }}
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
+              
+              {/* Auto-scrolling Biography */}
+              <BiographyScroll
+                biography={profile.biography}
+                className="flex-1"
+                seamlessLoop={true}
+                pauseOnHover={false}
               />
             </div>
           </div>
