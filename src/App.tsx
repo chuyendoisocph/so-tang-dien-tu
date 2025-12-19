@@ -8,6 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SlideshowPage from "./pages/SlideshowPage";
 import SlideshowProfilePage from "./pages/SlideshowProfilePage";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/profile/:profileId" element={<ProfilePage />} />
           <Route path="/slideshow" element={<SlideshowPage />} />
           <Route path="/slideshow-profile" element={<SlideshowProfilePage />} />
