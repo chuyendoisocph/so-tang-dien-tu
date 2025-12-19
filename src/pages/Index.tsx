@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Sidebar, MobileHeader } from "@/components/layout/Sidebar";
 import { ProfilesTab } from "@/components/admin/ProfilesTab";
 import { CreateEditTab } from "@/components/admin/CreateEditTab";
 import { SlideshowTab } from "@/components/admin/SlideshowTab";
-import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
 
 interface EditingProfile {
   id: string;
@@ -14,22 +11,9 @@ interface EditingProfile {
 }
 
 const Index = () => {
-  const navigate = useNavigate();
-  const { user, loading: authLoading, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("profiles");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState<EditingProfile | null>(null);
-
-  // Redirect to auth if not logged in or not admin
-  useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        navigate('/auth');
-      } else if (!isAdmin) {
-        navigate('/auth');
-      }
-    }
-  }, [user, authLoading, isAdmin, navigate]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -58,24 +42,6 @@ const Index = () => {
   useEffect(() => {
     document.title = "CPHACO Admin | Quản trị Sổ Tang";
   }, []);
-
-  // Show loading while checking auth
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Don't render admin content if not authenticated or not admin
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
