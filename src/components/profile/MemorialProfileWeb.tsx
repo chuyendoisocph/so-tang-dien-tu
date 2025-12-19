@@ -208,31 +208,62 @@ export default function MemorialProfileWeb({
           >
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '24px',
-                padding: '36px 48px',
-                boxShadow: '0 12px 48px rgba(0,0,0,0.06)',
-                border: `1px solid rgba(197, 160, 89, 0.25)`
+                padding: '40px 52px',
+                boxShadow: '0 16px 56px rgba(0,0,0,0.08)',
+                border: `2px solid rgba(197, 160, 89, 0.3)`,
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
+              {/* Decorative corner accents */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100px',
+                height: '100px',
+                background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
+                borderTopLeftRadius: '24px'
+              }} />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: '100px',
+                height: '100px',
+                background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
+                borderBottomRightRadius: '24px'
+              }} />
+              
               <h2
                 style={{
-                  fontSize: '30px',
-                  fontWeight: 800,
+                  fontSize: '32px',
+                  fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: '20px',
+                  marginBottom: '28px',
                   textAlign: 'center',
-                  letterSpacing: '-0.5px'
+                  letterSpacing: '-0.5px',
+                  position: 'relative'
                 }}
               >
-                Tiểu sử & Cuộc đời
+                <span style={{
+                  borderBottom: `4px solid ${GOLD_ACCENT}`,
+                  paddingBottom: '8px',
+                  display: 'inline-block'
+                }}>
+                  Tiểu sử & Cuộc đời
+                </span>
               </h2>
               <div
+                className="biography-content"
                 style={{
                   fontSize: '24px',
                   color: '#374151',
-                  lineHeight: 1.9,
-                  textAlign: 'center'
+                  lineHeight: 2.1,
+                  textAlign: 'justify',
+                  position: 'relative'
                 }}
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
               />
@@ -632,31 +663,62 @@ export default function MemorialProfileWeb({
           >
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                backgroundColor: 'rgba(255, 255, 255, 0.96)',
                 borderRadius: 'clamp(16px, 2vw, 24px)',
-                padding: 'clamp(24px, 3vw, 40px) clamp(28px, 4vw, 52px)',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
-                border: `1px solid rgba(197, 160, 89, 0.2)`
+                padding: 'clamp(28px, 3.5vw, 44px) clamp(32px, 4.5vw, 56px)',
+                boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
+                border: `2px solid rgba(197, 160, 89, 0.3)`,
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
+              {/* Decorative accents */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 'clamp(60px, 8vw, 100px)',
+                height: 'clamp(60px, 8vw, 100px)',
+                background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
+                borderTopLeftRadius: 'clamp(16px, 2vw, 24px)'
+              }} />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: 'clamp(60px, 8vw, 100px)',
+                height: 'clamp(60px, 8vw, 100px)',
+                background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
+                borderBottomRightRadius: 'clamp(16px, 2vw, 24px)'
+              }} />
+              
               <h2
                 style={{
-                  fontSize: 'clamp(20px, 2.5vw, 28px)',
-                  fontWeight: 800,
+                  fontSize: 'clamp(22px, 2.8vw, 32px)',
+                  fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(14px, 2vh, 22px)',
+                  marginBottom: 'clamp(18px, 2.5vh, 26px)',
                   textAlign: 'center',
-                  letterSpacing: '-0.5px'
+                  letterSpacing: '-0.5px',
+                  position: 'relative'
                 }}
               >
-                Tiểu sử & Cuộc đời
+                <span style={{
+                  borderBottom: `3px solid ${GOLD_ACCENT}`,
+                  paddingBottom: 'clamp(6px, 1vh, 8px)',
+                  display: 'inline-block'
+                }}>
+                  Tiểu sử & Cuộc đời
+                </span>
               </h2>
               <div
+                className="biography-content"
                 style={{
-                  fontSize: 'clamp(16px, 1.8vw, 22px)',
+                  fontSize: 'clamp(16px, 2vw, 24px)',
                   color: '#374151',
-                  lineHeight: 1.85,
-                  textAlign: 'center'
+                  lineHeight: 2.0,
+                  textAlign: 'justify',
+                  position: 'relative'
                 }}
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
               />
@@ -1069,24 +1131,38 @@ export default function MemorialProfileWeb({
 
         {/* ============ 2. SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
         <div
-          className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+          className="card-hover transition-all duration-300 mb-5 sm:mb-6 relative overflow-hidden"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
             borderRadius: 'clamp(14px, 2vw, 20px)',
-            padding: 'clamp(20px, 3vw, 32px) clamp(24px, 4vw, 40px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-            border: `1px solid rgba(197, 160, 89, 0.2)`
+            padding: 'clamp(24px, 3.5vw, 36px) clamp(28px, 4.5vw, 44px)',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.07)',
+            border: `2px solid rgba(197, 160, 89, 0.3)`
           }}
         >
+          {/* Decorative corner accents */}
+          <div className="absolute top-0 left-0 w-16 h-16 sm:w-20 sm:h-20 opacity-40" style={{
+            background: `linear-gradient(135deg, ${GOLD_ACCENT}40, transparent)`,
+            borderTopLeftRadius: 'clamp(14px, 2vw, 20px)'
+          }} />
+          <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 opacity-40" style={{
+            background: `linear-gradient(315deg, ${GOLD_ACCENT}40, transparent)`,
+            borderBottomRightRadius: 'clamp(14px, 2vw, 20px)'
+          }} />
+          
           <h2
-            className="text-lg sm:text-xl md:text-2xl font-bold text-center mb-4 sm:mb-5"
+            className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-5 sm:mb-6 relative"
             style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
           >
-            Tiểu sử & Cuộc đời
+            <span className="inline-block pb-2" style={{
+              borderBottom: `3px solid ${GOLD_ACCENT}`
+            }}>
+              Tiểu sử & Cuộc đời
+            </span>
           </h2>
           <div
-            className="text-sm sm:text-base md:text-lg text-center"
-            style={{ color: '#374151', lineHeight: 1.85 }}
+            className="biography-content text-sm sm:text-base md:text-lg relative"
+            style={{ color: '#374151', lineHeight: 2.0 }}
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
           />
         </div>

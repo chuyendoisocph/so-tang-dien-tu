@@ -1,12 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Minimalism Luxury Animations */
 @keyframes fadeInUp {
@@ -143,4 +143,80 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
   }
+}
+
+/* Memorial Profile Biography Styling */
+.biography-content {
+  font-family: 'Merriweather', Georgia, serif;
+  text-align: left !important;
+}
+
+/* First paragraph - intro text without bullet */
+.biography-content p:first-of-type {
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  font-style: italic;
+  color: #475569;
+  border-left: 4px solid #C5A059;
+  padding-left: 1rem;
+  background: rgba(197, 160, 89, 0.05);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.biography-content p:first-of-type::before {
+  content: none;
+}
+
+/* All other paragraphs with bullets */
+.biography-content p {
+  margin-bottom: 0.875rem;
+  text-align: left;
+  position: relative;
+  padding-left: 1.75rem;
+  line-height: 1.8;
+}
+
+.biography-content p::before {
+  content: '●';
+  position: absolute;
+  left: 0;
+  color: #C5A059;
+  font-size: 0.7em;
+  top: 0.5em;
+  font-weight: bold;
+}
+
+.biography-content p:last-child {
+  margin-bottom: 0;
+}
+
+.biography-content strong,
+.biography-content b {
+  color: #1e3a5f;
+  font-weight: 700;
+}
+
+/* Handle line breaks as bullet points */
+.biography-content br + * {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.biography-content ul,
+.biography-content ol {
+  padding-left: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.biography-content li {
+  margin-bottom: 0.75rem;
+  color: #374151;
+  line-height: 1.9;
+  text-align: left;
+}
+
+.biography-content li::marker {
+  color: #C5A059;
+  font-weight: 700;
 }

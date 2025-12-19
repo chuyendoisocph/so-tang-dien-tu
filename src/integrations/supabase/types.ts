@@ -135,6 +135,50 @@ export type Database = {
           },
         ]
       }
+      comments: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          content: string
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          is_public: boolean | null
+          profile_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          content: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_public?: boolean | null
+          profile_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_public?: boolean | null
+          profile_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
