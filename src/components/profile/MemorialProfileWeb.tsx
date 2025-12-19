@@ -991,11 +991,15 @@ export default function MemorialProfileWeb({
           }}
         >
           {/* Profile Picture */}
-          <div className="float-normal" style={{ marginBottom: 'clamp(14px, 2vh, 24px)' }}>
+          <div 
+            className="float-normal cursor-pointer" 
+            style={{ marginBottom: 'clamp(14px, 2vh, 24px)' }}
+            onClick={() => setSelectedPhoto({ id: 'avatar', url: profile.avatarUrl, caption: profile.name, display_order: null })}
+          >
             <img
               src={profile.avatarUrl}
               alt={profile.name}
-              className="w-32 h-40 sm:w-40 sm:h-52 md:w-48 md:h-60 object-cover"
+              className="w-32 h-40 sm:w-40 sm:h-52 md:w-48 md:h-60 object-cover transition-transform duration-300 hover:scale-105"
               style={{
                 borderRadius: 'clamp(12px, 1.5vw, 18px)',
                 border: `4px solid ${GOLD_ACCENT}`,
