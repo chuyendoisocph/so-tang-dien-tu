@@ -1138,24 +1138,81 @@ export default function MemorialProfileWeb({
 
         {/* ============ 4. SECTION C: TRIBUTE FORM (Instead of QR) ============ */}
         <div
-          className="card-hover transition-all duration-300 mb-5 sm:mb-6"
+          className="card-hover transition-all duration-300 mb-5 sm:mb-6 relative overflow-hidden"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
             borderRadius: 'clamp(14px, 2vw, 20px)',
-            padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
+            padding: 'clamp(24px, 3.5vw, 36px) clamp(28px, 4.5vw, 44px)',
             boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-            border: `2px solid ${GOLD_ACCENT}40`
+            border: `2px solid ${GOLD_ACCENT}50`
           }}
         >
-          <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
-            <PenLine className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
-            <h2
-              className="text-base sm:text-lg md:text-xl font-bold"
-              style={{ color: NAVY_PRIMARY }}
-            >
-              Gửi lời chia buồn
-            </h2>
+          {/* Decorative Corner Elements */}
+          <div
+            className="absolute top-0 left-0 w-16 h-16 sm:w-20 sm:h-20"
+            style={{
+              background: `linear-gradient(135deg, ${GOLD_ACCENT}15 0%, transparent 60%)`,
+              borderBottomRightRadius: '100%'
+            }}
+          />
+          <div
+            className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20"
+            style={{
+              background: `linear-gradient(225deg, ${GOLD_ACCENT}15 0%, transparent 60%)`,
+              borderBottomLeftRadius: '100%'
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-0 w-12 h-12 sm:w-16 sm:h-16"
+            style={{
+              background: `linear-gradient(45deg, ${GOLD_ACCENT}10 0%, transparent 60%)`,
+              borderTopRightRadius: '100%'
+            }}
+          />
+          <div
+            className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16"
+            style={{
+              background: `linear-gradient(315deg, ${GOLD_ACCENT}10 0%, transparent 60%)`,
+              borderTopLeftRadius: '100%'
+            }}
+          />
+
+          {/* Header with Decorative Stars */}
+          <div className="relative flex items-center justify-center gap-3 mb-5 sm:mb-6">
+            <Star 
+              className="w-4 h-4 sm:w-5 sm:h-5" 
+              style={{ color: GOLD_ACCENT, fill: GOLD_ACCENT, opacity: 0.6 }} 
+            />
+            <div
+              className="w-8 sm:w-12 h-px"
+              style={{ background: `linear-gradient(90deg, transparent, ${GOLD_ACCENT})` }}
+            />
+            <div className="flex items-center gap-2">
+              <PenLine className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
+              <h2
+                className="text-base sm:text-lg md:text-xl font-bold"
+                style={{ color: NAVY_PRIMARY }}
+              >
+                Gửi lời chia buồn
+              </h2>
+            </div>
+            <div
+              className="w-8 sm:w-12 h-px"
+              style={{ background: `linear-gradient(90deg, ${GOLD_ACCENT}, transparent)` }}
+            />
+            <Star 
+              className="w-4 h-4 sm:w-5 sm:h-5" 
+              style={{ color: GOLD_ACCENT, fill: GOLD_ACCENT, opacity: 0.6 }} 
+            />
           </div>
+
+          {/* Subtitle */}
+          <p
+            className="text-center text-xs sm:text-sm mb-4 sm:mb-5"
+            style={{ color: '#64748b' }}
+          >
+            Gửi gắm những lời yêu thương đến người đã khuất
+          </p>
 
           <form onSubmit={onSubmitTribute}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
