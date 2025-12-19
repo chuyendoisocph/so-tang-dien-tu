@@ -623,7 +623,7 @@ export default function MemorialProfileWeb({
                       margin: 0
                     }}
                   >
-                    Quét để truy cập cphaco.vn
+                    Quét để xem các giải pháp phù hợp
                   </p>
                 </div>
                 <div
@@ -694,12 +694,12 @@ export default function MemorialProfileWeb({
         >
           <div
             style={{
-              fontSize: '16px',
-              fontWeight: 600,
+              fontSize: 'clamp(32px, 5vw, 58px)',
+              fontWeight: 900,
               letterSpacing: '2px',
               textTransform: 'uppercase',
               color: GOLD_ACCENT,
-              textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+              textShadow: '0 2px 4px rgba(0,0,0,0.2)', fontFamily: 'serif'
             }}
           >
             HOA VIÊN BÌNH DƯƠNG
@@ -777,11 +777,26 @@ export default function MemorialProfileWeb({
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 'clamp(8px, 1vw, 14px)'
+                gap: 'clamp(8px, 1vw, 14px)',
+                marginBottom: 'clamp(12px, 1.5vh, 20px)'
               }}
             >
               <Calendar style={{ width: 'clamp(20px, 2.5vw, 30px)', height: 'clamp(20px, 2.5vw, 30px)' }} />
               {years}
+            </div>
+
+            {/* Resting Place Text */}
+            <div
+              style={{
+                textAlign: 'center',
+                fontSize: 'clamp(16px, 2vw, 22px)',
+                fontStyle: 'italic',
+                color: '#555555',
+                letterSpacing: '0.5px',
+                lineHeight: 1.4
+              }}
+            >
+{profile.name} đang an nghỉ ở Đường Nghệ sĩ Hoa Viên Bình Dương
             </div>
           </div>
 
@@ -799,7 +814,7 @@ export default function MemorialProfileWeb({
           <div
             style={{
               padding: 'clamp(24px, 3vh, 40px) 0',
-              flex: 1,
+              height: 'clamp(300px, 35vh, 500px)', // Giảm chiều cao từ flex: 1
               display: 'flex',
               flexDirection: 'column',
               minHeight: 0
@@ -816,8 +831,7 @@ export default function MemorialProfileWeb({
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                flex: 1,
-                minHeight: 0
+                height: '100%', minHeight: 0
               }}
             >
               {/* Decorative accents */}
@@ -1146,7 +1160,7 @@ export default function MemorialProfileWeb({
                           margin: 0
                         }}
                       >
-                        Quét để truy cập cphaco.vn
+                        Quét để xem các giải pháp phù hợp
                       </p>
                     </div>
                     <div
@@ -1702,3 +1716,5 @@ export default function MemorialProfileWeb({
     </div>
   );
 }
+
+
