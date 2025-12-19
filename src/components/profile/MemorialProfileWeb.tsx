@@ -59,6 +59,9 @@ export default function MemorialProfileWeb({
     border: '1px solid rgba(255,255,255,0.8)'
   };
 
+  // Check if career/roles data exists
+  const hasCareerData = profile.roles && profile.roles.length > 0;
+
   // KIOSK MODE - Optimized for 1080x1920 Vertical Advertising Standee
   if (kioskMode) {
     return (
@@ -72,10 +75,10 @@ export default function MemorialProfileWeb({
           maxHeight: '1920px',
           margin: '0 auto',
           overflow: 'hidden',
-          background: `linear-gradient(180deg, rgba(15, 30, 50, 0.97) 0%, rgba(30, 58, 95, 0.92) 25%, rgba(253, 252, 248, 1) 45%), url("https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1920&h=1920&fit=crop") center top/cover`
+          backgroundColor: '#FDFCF8'
         }}
       >
-        {/* Kiosk-specific styles */}
+        {/* Kiosk-specific styles with Ken Burns effect */}
         <style>{`
           @keyframes float-kiosk {
             0%, 100% { transform: translateY(0px); }
@@ -91,63 +94,109 @@ export default function MemorialProfileWeb({
           .pulse-glow {
             animation: pulse-glow 3s ease-in-out infinite;
           }
+          @keyframes ken-burns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+          }
+          .ken-burns-bg {
+            animation: ken-burns 20s ease-in-out infinite alternate;
+          }
         `}</style>
 
-        {/* ============ HEADER SECTION - Top 12% ============ */}
+        {/* ============ HERO SECTION - 38% of screen with Ken Burns ============ */}
         <div
           style={{
-            paddingTop: '40px',
-            paddingBottom: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
+            position: 'relative',
+            height: '730px', /* ~38% of 1920px */
+            overflow: 'hidden'
           }}
         >
-          {/* Large Profile Picture */}
-          <div className="float-kiosk" style={{ marginBottom: '20px' }}>
-            <img
-              src={profile.avatarUrl}
-              alt={profile.name}
-              style={{
-                width: '320px',
-                height: '400px',
-                objectFit: 'cover',
-                borderRadius: '20px',
-                border: '5px solid #ffffff',
-                boxShadow: '0 25px 60px rgba(0,0,0,0.35)'
-              }}
-            />
-          </div>
-
-          {/* Name - Extra Large for Distance Reading */}
-          <h1
+          {/* Background with Ken Burns animation */}
+          <div
+            className="ken-burns-bg"
             style={{
-              fontSize: '64px',
-              fontWeight: 800,
-              color: '#ffffff',
-              textAlign: 'center',
-              letterSpacing: '-1px',
-              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
-              marginBottom: '12px',
-              fontFamily: "'Inter', sans-serif"
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url("https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1920&h=1200&fit=crop")',
+              backgroundPosition: 'center top',
+              backgroundSize: 'cover',
+              transformOrigin: 'center center'
             }}
-          >
-            {profile.name}
-          </h1>
+          />
 
-          {/* Dates - Large */}
+          {/* Gradient overlay for seamless fade */}
           <div
             style={{
-              fontSize: '32px',
-              color: GOLD_ACCENT,
-              fontWeight: 600,
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(
+                180deg,
+                rgba(15, 30, 50, 0.85) 0%,
+                rgba(30, 58, 95, 0.75) 50%,
+                rgba(253, 252, 248, 1) 100%
+              )`
+            }}
+          />
+
+          {/* Hero Content */}
+          <div
+            style={{
+              position: 'relative',
+              height: '100%',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '14px'
+              justifyContent: 'center',
+              paddingTop: '40px'
             }}
           >
-            <Calendar style={{ width: '32px', height: '32px' }} />
-            {years}
+            {/* Large Profile Picture */}
+            <div className="float-kiosk" style={{ marginBottom: '24px' }}>
+              <img
+                src={profile.avatarUrl}
+                alt={profile.name}
+                style={{
+                  width: '340px',
+                  height: '420px',
+                  objectFit: 'cover',
+                  borderRadius: '20px',
+                  border: '5px solid #ffffff',
+                  boxShadow: '0 30px 70px rgba(0,0,0,0.4)'
+                }}
+              />
+            </div>
+
+            {/* Name - Extra Large for Distance Reading */}
+            <h1
+              style={{
+                fontSize: '68px',
+                fontWeight: 800,
+                color: '#ffffff',
+                textAlign: 'center',
+                letterSpacing: '-1px',
+                textShadow: '0 4px 24px rgba(0,0,0,0.4)',
+                marginBottom: '14px',
+                fontFamily: "'Inter', sans-serif"
+              }}
+            >
+              {profile.name}
+            </h1>
+
+            {/* Dates - Large */}
+            <div
+              style={{
+                fontSize: '34px',
+                color: GOLD_ACCENT,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                textShadow: '0 2px 12px rgba(0,0,0,0.3)'
+              }}
+            >
+              <Calendar style={{ width: '34px', height: '34px' }} />
+              {years}
+            </div>
           </div>
         </div>
 
@@ -158,105 +207,108 @@ export default function MemorialProfileWeb({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '0 40px',
-            gap: '24px',
+            padding: '32px 40px 20px',
+            gap: hasCareerData ? '20px' : '28px',
             overflow: 'hidden'
           }}
         >
           {/* Biography Card */}
           <div
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
               borderRadius: '24px',
-              padding: '36px 40px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.08)'
+              padding: '32px 36px',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.06)',
+              flex: hasCareerData ? 'none' : 1
             }}
           >
             <h2
               style={{
-                fontSize: '36px',
+                fontSize: '34px',
                 fontWeight: 700,
                 color: NAVY_PRIMARY,
-                marginBottom: '20px'
+                marginBottom: '18px'
               }}
             >
               Tiểu sử
             </h2>
             <div
               style={{
-                fontSize: '24px',
+                fontSize: '23px',
                 color: '#475569',
-                lineHeight: 1.8
+                lineHeight: 1.75
               }}
               dangerouslySetInnerHTML={{ __html: profile.biography }}
             />
           </div>
 
-          {/* Career/Roles Card */}
-          <div
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.97)',
-              borderRadius: '24px',
-              padding: '36px 40px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.08)'
-            }}
-          >
-            <h2
+          {/* Career/Roles Card - CONDITIONAL RENDERING */}
+          {hasCareerData && (
+            <div
               style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: NAVY_PRIMARY,
-                marginBottom: '20px'
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                borderRadius: '24px',
+                padding: '32px 36px',
+                boxShadow: '0 16px 48px rgba(0,0,0,0.06)'
               }}
             >
-              Quá trình công tác
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {profile.roles.map((role, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '16px'
-                  }}
-                >
+              <h2
+                style={{
+                  fontSize: '34px',
+                  fontWeight: 700,
+                  color: NAVY_PRIMARY,
+                  marginBottom: '18px'
+                }}
+              >
+                Quá trình công tác
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {profile.roles.map((role, index) => (
                   <div
+                    key={index}
                     style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      backgroundColor: GOLD_ACCENT,
-                      marginTop: '10px',
-                      flexShrink: 0
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '14px'
                     }}
-                  />
-                  <p style={{ fontSize: '22px', color: '#475569', lineHeight: 1.6 }}>
-                    {role}
-                  </p>
-                </div>
-              ))}
+                  >
+                    <div
+                      style={{
+                        width: '11px',
+                        height: '11px',
+                        borderRadius: '50%',
+                        backgroundColor: GOLD_ACCENT,
+                        marginTop: '10px',
+                        flexShrink: 0
+                      }}
+                    />
+                    <p style={{ fontSize: '21px', color: '#475569', lineHeight: 1.55 }}>
+                      {role}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Guestbook/Tributes Card - Flex grow to fill space */}
           <div
             style={{
               flex: 1,
-              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
               borderRadius: '24px',
-              padding: '36px 40px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.08)',
+              padding: '32px 36px',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.06)',
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
               minHeight: 0
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
               <h2
                 style={{
-                  fontSize: '36px',
+                  fontSize: '34px',
                   fontWeight: 700,
                   color: NAVY_PRIMARY
                 }}
@@ -265,8 +317,8 @@ export default function MemorialProfileWeb({
               </h2>
               <span
                 style={{
-                  fontSize: '22px',
-                  padding: '8px 20px',
+                  fontSize: '20px',
+                  padding: '8px 18px',
                   borderRadius: '9999px',
                   backgroundColor: 'rgba(241,245,249,0.9)',
                   color: '#64748b',
@@ -277,45 +329,45 @@ export default function MemorialProfileWeb({
               </span>
             </div>
 
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', overflow: 'hidden' }}>
-              {tributes.slice(0, 4).map((t) => (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', overflow: 'hidden' }}>
+              {tributes.slice(0, hasCareerData ? 3 : 4).map((t) => (
                 <div
                   key={t.id}
                   style={{
-                    padding: '20px 24px',
+                    padding: '18px 22px',
                     borderRadius: '16px',
                     backgroundColor: 'rgba(248,250,252,0.9)',
                     border: '1px solid rgba(226,232,240,0.7)',
                     flex: 1
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
                     <div
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '46px',
+                        height: '46px',
                         borderRadius: '50%',
                         background: `linear-gradient(135deg, ${SKY_BLUE}, #38bdf8)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: '#ffffff',
-                        fontSize: '20px',
+                        fontSize: '19px',
                         fontWeight: 700
                       }}
                     >
                       {t.name.charAt(0)}
                     </div>
                     <div>
-                      <p style={{ fontSize: '22px', fontWeight: 600, color: NAVY_PRIMARY }}>
+                      <p style={{ fontSize: '21px', fontWeight: 600, color: NAVY_PRIMARY }}>
                         {t.name}
                       </p>
-                      <p style={{ fontSize: '16px', color: '#94a3b8' }}>
+                      <p style={{ fontSize: '15px', color: '#94a3b8' }}>
                         {t.date}
                       </p>
                     </div>
                   </div>
-                  <p style={{ fontSize: '20px', color: '#475569', lineHeight: 1.7 }}>
+                  <p style={{ fontSize: '19px', color: '#475569', lineHeight: 1.65 }}>
                     {t.message}
                   </p>
                 </div>
@@ -324,48 +376,48 @@ export default function MemorialProfileWeb({
           </div>
 
           {/* Full Width Action Buttons */}
-          <div style={{ display: 'flex', gap: '20px' }}>
+          <div style={{ display: 'flex', gap: '18px', flexShrink: 0 }}>
             <button
               onClick={() => (document.getElementById("tributeName") as HTMLInputElement | null)?.focus()}
               className="pulse-glow"
               style={{
                 flex: 1,
-                height: '80px',
+                height: '76px',
                 borderRadius: '20px',
                 backgroundColor: SKY_BLUE,
                 color: '#ffffff',
-                fontSize: '28px',
+                fontSize: '26px',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '14px',
+                gap: '12px',
                 border: 'none',
                 cursor: 'pointer'
               }}
             >
-              <PenLine style={{ width: '30px', height: '30px', color: GOLD_ACCENT }} />
+              <PenLine style={{ width: '28px', height: '28px', color: GOLD_ACCENT }} />
               Gửi lời chia buồn
             </button>
             <button
               onClick={onOpenShare}
               style={{
                 flex: 1,
-                height: '80px',
+                height: '76px',
                 borderRadius: '20px',
                 backgroundColor: 'rgba(255,255,255,0.95)',
                 color: NAVY_PRIMARY,
-                fontSize: '28px',
+                fontSize: '26px',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '14px',
+                gap: '12px',
                 border: '3px solid rgba(226,232,240,0.8)',
                 cursor: 'pointer'
               }}
             >
-              <Share2 style={{ width: '30px', height: '30px', color: GOLD_ACCENT }} />
+              <Share2 style={{ width: '28px', height: '28px', color: GOLD_ACCENT }} />
               Chia sẻ
             </button>
           </div>
@@ -375,23 +427,23 @@ export default function MemorialProfileWeb({
         <div
           style={{
             backgroundColor: NAVY_PRIMARY,
-            padding: '32px 48px',
-            marginTop: 'auto'
+            padding: '28px 40px',
+            flexShrink: 0
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '48px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
             {/* QR Code - Larger */}
             <div
               style={{
                 backgroundColor: '#ffffff',
-                padding: '16px',
-                borderRadius: '20px',
+                padding: '14px',
+                borderRadius: '18px',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
               }}
             >
               <QRCodeSVG
                 value={publicUrl}
-                size={200}
+                size={180}
                 level="H"
                 fgColor={NAVY_PRIMARY}
               />
@@ -399,11 +451,11 @@ export default function MemorialProfileWeb({
 
             {/* QR Label */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <QrCode style={{ width: '40px', height: '40px', color: GOLD_ACCENT }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                <QrCode style={{ width: '36px', height: '36px', color: GOLD_ACCENT }} />
                 <span
                   style={{
-                    fontSize: '32px',
+                    fontSize: '30px',
                     fontWeight: 700,
                     color: '#ffffff'
                   }}
@@ -413,10 +465,10 @@ export default function MemorialProfileWeb({
               </div>
               <p
                 style={{
-                  fontSize: '24px',
+                  fontSize: '22px',
                   color: 'rgba(255,255,255,0.8)',
-                  maxWidth: '350px',
-                  lineHeight: 1.5
+                  maxWidth: '320px',
+                  lineHeight: 1.4
                 }}
               >
                 để lưu giữ kỷ niệm trên điện thoại của bạn
