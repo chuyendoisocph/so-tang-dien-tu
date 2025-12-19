@@ -1,4 +1,5 @@
 import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -37,6 +38,8 @@ const mockProfiles: Profile[] = [
 ];
 
 export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -77,32 +80,55 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                     <TableCell className="font-semibold">{profile.name}</TableCell>
                     <TableCell className="text-muted-foreground">{profile.createdAt}</TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => window.open(`/profile/${profile.jobId}`, '_blank')}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Xem trang
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => window.open(`/profile/${profile.jobId}?kiosk=1`, '_blank')}>
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            Xem chế độ Kiosk
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => onEdit(profile)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Sửa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Xóa
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex items-center justify-end gap-1">
+                        {/* Always-visible actions (work even if dropdown is blocked) */}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => navigate(`/profile/${profile.jobId}`)}
+                          aria-label={`Xem trang ${profile.name}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => navigate(`/profile/${profile.jobId}?kiosk=1`)}
+                          aria-label={`Xem kiosk ${profile.name}`}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+
+                        {/* Overflow menu */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem className="cursor-pointer" onSelect={() => navigate(`/profile/${profile.jobId}`)}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              Xem trang
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer" onSelect={() => navigate(`/profile/${profile.jobId}?kiosk=1`)}>
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Xem chế độ Kiosk
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="cursor-pointer" onSelect={() => onEdit(profile)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-destructive">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Xóa
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
