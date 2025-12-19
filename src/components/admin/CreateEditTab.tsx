@@ -18,18 +18,22 @@ interface CreateEditTabProps {
   } | null;
 }
 
-// Generate slug from name
+// Remove Vietnamese diacritics
+function removeVietnameseTones(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'd');
+}
+
+// Generate slug from name (lowercase, no spaces, no diacritics)
 function generateSlug(name: string): string {
   if (!name.trim()) return "";
-  const timestamp = Date.now().toString(36).slice(-4).toUpperCase();
-  const initials = name
-    .trim()
-    .split(' ')
-    .map((word) => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 3);
-  return `${initials}${timestamp}`;
+  return removeVietnameseTones(name)
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[^a-z0-9]/g, '');
 }
 
 export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) => {
@@ -60,7 +64,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   };
 
   const handleSlugChange = (newSlug: string) => {
-    setSlug(newSlug);
+    setSlug(newSlug.toLowerCase().replace(/\s+/g, ''));
     setSlugManuallyEdited(true);
   };
 
@@ -243,7 +247,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                   value={avatarUrl}
                   onChange={setAvatarUrl}
                   onRemove={() => setAvatarUrl("")}
-                  aspectRatio="portrait"
+                  aspectRatio="square"
                   placeholder="Nhấn hoặc kéo thả ảnh vào đây"
                 />
               </div>
@@ -254,7 +258,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                   value={coverUrl}
                   onChange={setCoverUrl}
                   onRemove={() => setCoverUrl("")}
-                  aspectRatio="video"
+                  aspectRatio="square"
                   placeholder="Nhấn hoặc kéo thả ảnh vào đây"
                 />
               </div>
