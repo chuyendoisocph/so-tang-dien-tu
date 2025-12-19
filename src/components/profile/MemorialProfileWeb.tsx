@@ -956,7 +956,7 @@ export default function MemorialProfileWeb({
         }
         .btn-hover:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4) !important;
+          box-shadow: 0 8px 25px rgba(30, 58, 95, 0.4) !important;
         }
         .card-hover:hover {
           transform: translateY(-2px);
@@ -1018,9 +1018,9 @@ export default function MemorialProfileWeb({
               onClick={() => (document.getElementById("tributeNameNormal") as HTMLInputElement | null)?.focus()}
               className="btn-hover flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm transition-all duration-300"
               style={{
-                backgroundColor: SKY_BLUE,
+                backgroundColor: NAVY_PRIMARY,
                 color: '#ffffff',
-                boxShadow: '0 6px 20px rgba(14, 165, 233, 0.35)'
+                boxShadow: '0 6px 20px rgba(30, 58, 95, 0.35)'
               }}
             >
               <PenLine className="w-4 h-4" style={{ color: GOLD_ACCENT }} />
@@ -1165,10 +1165,10 @@ export default function MemorialProfileWeb({
                 value={formData.name}
                 onChange={(e) => onChangeForm({ name: e.target.value })}
                 required
-                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
+                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
                 style={{
-                  backgroundColor: 'rgba(248,250,252,0.9)',
-                  border: '1px solid rgba(226,232,240,0.6)',
+                  backgroundColor: 'rgba(253, 252, 248, 0.95)',
+                  border: `1px solid ${GOLD_ACCENT}30`,
                   color: '#334155'
                 }}
               />
@@ -1178,10 +1178,10 @@ export default function MemorialProfileWeb({
                 value={formData.phone}
                 onChange={(e) => onChangeForm({ phone: e.target.value })}
                 required
-                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200"
+                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
                 style={{
-                  backgroundColor: 'rgba(248,250,252,0.9)',
-                  border: '1px solid rgba(226,232,240,0.6)',
+                  backgroundColor: 'rgba(253, 252, 248, 0.95)',
+                  border: `1px solid ${GOLD_ACCENT}30`,
                   color: '#334155'
                 }}
               />
@@ -1192,10 +1192,10 @@ export default function MemorialProfileWeb({
               onChange={(e) => onChangeForm({ message: e.target.value })}
               rows={3}
               required
-              className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 resize-none mb-4"
+              className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 resize-none mb-4"
               style={{
-                backgroundColor: 'rgba(248,250,252,0.9)',
-                border: '1px solid rgba(226,232,240,0.6)',
+                backgroundColor: 'rgba(253, 252, 248, 0.95)',
+                border: `1px solid ${GOLD_ACCENT}30`,
                 color: '#334155'
               }}
             />
@@ -1203,9 +1203,9 @@ export default function MemorialProfileWeb({
               type="submit"
               className="btn-hover w-full py-3 rounded-full font-semibold text-sm transition-all duration-300"
               style={{
-                backgroundColor: SKY_BLUE,
+                backgroundColor: NAVY_PRIMARY,
                 color: '#ffffff',
-                boxShadow: '0 6px 20px rgba(14, 165, 233, 0.3)'
+                boxShadow: '0 6px 20px rgba(30, 58, 95, 0.3)'
               }}
             >
               Gửi lời chia buồn
