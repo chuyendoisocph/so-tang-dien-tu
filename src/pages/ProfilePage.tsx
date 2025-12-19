@@ -60,6 +60,7 @@ export default function ProfilePage() {
   const [searchParams] = useSearchParams();
   const { profileId } = useParams();
   const isSlideshow = searchParams.get("slideshow") === "1";
+  const isKiosk = searchParams.get("kiosk") === "1";
 
   const [tributes, setTributes] = useState(mockTributes);
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
@@ -118,6 +119,7 @@ export default function ProfilePage() {
         onSubmitTribute={handleSubmitTribute}
         onOpenShare={() => setShareModalOpen(true)}
         slideshowMode={isSlideshow}
+        kioskMode={isKiosk}
       />
 
       {/* Share Modal */}
