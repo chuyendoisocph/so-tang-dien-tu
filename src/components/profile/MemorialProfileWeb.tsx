@@ -501,7 +501,7 @@ export default function MemorialProfileWeb({
           style={{
             height: '28vh',
             minHeight: '180px',
-            background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.88), rgba(15, 30, 50, 0.92)), url("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=600&fit=crop") center/cover'
+            background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
           }}
         >
           {/* Soft overlay gradient */}
@@ -810,7 +810,7 @@ export default function MemorialProfileWeb({
         style={{
           height: '28vh',
           minHeight: '180px',
-          background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.85), rgba(15, 30, 50, 0.88)), url("https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1920&h=600&fit=crop") center/cover'
+          background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
         }}
       >
         {/* Soft overlay gradient */}
