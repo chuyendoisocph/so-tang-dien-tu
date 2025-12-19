@@ -918,12 +918,32 @@ export default function MemorialProfileWeb({
   // NORMAL MODE - MyKeeper Premium Style (Interactive Web View)
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen relative"
       style={{
-        fontFamily: "'Inter', sans-serif",
-        backgroundColor: '#FDFCF8'
+        fontFamily: "'Inter', sans-serif"
       }}
     >
+      {/* Premium CSS Gradient Background (Cream to Muted Gold) - Same as slideshow */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'linear-gradient(180deg, #FDFCF8 0%, #F8F3E3 40%, #F3E5AB 100%)',
+          zIndex: 0
+        }}
+      />
+      {/* Subtle Noise/Grain Texture Overlay (3%) */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          opacity: 0.03,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          zIndex: 1,
+          pointerEvents: 'none'
+        }}
+      />
+
       {/* Floating animation and hover effects */}
       <style>{`
         @keyframes float {
@@ -947,16 +967,17 @@ export default function MemorialProfileWeb({
         }
       `}</style>
 
-      {/* Banner Image */}
+      {/* Banner Header with Navy Gradient */}
       <div
         className="relative w-full"
         style={{
           height: '28vh',
           minHeight: '180px',
-          background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
+          background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))',
+          zIndex: 2
         }}
       >
-        {/* Soft overlay gradient */}
+        {/* Soft overlay gradient blending into cream background */}
         <div
           className="absolute inset-0"
           style={{
@@ -966,7 +987,7 @@ export default function MemorialProfileWeb({
       </div>
 
       {/* Main Content Container */}
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6" style={{ marginTop: '-90px' }}>
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6" style={{ marginTop: '-90px', zIndex: 10 }}>
 
         {/* Profile Header Card - Glassmorphism */}
         <div
