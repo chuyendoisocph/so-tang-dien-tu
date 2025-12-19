@@ -489,307 +489,428 @@ export default function MemorialProfileWeb({
     );
   }
 
-  // SLIDESHOW MODE - MyKeeper Premium Style (Optimized for TV display)
+  // SLIDESHOW MODE - Professional Digital Signage (Vertical Stack Layout)
   if (slideshowMode) {
     return (
       <div
-        className="min-h-screen"
+        className="relative flex flex-col"
         style={{
           fontFamily: "'Inter', sans-serif",
-          backgroundColor: '#FDFCF8'
+          minHeight: '100vh',
+          overflow: 'hidden'
         }}
       >
-        {/* Floating animation keyframes */}
+        {/* Premium CSS Gradient Background (Cream to Muted Gold) */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, #FDFCF8 0%, #F8F3E3 40%, #F3E5AB 100%)',
+            zIndex: 0
+          }}
+        />
+        {/* Subtle Noise/Grain Texture Overlay (3%) */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.03,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            zIndex: 1
+          }}
+        />
+
+        {/* Animation Styles */}
         <style>{`
-          @keyframes float {
+          @keyframes float-slide {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-6px); }
           }
-          .float-animation {
-            animation: float 4s ease-in-out infinite;
-          }
-          .btn-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4) !important;
-          }
-          .btn-outline-hover:hover {
-            background-color: rgba(255,255,255,0.9) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
+          .float-slide {
+            animation: float-slide 4s ease-in-out infinite;
           }
         `}</style>
 
-        {/* Banner Image */}
+        {/* Main Content Wrapper - Full Height Flex Column */}
         <div
-          className="relative w-full"
           style={{
-            height: '28vh',
-            minHeight: '180px',
-            background: 'linear-gradient(135deg, rgba(30, 58, 95, 0.95), rgba(15, 30, 50, 0.98))'
+            position: 'relative',
+            zIndex: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            padding: '0 clamp(24px, 5vw, 80px)'
           }}
         >
-          {/* Soft overlay gradient */}
+          {/* ============ 1. HEADER - Profile + Name + Dates ============ */}
           <div
-            className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to bottom, transparent 50%, #FDFCF8 100%)'
-            }}
-          />
-        </div>
-
-        {/* Main Content Container */}
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6" style={{ marginTop: '-100px' }}>
-
-          {/* Profile Header Card - Glassmorphism */}
-          <div
-            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8"
-            style={{
-              ...cardStyle,
-              backgroundColor: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 15px 50px rgba(0,0,0,0.1)'
+              padding: 'clamp(32px, 4vh, 60px) 0 clamp(24px, 3vh, 40px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              flexShrink: 0
             }}
           >
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6">
-              {/* Portrait - Responsive with floating animation */}
-              <div
-                className="flex-shrink-0 float-animation"
-                style={{ marginTop: '-70px' }}
-              >
-                <img
-                  src={profile.avatarUrl}
-                  alt={profile.name}
-                  className="w-[130px] h-[165px] sm:w-[160px] sm:h-[200px] md:w-[180px] md:h-[225px] object-cover"
-                  style={{
-                    borderRadius: '14px',
-                    border: '4px solid #ffffff',
-                    boxShadow: '0 20px 50px rgba(0,0,0,0.18)'
-                  }}
-                />
-              </div>
-
-              {/* Name & Info */}
-              <div className="flex-1 text-center sm:text-left pb-1 sm:pb-2">
-                <h1
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3"
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    color: NAVY_PRIMARY,
-                    letterSpacing: '-0.5px'
-                  }}
-                >
-                  {profile.name}
-                </h1>
-                <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-4 text-xs sm:text-sm" style={{ color: '#64748b' }}>
-                  <span className="flex items-center gap-1.5 sm:gap-2">
-                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: GOLD_ACCENT }} />
-                    {years}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons - Hidden on mobile, shown sm+ */}
-              <div className="hidden sm:flex gap-2 md:gap-3">
-                <button
-                  className="btn-hover flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300"
-                  style={{
-                    backgroundColor: SKY_BLUE,
-                    color: '#ffffff',
-                    boxShadow: '0 6px 20px rgba(14, 165, 233, 0.35)'
-                  }}
-                >
-                  <PenLine className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: GOLD_ACCENT }} />
-                  Gửi lời chia buồn
-                </button>
-                <button
-                  onClick={onOpenShare}
-                  className="btn-outline-hover flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.7)',
-                    color: NAVY_PRIMARY,
-                    border: '1.5px solid rgba(226,232,240,0.8)'
-                  }}
-                >
-                  <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: GOLD_ACCENT }} />
-                  Chia sẻ
-                </button>
-              </div>
+            {/* Profile Picture */}
+            <div className="float-slide" style={{ marginBottom: 'clamp(16px, 2vh, 28px)' }}>
+              <img
+                src={profile.avatarUrl}
+                alt={profile.name}
+                style={{
+                  width: 'clamp(140px, 18vw, 260px)',
+                  height: 'clamp(175px, 22vw, 325px)',
+                  objectFit: 'cover',
+                  borderRadius: 'clamp(12px, 1.5vw, 20px)',
+                  border: `4px solid ${GOLD_ACCENT}`,
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.15)'
+                }}
+              />
             </div>
 
-            {/* Action Buttons - Mobile only */}
-            <div className="flex sm:hidden gap-2 mt-4 justify-center">
-              <button
-                className="btn-hover flex items-center gap-1.5 px-4 py-2.5 rounded-full font-semibold text-xs transition-all duration-300"
-                style={{
-                  backgroundColor: SKY_BLUE,
-                  color: '#ffffff',
-                  boxShadow: '0 4px 15px rgba(14, 165, 233, 0.3)'
-                }}
-              >
-                <PenLine className="w-3.5 h-3.5" style={{ color: GOLD_ACCENT }} />
-                Gửi lời chia buồn
-              </button>
-              <button
-                onClick={onOpenShare}
-                className="btn-outline-hover flex items-center gap-1.5 px-4 py-2.5 rounded-full font-semibold text-xs transition-all duration-300"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.8)',
-                  color: NAVY_PRIMARY,
-                  border: '1.5px solid rgba(226,232,240,0.8)'
-                }}
-              >
-                <Share2 className="w-3.5 h-3.5" style={{ color: GOLD_ACCENT }} />
-                Chia sẻ
-              </button>
+            {/* Name - Bold & Dark */}
+            <h1
+              style={{
+                fontSize: 'clamp(32px, 5vw, 58px)',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
+                textAlign: 'center',
+                letterSpacing: '-1.5px',
+                marginBottom: 'clamp(8px, 1vh, 14px)',
+                textTransform: 'uppercase'
+              }}
+            >
+              {profile.name}
+            </h1>
+
+            {/* Dates */}
+            <div
+              style={{
+                fontSize: 'clamp(18px, 2.5vw, 30px)',
+                color: GOLD_ACCENT,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'clamp(8px, 1vw, 14px)'
+              }}
+            >
+              <Calendar style={{ width: 'clamp(20px, 2.5vw, 30px)', height: 'clamp(20px, 2.5vw, 30px)' }} />
+              {years}
             </div>
           </div>
 
-          {/* Two Column Layout */}
-          <div className="flex flex-col md:flex-row gap-5 sm:gap-6 lg:gap-8">
+          {/* Elegant Gold Divider */}
+          <div
+            style={{
+              height: '2px',
+              background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
+              margin: '0 clamp(20px, 5vw, 100px)',
+              flexShrink: 0
+            }}
+          />
 
-            {/* Left Column - Sidebar */}
-            <div className="w-full md:w-2/5 lg:w-1/3 space-y-4 sm:space-y-6 order-2 md:order-1">
-
-              {/* Work History Card */}
-              <div
-                className="rounded-xl sm:rounded-2xl overflow-hidden"
-                style={cardStyle}
+          {/* ============ 2. SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
+          <div
+            style={{
+              padding: 'clamp(24px, 3vh, 40px) 0',
+              flexShrink: 0
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                borderRadius: 'clamp(16px, 2vw, 24px)',
+                padding: 'clamp(24px, 3vw, 40px) clamp(28px, 4vw, 52px)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: 'clamp(20px, 2.5vw, 28px)',
+                  fontWeight: 800,
+                  color: NAVY_PRIMARY,
+                  marginBottom: 'clamp(14px, 2vh, 22px)',
+                  textAlign: 'center',
+                  letterSpacing: '-0.5px'
+                }}
               >
-                <div className="p-4 sm:p-5">
-                  <h3 className="font-semibold text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: NAVY_PRIMARY }}>
-                    Quá trình công tác
-                  </h3>
-                  <div className="space-y-2 sm:space-y-3">
-                    {profile.roles.map((role, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-2 sm:gap-3"
-                      >
-                        <div
-                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mt-1.5 flex-shrink-0"
-                          style={{ backgroundColor: GOLD_ACCENT }}
-                        />
-                        <p className="text-xs sm:text-sm" style={{ color: '#475569', lineHeight: 1.6 }}>
-                          {role}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* QR Code Widget - Hidden on mobile */}
+                Tiểu sử & Cuộc đời
+              </h2>
               <div
-                className="hidden sm:block rounded-xl sm:rounded-2xl p-4 sm:p-5"
-                style={cardStyle}
-              >
-                <div className="flex justify-center">
-                  <div
-                    className="p-2 sm:p-3 rounded-lg sm:rounded-xl"
-                    style={{ backgroundColor: 'rgba(248,250,252,0.8)', border: '1px solid rgba(226,232,240,0.6)' }}
-                  >
-                    <QRCodeSVG
-                      value={publicUrl}
-                      className="w-[60px] h-[60px] sm:w-[80px] sm:h-[80px]"
-                      level="H"
-                      fgColor={NAVY_PRIMARY}
-                    />
-                  </div>
-                </div>
-                <p className="text-[10px] sm:text-xs text-center mt-2 sm:mt-3 font-medium" style={{ color: '#94a3b8' }}>
-                  Lưu giữ kỷ niệm trên di động
-                </p>
-              </div>
+                style={{
+                  fontSize: 'clamp(16px, 1.8vw, 22px)',
+                  color: '#374151',
+                  lineHeight: 1.85,
+                  textAlign: 'center'
+                }}
+                dangerouslySetInnerHTML={{ __html: profile.biography }}
+              />
             </div>
+          </div>
 
-            {/* Right Column - Main Content */}
-            <div className="w-full md:w-3/5 lg:w-2/3 space-y-4 sm:space-y-6 order-1 md:order-2">
+          {/* Subtle Divider */}
+          <div
+            style={{
+              height: '1px',
+              background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+              margin: '0 clamp(30px, 8vw, 120px)',
+              flexShrink: 0
+            }}
+          />
 
-              {/* Biography Card */}
+          {/* ============ 3. SECTION B: CAREER HISTORY (Full Width, 2-Column Grid) ============ */}
+          {hasCareerData && (
+            <div
+              style={{
+                padding: 'clamp(24px, 3vh, 36px) 0',
+                flexShrink: 0
+              }}
+            >
               <div
-                className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8"
-                style={cardStyle}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                  borderRadius: 'clamp(16px, 2vw, 24px)',
+                  padding: 'clamp(24px, 3vw, 36px) clamp(28px, 4vw, 48px)',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+                  border: `1px solid rgba(197, 160, 89, 0.2)`
+                }}
               >
                 <h2
-                  className="text-base sm:text-lg font-bold mb-4 sm:mb-6"
-                  style={{ color: NAVY_PRIMARY }}
-                >
-                  Tiểu sử & Cuộc đời
-                </h2>
-                <div
-                  className="prose prose-slate max-w-none prose-sm sm:prose-base"
                   style={{
-                    color: '#475569',
-                    lineHeight: 1.8,
-                    fontSize: 'inherit'
+                    fontSize: 'clamp(18px, 2.2vw, 26px)',
+                    fontWeight: 800,
+                    color: NAVY_PRIMARY,
+                    marginBottom: 'clamp(16px, 2vh, 24px)',
+                    textAlign: 'center',
+                    letterSpacing: '-0.5px'
                   }}
-                  dangerouslySetInnerHTML={{ __html: profile.biography }}
-                />
-              </div>
-
-              {/* Tributes Card */}
-              <div
-                className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8"
-                style={cardStyle}
-              >
-                <div className="flex items-center justify-between mb-4 sm:mb-6">
-                  <h2
-                    className="text-base sm:text-lg font-bold"
-                    style={{ color: NAVY_PRIMARY }}
-                  >
-                    Lời chia buồn
-                  </h2>
-                  <span
-                    className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium"
-                    style={{ backgroundColor: 'rgba(241,245,249,0.8)', color: '#64748b' }}
-                  >
-                    {tributes.length} lời nhắn
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:gap-5">
-                  {tributes.map((t) => (
+                >
+                  Quá trình công tác
+                </h2>
+                {/* 2-Column Grid for Roles */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: 'clamp(12px, 1.5vw, 18px) clamp(20px, 2.5vw, 32px)'
+                  }}
+                >
+                  {profile.roles.map((role, index) => (
                     <div
-                      key={t.id}
-                      className="p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                      key={index}
                       style={{
-                        backgroundColor: 'rgba(248,250,252,0.8)',
-                        border: '1px solid rgba(226,232,240,0.6)'
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 'clamp(10px, 1.2vw, 14px)',
+                        padding: 'clamp(12px, 1.5vw, 16px) clamp(14px, 1.8vw, 20px)',
+                        backgroundColor: 'rgba(253, 252, 248, 0.8)',
+                        borderRadius: 'clamp(10px, 1.2vw, 14px)',
+                        border: `1px solid rgba(197, 160, 89, 0.15)`
                       }}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                        <div
-                          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm"
-                          style={{
-                            backgroundColor: SKY_BLUE,
-                            color: '#ffffff'
-                          }}
-                        >
-                          {t.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-xs sm:text-sm" style={{ color: NAVY_PRIMARY }}>
-                            {t.name}
-                          </p>
-                          <p className="text-[10px] sm:text-xs" style={{ color: '#94a3b8' }}>
-                            {t.date}
-                          </p>
-                        </div>
-                      </div>
-                      <p
-                        className="text-xs sm:text-sm"
-                        style={{ color: '#475569', lineHeight: 1.7 }}
-                      >
-                        {t.message}
+                      <Briefcase
+                        style={{
+                          width: 'clamp(18px, 2vw, 24px)',
+                          height: 'clamp(18px, 2vw, 24px)',
+                          color: GOLD_ACCENT,
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}
+                      />
+                      <p style={{ fontSize: 'clamp(14px, 1.5vw, 18px)', color: '#374151', lineHeight: 1.5 }}>
+                        {role}
                       </p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Subtle Divider (only if career data exists) */}
+          {hasCareerData && (
+            <div
+              style={{
+                height: '1px',
+                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
+                margin: '0 clamp(30px, 8vw, 120px)',
+                flexShrink: 0
+              }}
+            />
+          )}
+
+          {/* ============ 4. SECTION C: GUESTBOOK (Flex Grow - Space Filler) ============ */}
+          <div
+            style={{
+              flex: 1,
+              padding: 'clamp(24px, 3vh, 36px) 0 clamp(16px, 2vh, 24px)',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                borderRadius: 'clamp(16px, 2vw, 24px)',
+                padding: 'clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 44px)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+                border: `1px solid rgba(197, 160, 89, 0.2)`,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'
+              }}
+            >
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'clamp(14px, 2vh, 22px)', flexShrink: 0 }}>
+                <h2
+                  style={{
+                    fontSize: 'clamp(18px, 2.2vw, 26px)',
+                    fontWeight: 800,
+                    color: NAVY_PRIMARY,
+                    letterSpacing: '-0.5px'
+                  }}
+                >
+                  Lời chia buồn
+                </h2>
+                <span
+                  style={{
+                    fontSize: 'clamp(12px, 1.3vw, 16px)',
+                    padding: 'clamp(6px, 0.8vw, 10px) clamp(12px, 1.5vw, 20px)',
+                    borderRadius: '9999px',
+                    backgroundColor: `${GOLD_ACCENT}18`,
+                    color: GOLD_ACCENT,
+                    fontWeight: 700,
+                    border: `1px solid ${GOLD_ACCENT}30`
+                  }}
+                >
+                  {tributes.length} lời nhắn
+                </span>
+              </div>
+
+              {/* 2-Column Masonry-Style Grid (6-8 messages) */}
+              <div
+                style={{
+                  flex: 1,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: 'clamp(12px, 1.5vw, 18px)',
+                  overflow: 'hidden',
+                  alignContent: 'start'
+                }}
+              >
+                {tributes.slice(0, hasCareerData ? 6 : 8).map((t) => (
+                  <div
+                    key={t.id}
+                    style={{
+                      padding: 'clamp(14px, 1.8vw, 20px) clamp(16px, 2vw, 24px)',
+                      borderRadius: 'clamp(12px, 1.5vw, 18px)',
+                      backgroundColor: '#ffffff',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+                      border: `1px solid rgba(226, 232, 240, 0.8)`
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(10px, 1.2vw, 14px)', marginBottom: 'clamp(8px, 1vh, 12px)' }}>
+                      <div
+                        style={{
+                          width: 'clamp(36px, 4vw, 48px)',
+                          height: 'clamp(36px, 4vw, 48px)',
+                          borderRadius: '50%',
+                          background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#ffffff',
+                          fontSize: 'clamp(14px, 1.6vw, 18px)',
+                          fontWeight: 700,
+                          boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)'
+                        }}
+                      >
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 'clamp(14px, 1.5vw, 18px)', fontWeight: 700, color: NAVY_PRIMARY }}>
+                          {t.name}
+                        </p>
+                        <p style={{ fontSize: 'clamp(10px, 1.1vw, 13px)', color: '#94a3b8' }}>
+                          {t.date}
+                        </p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 'clamp(13px, 1.4vw, 16px)', color: '#475569', lineHeight: 1.55 }}>
+                      {t.message.length > 100 ? t.message.slice(0, 100) + '...' : t.message}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Bottom spacing */}
-          <div className="h-8 sm:h-12" />
+          {/* ============ 5. FOOTER - QR Code (Full Width Bar, Anchored Bottom) ============ */}
+          <div
+            style={{
+              marginTop: 'auto',
+              backgroundColor: NAVY_PRIMARY,
+              padding: 'clamp(28px, 3.5vh, 44px) clamp(24px, 4vw, 60px)',
+              marginLeft: 'calc(-1 * clamp(24px, 5vw, 80px))',
+              marginRight: 'calc(-1 * clamp(24px, 5vw, 80px))',
+              flexShrink: 0
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 'clamp(14px, 2vh, 22px)'
+              }}
+            >
+              {/* Title Above QR */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(10px, 1.2vw, 16px)', marginBottom: '6px' }}>
+                  <Star style={{ width: 'clamp(24px, 2.8vw, 34px)', height: 'clamp(24px, 2.8vw, 34px)', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
+                  <span
+                    style={{
+                      fontSize: 'clamp(22px, 2.8vw, 36px)',
+                      fontWeight: 800,
+                      color: '#ffffff',
+                      letterSpacing: '-0.5px'
+                    }}
+                  >
+                    Quét để lưu giữ kỷ niệm
+                  </span>
+                  <Star style={{ width: 'clamp(24px, 2.8vw, 34px)', height: 'clamp(24px, 2.8vw, 34px)', color: GOLD_ACCENT, fill: GOLD_ACCENT }} />
+                </div>
+                <p
+                  style={{
+                    fontSize: 'clamp(14px, 1.6vw, 20px)',
+                    color: 'rgba(255,255,255,0.75)'
+                  }}
+                >
+                  Tôn vinh và gửi lời chia buồn trên điện thoại
+                </p>
+              </div>
+
+              {/* QR Code - Centered & Large (200px+) */}
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  padding: 'clamp(14px, 1.8vw, 20px)',
+                  borderRadius: 'clamp(16px, 2vw, 24px)',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.25)'
+                }}
+              >
+                <QRCodeSVG
+                  value={publicUrl}
+                  size={Math.max(160, Math.min(220, window.innerWidth * 0.15))}
+                  level="H"
+                  fgColor={NAVY_PRIMARY}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
