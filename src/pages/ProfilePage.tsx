@@ -12,6 +12,7 @@ const mockProfile = {
   name: "Hoàng Nam Tiến",
   dateRange: "28/06/1969 - 31/07/2025",
   avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&crop=face",
+  coverUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=600&fit=crop",
   biography: `
     <p>Ông Hoàng Nam Tiến sinh ngày 28 tháng 6 năm 1969 tại Hà Nội. Ông là một doanh nhân xuất sắc, nhà lãnh đạo tài ba trong lĩnh vực công nghệ thông tin Việt Nam.</p>
     <p>Với hơn 30 năm cống hiến cho ngành công nghệ, ông đã góp phần xây dựng và phát triển nhiều doanh nghiệp công nghệ hàng đầu Việt Nam.</p>
