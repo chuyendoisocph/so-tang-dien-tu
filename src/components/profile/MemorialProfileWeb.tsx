@@ -290,26 +290,6 @@ export default function MemorialProfileWeb({
                 </span>
               </h2>
               
-              {/* Resting Place Note */}
-              <div
-                style={{
-                  textAlign: 'center',
-                  marginBottom: '24px',
-                  flexShrink: 0
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '20px',
-                    fontStyle: 'italic',
-                    color: '#555555',
-                    margin: 0,
-                    letterSpacing: '0.5px'
-                  }}
-                >
-                  Ông đã được An Nghỉ ở Hoa viên Bình Dương
-                </p>
-              </div>
               
               {/* Auto-scrolling Biography */}
               <BiographyScroll
