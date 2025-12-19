@@ -5,27 +5,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 
 import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
+import { useProfileData } from "@/hooks/useProfileData";
 
-// Mock data
-const mockProfile = {
-  id: "HNT2025",
-  name: "Hoàng Nam Tiến",
-  dateRange: "28/06/1969 - 31/07/2025",
-  avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&crop=face",
-  coverUrl: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1920&h=600&fit=crop",
-  biography: `
-    <p>Ông Hoàng Nam Tiến sinh ngày 28 tháng 6 năm 1969 tại Hà Nội. Ông là một doanh nhân xuất sắc, nhà lãnh đạo tài ba trong lĩnh vực công nghệ thông tin Việt Nam.</p>
-    <p>Với hơn 30 năm cống hiến cho ngành công nghệ, ông đã góp phần xây dựng và phát triển nhiều doanh nghiệp công nghệ hàng đầu Việt Nam.</p>
-    <p>Ông ra đi để lại niềm tiếc thương vô hạn trong lòng gia đình, đồng nghiệp và cộng đồng doanh nhân.</p>
-  `,
-  roles: [
-    "Nguyên Chủ tịch HĐQT Công ty ABC",
-    "Phó Chủ tịch Hiệp hội Doanh nghiệp",
-    "Thành viên Ban cố vấn Đại học XYZ",
-    "Chủ tịch sáng lập Quỹ Từ thiện ABC",
-  ],
-};
-
+// Mock tributes (to be replaced with real data later)
 const mockTributes = [
   {
     id: 1,
@@ -63,13 +45,17 @@ export default function ProfilePage() {
   const isSlideshow = searchParams.get("slideshow") === "1";
   const isKiosk = searchParams.get("kiosk") === "1";
 
+  const { profile, photos, isLoading, error } = useProfileData(profileId);
+
   const [tributes, setTributes] = useState(mockTributes);
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   useEffect(() => {
-    document.title = `Sổ Tang Điện Tử - ${mockProfile.name}`;
-  }, []);
+    if (profile?.name) {
+      document.title = `Sổ Tang Điện Tử - ${profile.name}`;
+    }
+  }, [profile?.name]);
 
   const handleSubmitTribute = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,11 +96,34 @@ export default function ProfilePage() {
     setShareModalOpen(false);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FDFCF8] to-[#F3E5AB]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#C5A059] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#1e3a5f] font-medium">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FDFCF8] to-[#F3E5AB]">
+        <div className="text-center max-w-md mx-auto p-8">
+          <h1 className="text-2xl font-bold text-[#1e3a5f] mb-4">Không tìm thấy trang tưởng niệm</h1>
+          <p className="text-gray-600">Trang tưởng niệm này không tồn tại hoặc chưa được công bố.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <MemorialProfileWeb
-        profile={mockProfile}
+        profile={profile}
         tributes={tributes}
+        photos={photos}
         formData={formData}
         onChangeForm={(patch) => setFormData((p) => ({ ...p, ...patch }))}
         onSubmitTribute={handleSubmitTribute}
