@@ -37,6 +37,83 @@ const mockTributes = [
     message: "Xin gửi lời chia buồn sâu sắc đến gia đình.",
     date: "13/12/2025",
   },
+  {
+    id: 5,
+    name: "Hoàng Thị Mai",
+    phone: "0938***123",
+    message: "Anh là người thầy tuyệt vời, luôn tận tâm với nghề. Chúng em sẽ nhớ mãi.",
+    date: "13/12/2025",
+  },
+  {
+    id: 6,
+    name: "Võ Minh Tuấn",
+    phone: "0945***789",
+    message: "Những bài học từ anh sẽ mãi là kim chỉ nam cho chúng em.",
+    date: "12/12/2025",
+  },
+  {
+    id: 7,
+    name: "Đặng Thị Lan",
+    phone: "0967***456",
+    message: "Anh đã cống hiến hết mình cho nghệ thuật. Xin chia buồn cùng gia đình.",
+    date: "12/12/2025",
+  },
+  {
+    id: 8,
+    name: "Bùi Văn Hùng",
+    phone: "0923***321",
+    message: "Tiếng hát của anh sẽ mãi vang vọng trong lòng người hâm mộ.",
+    date: "11/12/2025",
+  },
+  {
+    id: 9,
+    name: "Ngô Thị Hương",
+    phone: "0934***654",
+    message: "Anh là nghệ sĩ tài năng và con người tốt bụng. Chúc anh yên nghỉ.",
+    date: "11/12/2025",
+  },
+  {
+    id: 10,
+    name: "Lý Văn Phong",
+    phone: "0956***987",
+    message: "Những tác phẩm của anh sẽ sống mãi với thời gian.",
+    date: "10/12/2025",
+  },
+  {
+    id: 11,
+    name: "Trương Thị Nga",
+    phone: "0912***234",
+    message: "Anh đã để lại dấu ấn đẹp trong lòng mọi người. Vĩnh biệt anh!",
+    date: "10/12/2025",
+  },
+  {
+    id: 12,
+    name: "Phan Văn Thành",
+    phone: "0987***567",
+    message: "Cảm ơn anh vì những đóng góp to lớn cho nền nghệ thuật Việt Nam.",
+    date: "09/12/2025",
+  },
+  {
+    id: 13,
+    name: "Đinh Thị Xuân",
+    phone: "0943***890",
+    message: "Anh mãi là niềm tự hào của làng nghệ thuật. Xin chia buồn.",
+    date: "09/12/2025",
+  },
+  {
+    id: 14,
+    name: "Vũ Minh Đức",
+    phone: "0965***123",
+    message: "Những kỷ niệm đẹp với anh sẽ mãi trong tim chúng em.",
+    date: "08/12/2025",
+  },
+  {
+    id: 15,
+    name: "Cao Thị Linh",
+    phone: "0978***456",
+    message: "Anh đã sống một cuộc đời ý nghĩa. Cầu mong anh an nghỉ.",
+    date: "08/12/2025",
+  }
 ];
 
 export default function ProfilePage() {
