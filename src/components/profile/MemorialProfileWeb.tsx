@@ -1037,62 +1037,81 @@ export default function MemorialProfileWeb({
               </span>
             </h3>
 
-            {/* 4 Messages - 2x2 Grid - LARGER CARDS */}
+            {/* 4 Messages - 2x2 Grid - COMPACT & ELEGANT */}
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gridTemplateRows: '1fr 1fr',
-                gap: '14px',
-                flex: 1,
-                overflow: 'hidden'
+                gap: '12px',
+                flex: 1
               }}
             >
               {tributes.slice(0, 4).map((t) => (
                 <div
                   key={t.id}
                   style={{
-                    padding: '18px 20px',
-                    borderRadius: '16px',
+                    padding: '12px 14px',
+                    borderRadius: '14px',
                     backgroundColor: '#ffffff',
-                    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
                     border: `1px solid rgba(226, 232, 240, 0.8)`,
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
+                    justifyContent: 'flex-start'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
+                  {/* Header: Avatar + Name/Date */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                     <div
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '36px',
+                        height: '36px',
                         borderRadius: '50%',
                         background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: '#ffffff',
-                        fontSize: '20px',
+                        fontSize: '15px',
                         fontWeight: 700,
-                        boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)',
+                        boxShadow: '0 3px 10px rgba(197, 160, 89, 0.25)',
                         flexShrink: 0
                       }}
                     >
                       {t.name.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: '19px', fontWeight: 700, color: NAVY_PRIMARY, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <p style={{ 
+                        fontSize: '15px', 
+                        fontWeight: 700, 
+                        color: NAVY_PRIMARY, 
+                        margin: 0, 
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
                         {t.name}
                       </p>
-                      <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>
+                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>
                         {t.date}
                       </p>
                     </div>
                   </div>
-                  <p style={{ fontSize: '17px', color: '#475569', lineHeight: 1.5, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                    {t.message.length > 80 ? t.message.slice(0, 80) + '...' : t.message}
+                  {/* Message Body - 2 lines with ellipsis */}
+                  <p style={{ 
+                    fontSize: '13px', 
+                    color: '#475569', 
+                    lineHeight: 1.4, 
+                    margin: 0,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    wordBreak: 'break-word'
+                  }}>
+                    {t.message}
                   </p>
                 </div>
               ))}
