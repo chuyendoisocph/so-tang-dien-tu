@@ -1023,7 +1023,7 @@ export default function MemorialProfileWeb({
                 flexShrink: 0
               }}
             >
-              Lời nhắn mới nhất
+              Lời chia buồn
               <span style={{
                 fontSize: '14px',
                 padding: '6px 14px',
@@ -1045,7 +1045,7 @@ export default function MemorialProfileWeb({
                 gridTemplateRows: '1fr 1fr',
                 gap: '14px',
                 flex: 1,
-                overflow: 'hidden'
+  
               }}
             >
               {tributes.slice(0, 4).map((t) => (
