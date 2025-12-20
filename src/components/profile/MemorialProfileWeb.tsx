@@ -639,16 +639,19 @@ export default function MemorialProfileWeb({
   }
 
   // SLIDESHOW MODE - Professional Digital Signage (Vertical Stack Layout)
+  // STRICT: 35% Header | 25% Bio | 40% Footer = 100% (1920px)
   if (slideshowMode) {
     return (
       <div
-        className="memorial-profile relative flex flex-col"
+        className="memorial-profile"
         style={{
           fontFamily: "'Inter', sans-serif",
           width: '1080px',
-          height: '1920px', // Fixed height - NO scrollbar
+          height: '1920px',
           maxHeight: '1920px',
-          overflow: 'hidden' // Prevent any overflow
+          minHeight: '1920px',
+          overflow: 'hidden',
+          position: 'relative'
         }}
       >
         {/* Premium CSS Gradient Background (Cream to Muted Gold) */}
@@ -671,31 +674,7 @@ export default function MemorialProfileWeb({
           }}
         />
 
-        {/* ============ BRAND HEADER (Fixed Top) ============ */}
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 10,
-            padding: '20px 0 10px',
-            textAlign: 'center',
-            flexShrink: 0
-          }}
-        >
-          <div
-            style={{
-              fontSize: 'clamp(32px, 5vw, 58px)',
-              fontWeight: 900,
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              color: GOLD_ACCENT,
-              textShadow: '0 2px 4px rgba(0,0,0,0.2)', fontFamily: 'serif'
-            }}
-          >
-            HOA VIÊN BÌNH DƯƠNG
-          </div>
-        </div>
-
-        {/* Animation Styles + Border Radius Fix */}
+        {/* Animation Styles + Gradient Masks */}
         <style>{`
           @keyframes float-slide {
             0%, 100% { transform: translateY(0px); }
@@ -704,568 +683,419 @@ export default function MemorialProfileWeb({
           .float-slide {
             animation: float-slide 4s ease-in-out infinite;
           }
-          /* Force rounded corners on tribute cards */
-          .tribute-card {
-            border-radius: 20px !important;
-            overflow: hidden !important;
-          }
-          /* Force rounded corners on guestbook container */
-          .guestbook-container {
-            border-radius: 32px !important;
-            overflow: hidden !important;
+          /* Strong gradient mask for bio scroll - smooth fade at edges */
+          .bio-scroll-mask {
+            mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
           }
         `}</style>
 
-        {/* Main Content Wrapper - Full Height Flex Column */}
+        {/* ============ SECTION 1: HEADER - 35% (672px) ============ */}
         <div
           style={{
-            position: 'relative',
-            zIndex: 2,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '672px', // FIXED 35% of 1920px
             display: 'flex',
             flexDirection: 'column',
-            height: '100%', // Use 100% of the 1920px container
-            padding: '0 clamp(24px, 5vw, 80px)'
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 40px',
+            overflow: 'hidden',
+            zIndex: 10
           }}
         >
-          {/* ============ 1. HEADER - Profile + Name + Dates (~35% = ~672px) ============ */}
+          {/* Brand Name - GRAND & MAJESTIC */}
           <div
             style={{
-              height: '35%', // Fixed 35% of 1920px = ~672px
-              minHeight: '600px',
-              padding: 'clamp(40px, 5vh, 70px) 0 clamp(30px, 4vh, 50px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
+              fontSize: '58px',
+              fontWeight: 900,
+              letterSpacing: '6px',
+              textTransform: 'uppercase',
+              color: GOLD_ACCENT,
+              textShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              marginBottom: '28px'
             }}
           >
-            {/* Profile Picture - FOCAL POINT ~250px */}
-            <div className="float-slide" style={{ marginBottom: 'clamp(20px, 2.5vh, 32px)' }}>
-              <img
-                src={profile.avatarUrl}
-                alt={profile.name}
-                style={{
-                  width: 'clamp(180px, 22vw, 280px)', // Larger: ~250px focal point
-                  height: 'clamp(225px, 28vw, 350px)', // Proportional height
-                  objectFit: 'cover',
-                  borderRadius: 'clamp(14px, 1.8vw, 24px)',
-                  border: `5px solid ${GOLD_ACCENT}`,
-                  boxShadow: '0 24px 60px rgba(0,0,0,0.18)'
-                }}
-              />
-            </div>
-
-            {/* Name - Bold & Dark */}
-            <h1
-              style={{
-                fontSize: 'clamp(36px, 5.5vw, 64px)', // Larger name
-                fontWeight: 900,
-                color: NAVY_PRIMARY,
-                textAlign: 'center',
-                letterSpacing: '-1.5px',
-                marginBottom: 'clamp(10px, 1.2vh, 16px)',
-                textTransform: 'uppercase'
-              }}
-            >
-              {profile.name}
-            </h1>
-
-            {/* Dates */}
-            <div
-              style={{
-                fontSize: 'clamp(22px, 3vw, 34px)', // Larger dates
-                color: GOLD_ACCENT,
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'clamp(10px, 1.2vw, 16px)',
-                marginBottom: 'clamp(14px, 1.8vh, 24px)'
-              }}
-            >
-              <Calendar style={{ width: 'clamp(24px, 3vw, 34px)', height: 'clamp(24px, 3vw, 34px)' }} />
-              {years}
-            </div>
-
-            {/* Resting Place Text */}
-            <div
-              style={{
-                textAlign: 'center',
-                fontSize: 'clamp(18px, 2.2vw, 26px)', // Larger text
-                fontStyle: 'italic',
-                color: '#555555',
-                letterSpacing: '0.5px',
-                lineHeight: 1.4,
-                textTransform: 'none'
-              }}
-            >
-              {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
-            </div>
+            HOA VIÊN BÌNH DƯƠNG
           </div>
 
-          {/* Elegant Gold Divider */}
-          <div
-            style={{
-              height: '2px',
-              background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
-              margin: '0 clamp(20px, 5vw, 100px)',
-              flexShrink: 0
-            }}
-          />
+          {/* Profile Picture - LARGE FOCAL POINT */}
+          <div className="float-slide" style={{ marginBottom: '24px' }}>
+            <img
+              src={profile.avatarUrl}
+              alt={profile.name}
+              style={{
+                width: '240px',
+                height: '300px',
+                objectFit: 'cover',
+                borderRadius: '18px',
+                border: `6px solid ${GOLD_ACCENT}`,
+                boxShadow: '0 24px 60px rgba(0,0,0,0.25)'
+              }}
+            />
+          </div>
 
-          {/* ============ 2. SECTION A: BIOGRAPHY (~30% = ~576px) ============ */}
-          <div
+          {/* Name - MAJESTIC */}
+          <h1
             style={{
-              padding: 'clamp(16px, 2vh, 24px) 0',
-              flex: 1, // Takes remaining ~30%
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '400px',
-              overflow: 'hidden'
+              fontSize: '62px',
+              fontWeight: 900,
+              color: NAVY_PRIMARY,
+              textAlign: 'center',
+              letterSpacing: '-1px',
+              marginBottom: '14px',
+              textTransform: 'uppercase',
+              textShadow: '0 3px 6px rgba(0,0,0,0.12)'
             }}
           >
-            <div
+            {profile.name}
+          </h1>
+
+          {/* Dates */}
+          <div
+            style={{
+              fontSize: '32px',
+              color: GOLD_ACCENT,
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              marginBottom: '14px'
+            }}
+          >
+            <Calendar style={{ width: '32px', height: '32px' }} />
+            {years}
+          </div>
+
+          {/* Resting Place */}
+          <div
+            style={{
+              textAlign: 'center',
+              fontSize: '22px',
+              fontStyle: 'italic',
+              color: '#555555',
+              letterSpacing: '0.5px'
+            }}
+          >
+            {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
+          </div>
+        </div>
+
+        {/* Divider between Header and Bio */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '672px',
+            left: '60px',
+            right: '60px',
+            height: '3px',
+            background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT} 20%, ${GOLD_ACCENT} 80%, transparent 100%)`,
+            zIndex: 15
+          }}
+        />
+
+        {/* ============ SECTION 2: BIOGRAPHY - 25% (480px) ============ */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '672px', // Starts after header
+            left: 0,
+            right: 0,
+            height: '480px', // FIXED 25% of 1920px
+            padding: '20px 40px 16px',
+            overflow: 'hidden',
+            zIndex: 10
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.96)',
+              borderRadius: '20px',
+              padding: '20px 36px 16px',
+              boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
+              border: `2px solid rgba(197, 160, 89, 0.3)`,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+          >
+            {/* Decorative accents */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '80px',
+              height: '80px',
+              background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
+              borderTopLeftRadius: '20px'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: '80px',
+              height: '80px',
+              background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
+              borderBottomRightRadius: '20px'
+            }} />
+            
+            <h2
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.96)',
-                borderRadius: 'clamp(18px, 2.2vw, 26px)',
-                padding: 'clamp(24px, 3vw, 36px) clamp(32px, 4vw, 48px) clamp(20px, 2.5vh, 28px)',
-                boxShadow: '0 14px 56px rgba(0,0,0,0.07)',
-                border: `2px solid rgba(197, 160, 89, 0.3)`,
+                fontSize: '26px',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
+                marginBottom: '12px',
+                textAlign: 'center',
+                letterSpacing: '-0.5px',
                 position: 'relative',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                minHeight: 0
+                flexShrink: 0
               }}
             >
-              {/* Decorative accents */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: 'clamp(70px, 9vw, 110px)',
-                height: 'clamp(70px, 9vw, 110px)',
-                background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
-                borderTopLeftRadius: 'clamp(18px, 2.2vw, 26px)'
-              }} />
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: 'clamp(70px, 9vw, 110px)',
-                height: 'clamp(70px, 9vw, 110px)',
-                background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
-                borderBottomRightRadius: 'clamp(18px, 2.2vw, 26px)'
-              }} />
-              
-              <h2
-                style={{
-                  fontSize: 'clamp(24px, 3vw, 34px)',
-                  fontWeight: 900,
-                  color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
-                  textAlign: 'center',
-                  letterSpacing: '-0.5px',
-                  position: 'relative',
-                  flexShrink: 0
-                }}
-              >
-                <span style={{
-                  borderBottom: `3px solid ${GOLD_ACCENT}`,
-                  paddingBottom: 'clamp(8px, 1vh, 10px)',
-                  display: 'inline-block'
-                }}>
-                  Tiểu sử & Cuộc đời
-                </span>
-              </h2>
-              
-              {/* Auto-scrolling Biography */}
+              <span style={{
+                borderBottom: `3px solid ${GOLD_ACCENT}`,
+                paddingBottom: '6px',
+                display: 'inline-block'
+              }}>
+                Tiểu sử & Cuộc đời
+              </span>
+            </h2>
+            
+            {/* Auto-scrolling Biography with strong gradient mask */}
+            <div className="bio-scroll-mask" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
               <BiographyScroll
                 biography={profile.biography}
-                className="flex-1"
+                className="h-full"
                 seamlessLoop={true}
                 pauseOnHover={false}
               />
             </div>
           </div>
+        </div>
 
-          {/* Subtle Divider */}
+        {/* Divider between Bio and Footer */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '1152px', // 672 + 480
+            left: '80px',
+            right: '80px',
+            height: '2px',
+            background: `linear-gradient(90deg, transparent 0%, ${GOLD_ACCENT}50 30%, ${GOLD_ACCENT}50 70%, transparent 100%)`,
+            zIndex: 15
+          }}
+        />
+
+        {/* ============ SECTION 3: FOOTER - 40% (768px) ============ */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '1152px', // Starts after header + bio (672 + 480)
+            left: 0,
+            right: 0,
+            height: '768px', // FIXED 40% of 1920px
+            padding: '20px 40px 24px',
+            overflow: 'hidden',
+            zIndex: 10
+          }}
+        >
           <div
             style={{
-              height: '1px',
-              background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-              margin: '0 clamp(30px, 8vw, 120px)',
-              flexShrink: 0
+              backgroundColor: 'rgba(255, 255, 255, 0.96)',
+              borderRadius: '20px',
+              padding: '24px 36px 20px',
+              boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
+              border: `2px solid rgba(197, 160, 89, 0.3)`,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              position: 'relative'
             }}
-          />
+          >
+            {/* Decorative accents */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '80px',
+              height: '80px',
+              background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
+              borderTopLeftRadius: '20px'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: '80px',
+              height: '80px',
+              background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
+              borderBottomRightRadius: '20px'
+            }} />
 
-          {/* ============ 3. SECTION B: CAREER HISTORY (Full Width, 2-Column Grid) ============ */}
-          {hasCareerData && (
-            <div
+            {/* Header */}
+            <h2
               style={{
-                padding: 'clamp(24px, 3vh, 36px) 0',
+                fontSize: '30px',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
+                marginBottom: '20px',
+                textAlign: 'center',
+                letterSpacing: '-0.5px',
+                position: 'relative',
                 flexShrink: 0
               }}
             >
-              <div
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                  borderRadius: 'clamp(16px, 2vw, 24px)',
-                  padding: 'clamp(24px, 3vw, 36px) clamp(28px, 4vw, 48px)',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
-                  border: `1px solid rgba(197, 160, 89, 0.2)`
-                }}
-              >
-                <h2
-                  style={{
-                    fontSize: 'clamp(18px, 2.2vw, 26px)',
-                    fontWeight: 800,
-                    color: NAVY_PRIMARY,
-                    marginBottom: 'clamp(16px, 2vh, 24px)',
-                    textAlign: 'center',
-                    letterSpacing: '-0.5px'
-                  }}
-                >
-                  Quá trình công tác
-                </h2>
-                {/* 2-Column Grid for Roles */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: 'clamp(12px, 1.5vw, 18px) clamp(20px, 2.5vw, 32px)'
-                  }}
-                >
-                  {profile.roles.map((role, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 'clamp(10px, 1.2vw, 14px)',
-                        padding: 'clamp(12px, 1.5vw, 16px) clamp(14px, 1.8vw, 20px)',
-                        backgroundColor: 'rgba(253, 252, 248, 0.8)',
-                        borderRadius: 'clamp(10px, 1.2vw, 14px)',
-                        border: `1px solid rgba(197, 160, 89, 0.15)`
-                      }}
-                    >
-                      <Briefcase
-                        style={{
-                          width: 'clamp(18px, 2vw, 24px)',
-                          height: 'clamp(18px, 2vw, 24px)',
-                          color: GOLD_ACCENT,
-                          flexShrink: 0,
-                          marginTop: '2px'
-                        }}
-                      />
-                      <p style={{ fontSize: 'clamp(14px, 1.5vw, 18px)', color: '#374151', lineHeight: 1.5 }}>
-                        {role}
-                      </p>
-                    </div>
-                  ))}
+              <span style={{
+                borderBottom: `3px solid ${GOLD_ACCENT}`,
+                paddingBottom: '8px',
+                display: 'inline-block'
+              }}>
+                Sổ Tang & Thông Tin
+              </span>
+            </h2>
+
+            {/* QR Section - LARGER */}
+            <div
+              style={{
+                padding: '20px 28px',
+                borderRadius: '18px',
+                background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
+                border: `2px solid ${GOLD_ACCENT}`,
+                boxShadow: `0 8px 24px rgba(197, 160, 89, 0.2)`,
+                display: 'grid',
+                gridTemplateColumns: '1fr 2px 1fr',
+                gap: '24px',
+                alignItems: 'center',
+                marginBottom: '20px',
+                flexShrink: 0
+              }}
+            >
+              {/* Left Column - Memorial */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
+                    Sổ Tang Điện Tử
+                  </h3>
+                  <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
+                    Quét để gửi lời chia buồn
+                  </p>
+                </div>
+                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
+                  <QRCodeSVG value={publicUrl} size={120} level="H" fgColor={NAVY_PRIMARY} />
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ width: '2px', height: '140px', background: `linear-gradient(to bottom, transparent, ${GOLD_ACCENT}60, transparent)` }} />
+
+              {/* Right Column - CPHACO */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
+                    Thông Tin CPHACO
+                  </h3>
+                  <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
+                    Quét để xem thông tin
+                  </p>
+                </div>
+                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
+                  <QRCodeSVG value="https://cphaco.vn" size={120} level="H" fgColor={NAVY_PRIMARY} />
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Subtle Divider (only if career data exists) */}
-          {hasCareerData && (
-            <div
+            {/* Messages Sub-header */}
+            <h3
               style={{
-                height: '1px',
-                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-                margin: '0 clamp(30px, 8vw, 120px)',
+                fontSize: '22px',
+                fontWeight: 700,
+                color: NAVY_PRIMARY,
+                marginBottom: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
                 flexShrink: 0
               }}
-            />
-          )}
+            >
+              Lời nhắn mới nhất
+              <span style={{
+                fontSize: '14px',
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                backgroundColor: `${GOLD_ACCENT}18`,
+                color: GOLD_ACCENT,
+                fontWeight: 600,
+                border: `1px solid ${GOLD_ACCENT}30`
+              }}>
+                {tributes.length} lời nhắn
+              </span>
+            </h3>
 
-          {/* ============ 4. BOTTOM GUESTBOOK CARD (~35% = ~672px) ============ */}
-          <div
-            style={{
-              padding: 'clamp(14px, 1.8vh, 20px) 0',
-              height: '35%', // Fixed 35% of 1920px = ~672px
-              minHeight: '600px',
-              display: 'flex',
-              flexDirection: 'column',
-              flexShrink: 0,
-              overflow: 'hidden'
-            }}
-          >
+            {/* 4 Messages - 2x2 Grid - LARGER CARDS */}
             <div
-              className="guestbook-container"
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.96)',
-                borderRadius: 'clamp(18px, 2.2vw, 26px)',
-                padding: 'clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 40px) clamp(18px, 2.2vh, 28px)',
-                boxShadow: '0 14px 56px rgba(0,0,0,0.07)',
-                border: `2px solid rgba(197, 160, 89, 0.3)`,
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gridTemplateRows: '1fr 1fr',
+                gap: '14px',
+                flex: 1,
                 overflow: 'hidden'
               }}
             >
-              {/* Decorative accents - SAME as biography */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: 'clamp(60px, 8vw, 100px)',
-                height: 'clamp(60px, 8vw, 100px)',
-                background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
-                borderTopLeftRadius: 'clamp(16px, 2vw, 24px)'
-              }} />
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: 'clamp(60px, 8vw, 100px)',
-                height: 'clamp(60px, 8vw, 100px)',
-                background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
-                borderBottomRightRadius: 'clamp(16px, 2vw, 24px)'
-              }} />
-
-              {/* Header - Prominent */}
-              <h2
-                style={{
-                  fontSize: 'clamp(24px, 3vw, 34px)', // Larger header
-                  fontWeight: 900,
-                  color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
-                  textAlign: 'center',
-                  letterSpacing: '-0.5px',
-                  position: 'relative',
-                  flexShrink: 0
-                }}
-              >
-                <span style={{
-                  borderBottom: `3px solid ${GOLD_ACCENT}`,
-                  paddingBottom: 'clamp(6px, 0.8vh, 10px)',
-                  display: 'inline-block'
-                }}>
-                  Sổ Tang & Thông Tin
-                </span>
-              </h2>
-
-              {/* QR Section - Balanced */}
-              <div
-                style={{
-                  padding: 'clamp(14px, 1.8vw, 20px)',
-                  borderRadius: 'clamp(14px, 1.8vw, 18px)',
-                  background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
-                  border: `2px solid ${GOLD_ACCENT}`,
-                  boxShadow: `0 6px 20px rgba(197, 160, 89, 0.18)`,
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 2px 1fr',
-                  gap: 'clamp(12px, 1.5vw, 18px)',
-                  alignItems: 'center',
-                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
-                  flexShrink: 0
-                }}
-              >
-                {/* Left Column - Memorial Tribute */}
+              {tributes.slice(0, 4).map((t) => (
                 <div
+                  key={t.id}
                   style={{
+                    padding: '18px 20px',
+                    borderRadius: '16px',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+                    border: `1px solid rgba(226, 232, 240, 0.8)`,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 'clamp(6px, 0.8vw, 10px)'
+                    justifyContent: 'center',
+                    overflow: 'hidden'
                   }}
                 >
-                  <div style={{ textAlign: 'center' }}>
-                    <h3
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
+                    <div
                       style={{
-                        fontSize: 'clamp(15px, 1.8vw, 19px)',
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        fontSize: '20px',
                         fontWeight: 700,
-                        color: NAVY_PRIMARY,
-                        margin: '0 0 2px 0', // Reduced margin
-                        letterSpacing: '-0.2px'
+                        boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)',
+                        flexShrink: 0
                       }}
                     >
-                      Sổ Tang Điện Tử
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: 'clamp(12px, 1.4vw, 15px)',
-                        color: '#64748b',
-                        margin: 0
-                      }}
-                    >
-                      Quét để gửi lời chia buồn
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: '#ffffff',
-                      padding: 'clamp(6px, 0.8vw, 10px)',
-                      borderRadius: 'clamp(8px, 1vw, 12px)',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                      border: `1px solid rgba(197, 160, 89, 0.3)`
-                    }}
-                  >
-                    <QRCodeSVG
-                      value={publicUrl}
-                      size={Math.max(85, Math.min(105, window.innerWidth * 0.1))} // Balanced QR size
-                      level="H"
-                      fgColor={NAVY_PRIMARY}
-                    />
-                  </div>
-                </div>
-
-                {/* Vertical Divider */}
-                <div
-                  style={{
-                    width: '2px',
-                    height: '90px',
-                    background: `linear-gradient(to bottom, transparent, ${GOLD_ACCENT}60, transparent)`,
-                    justifySelf: 'center'
-                  }}
-                />
-
-                {/* Right Column - Homepage */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 'clamp(6px, 0.8vw, 10px)'
-                  }}
-                >
-                  <div style={{ textAlign: 'center' }}>
-                    <h3
-                      style={{
-                        fontSize: 'clamp(15px, 1.8vw, 19px)',
-                        fontWeight: 700,
-                        color: NAVY_PRIMARY,
-                        margin: '0 0 3px 0',
-                        letterSpacing: '-0.2px'
-                      }}
-                    >
-                      Thông Tin CPHACO
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: 'clamp(12px, 1.4vw, 15px)',
-                        color: '#64748b',
-                        margin: 0
-                      }}
-                    >
-                      Quét để xem thông tin
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: '#ffffff',
-                      padding: 'clamp(6px, 0.8vw, 10px)',
-                      borderRadius: 'clamp(8px, 1vw, 12px)',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                      border: `1px solid rgba(197, 160, 89, 0.3)`
-                    }}
-                  >
-                    <QRCodeSVG
-                      value="https://cphaco.vn"
-                      size={Math.max(85, Math.min(105, window.innerWidth * 0.1))} // Balanced QR size
-                      level="H"
-                      fgColor={NAVY_PRIMARY}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Sub-header for Messages Section */}
-              <h3
-                style={{
-                  fontSize: 'clamp(16px, 2vw, 22px)',
-                  fontWeight: 700,
-                  color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(10px, 1.2vh, 14px)',
-                  textAlign: 'left',
-                  letterSpacing: '-0.2px',
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 'clamp(8px, 1vw, 12px)'
-                }}
-              >
-                Lời nhắn mới nhất
-                <span
-                  style={{
-                    fontSize: 'clamp(11px, 1.3vw, 14px)',
-                    padding: 'clamp(4px, 0.5vw, 6px) clamp(8px, 1vw, 12px)',
-                    borderRadius: '9999px',
-                    backgroundColor: `${GOLD_ACCENT}18`,
-                    color: GOLD_ACCENT,
-                    fontWeight: 600,
-                    border: `1px solid ${GOLD_ACCENT}30`
-                  }}
-                >
-                  {tributes.length} lời nhắn
-                </span>
-              </h3>
-
-              {/* 4 Messages in 2x2 Grid - Balanced Cards */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gridTemplateRows: '1fr 1fr',
-                  gap: 'clamp(10px, 1.2vw, 14px)',
-                  flex: 1,
-                  overflow: 'hidden'
-                }}
-              >
-                {tributes.slice(0, 4).map((t) => (
-                  <div
-                    key={t.id}
-                    style={{
-                      padding: 'clamp(12px, 1.5vw, 18px)',
-                      borderRadius: 'clamp(12px, 1.5vw, 16px)',
-                      backgroundColor: '#ffffff',
-                      boxShadow: '0 3px 12px rgba(0,0,0,0.05)',
-                      border: `1px solid rgba(226, 232, 240, 0.8)`,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(10px, 1.2vw, 14px)', marginBottom: 'clamp(8px, 1vh, 10px)' }}>
-                      <div
-                        style={{
-                          width: 'clamp(32px, 4vw, 42px)',
-                          height: 'clamp(32px, 4vw, 42px)',
-                          borderRadius: '50%',
-                          background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#ffffff',
-                          fontSize: 'clamp(14px, 1.7vw, 18px)',
-                          fontWeight: 700,
-                          boxShadow: '0 3px 10px rgba(197, 160, 89, 0.3)',
-                          flexShrink: 0
-                        }}
-                      >
-                        {t.name.charAt(0)}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 'clamp(14px, 1.7vw, 18px)', fontWeight: 700, color: NAVY_PRIMARY, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {t.name}
-                        </p>
-                        <p style={{ fontSize: 'clamp(10px, 1.2vw, 13px)', color: '#94a3b8', margin: 0 }}>
-                          {t.date}
-                        </p>
-                      </div>
+                      {t.name.charAt(0)}
                     </div>
-                    <p style={{ fontSize: 'clamp(12px, 1.5vw, 16px)', color: '#475569', lineHeight: 1.4, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {t.message.length > 65 ? t.message.slice(0, 65) + '...' : t.message}
-                    </p>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: '19px', fontWeight: 700, color: NAVY_PRIMARY, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {t.name}
+                      </p>
+                      <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>
+                        {t.date}
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <p style={{ fontSize: '17px', color: '#475569', lineHeight: 1.5, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {t.message.length > 80 ? t.message.slice(0, 80) + '...' : t.message}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1366,394 +1196,156 @@ export default function MemorialProfileWeb({
 
           {/* Dates */}
           <div
-            className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl md:text-2xl font-bold"
+            className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2 mb-3 sm:mb-4"
             style={{ color: GOLD_ACCENT }}
           >
             <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
             {years}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 mt-4 sm:mt-5">
-            <button
-              onClick={() => (document.getElementById("tributeNameNormal") as HTMLInputElement | null)?.focus()}
-              className="btn-hover flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm transition-all duration-300"
-              style={{
-                backgroundColor: NAVY_PRIMARY,
-                color: '#ffffff',
-                boxShadow: '0 6px 20px rgba(30, 58, 95, 0.35)'
-              }}
-            >
-              <PenLine className="w-4 h-4" style={{ color: GOLD_ACCENT }} />
-              Gửi lời chia buồn
-            </button>
-            <button
-              onClick={onOpenShare}
-              className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white/90"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.8)',
-                color: NAVY_PRIMARY,
-                border: '1.5px solid rgba(226,232,240,0.8)'
-              }}
-            >
-              <Share2 className="w-4 h-4" style={{ color: GOLD_ACCENT }} />
-              Chia sẻ
-            </button>
+          {/* Resting Place */}
+          <div
+            className="text-center text-sm sm:text-base md:text-lg italic"
+            style={{ color: '#555555' }}
+          >
+            {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
           </div>
         </div>
 
-        {/* Elegant Gold Divider */}
+        {/* Divider */}
         <div
+          className="h-0.5 mx-8 sm:mx-16 mb-6"
           style={{
-            height: '2px',
-            background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
-            marginBottom: 'clamp(20px, 3vh, 32px)'
+            background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`
           }}
         />
 
-        {/* ============ 2. SECTION A: BIOGRAPHY (Full Width, Center-Aligned) ============ */}
-        <div
-          className="card-hover transition-all duration-300 mb-5 sm:mb-6 relative overflow-hidden"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.96)',
-            borderRadius: 'clamp(14px, 2vw, 20px)',
-            padding: 'clamp(24px, 3.5vw, 36px) clamp(28px, 4.5vw, 44px)',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.07)',
-            border: `2px solid rgba(197, 160, 89, 0.3)`
-          }}
-        >
-          {/* Decorative corner accents */}
-          <div className="absolute top-0 left-0 w-16 h-16 sm:w-20 sm:h-20 opacity-40" style={{
-            background: `linear-gradient(135deg, ${GOLD_ACCENT}40, transparent)`,
-            borderTopLeftRadius: 'clamp(14px, 2vw, 20px)'
-          }} />
-          <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 opacity-40" style={{
-            background: `linear-gradient(315deg, ${GOLD_ACCENT}40, transparent)`,
-            borderBottomRightRadius: 'clamp(14px, 2vw, 20px)'
-          }} />
-          
-          <h2
-            className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-5 sm:mb-6 relative"
-            style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
-          >
-            <span className="inline-block pb-2" style={{
-              borderBottom: `3px solid ${GOLD_ACCENT}`
-            }}>
+        {/* Biography Section */}
+        <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
+          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
+            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
               Tiểu sử & Cuộc đời
             </span>
           </h2>
-          <div
-            className="biography-content text-sm sm:text-base md:text-lg relative"
-            style={{ color: '#374151', lineHeight: 2.0 }}
+          <div 
+            className="prose prose-lg max-w-none"
+            style={{ color: '#374151', lineHeight: 1.8 }}
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
           />
         </div>
 
-        {/* ============ PHOTO GALLERY SECTION ============ */}
-        {photos.length > 0 && (
-          <>
-            {/* Subtle Divider */}
-            <div
-              style={{
-                height: '1px',
-                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-                marginBottom: 'clamp(20px, 3vh, 28px)'
-              }}
-            />
-
-            <div
-              className="card-hover transition-all duration-300 mb-5 sm:mb-6"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                borderRadius: 'clamp(14px, 2vw, 20px)',
-                padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-                border: `1px solid rgba(197, 160, 89, 0.2)`
-              }}
-            >
-              <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
-                <Image className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
-                <h2
-                  className="text-lg sm:text-xl md:text-2xl font-bold text-center"
-                  style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
-                >
-                  Hình ảnh kỷ niệm
-                </h2>
-              </div>
-              
-              {/* Photo Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                {photos.map((photo) => (
-                  <div
-                    key={photo.id}
-                    className="relative aspect-square cursor-pointer group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                    onClick={() => setSelectedPhoto(photo)}
-                    style={{
-                      border: `1px solid rgba(197, 160, 89, 0.2)`
-                    }}
-                  >
-                    <img
-                      src={photo.url}
-                      alt={photo.caption || "Ảnh kỷ niệm"}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {photo.caption && (
-                      <div
-                        className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      >
-                        {photo.caption}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Subtle Divider */}
-        <div
-          style={{
-            height: '1px',
-            background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-            marginBottom: 'clamp(20px, 3vh, 28px)'
-          }}
-        />
-
-        {/* ============ 3. SECTION B: CAREER HISTORY (Full Width, Grid) ============ */}
+        {/* Career Section */}
         {hasCareerData && (
-          <>
-            <div
-              className="card-hover transition-all duration-300 mb-5 sm:mb-6"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                borderRadius: 'clamp(14px, 2vw, 20px)',
-                padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-                border: `1px solid rgba(197, 160, 89, 0.2)`
-              }}
-            >
-              <h2
-                className="text-base sm:text-lg md:text-xl font-bold text-center mb-4 sm:mb-5"
-                style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
-              >
-                Quá trình công tác
-              </h2>
-              {/* 2-Column Grid for Roles */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {profile.roles.map((role, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-3 sm:p-4 rounded-xl transition-colors"
-                    style={{
-                      backgroundColor: 'rgba(253, 252, 248, 0.8)',
-                      border: `1px solid rgba(197, 160, 89, 0.15)`
-                    }}
-                  >
-                    <Briefcase
-                      className="w-5 h-5 flex-shrink-0 mt-0.5"
-                      style={{ color: GOLD_ACCENT }}
-                    />
-                    <p className="text-sm sm:text-base" style={{ color: '#374151', lineHeight: 1.5 }}>
-                      {role}
-                    </p>
-                  </div>
-                ))}
-              </div>
+          <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.92)', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', border: `1px solid rgba(197, 160, 89, 0.2)` }}>
+            <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
+              Quá trình công tác
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {profile.roles.map((role, index) => (
+                <div key={index} className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(253, 252, 248, 0.8)', border: `1px solid rgba(197, 160, 89, 0.15)` }}>
+                  <Briefcase className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: GOLD_ACCENT }} />
+                  <p className="text-base" style={{ color: '#374151' }}>{role}</p>
+                </div>
+              ))}
             </div>
-
-            {/* Subtle Divider */}
-            <div
-              style={{
-                height: '1px',
-                background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-                marginBottom: 'clamp(20px, 3vh, 28px)'
-              }}
-            />
-          </>
+          </div>
         )}
 
-        {/* ============ 4. SECTION C: TRIBUTE FORM (Instead of QR) ============ */}
-        <div
-          className="card-hover transition-all duration-300 mb-5 sm:mb-6"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            borderRadius: 'clamp(14px, 2vw, 20px)',
-            padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-            border: `2px solid ${GOLD_ACCENT}40`
-          }}
-        >
-          <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
-            <PenLine className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: GOLD_ACCENT }} />
-            <h2
-              className="text-base sm:text-lg md:text-xl font-bold"
-              style={{ color: NAVY_PRIMARY }}
-            >
+        {/* Tribute Form */}
+        <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
+          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
+            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
               Gửi lời chia buồn
-            </h2>
-          </div>
-
-          <form onSubmit={onSubmitTribute}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+            </span>
+          </h2>
+          <form onSubmit={onSubmitTribute} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
-                id="tributeNameNormal"
-                placeholder="Họ và tên..."
+                type="text"
+                placeholder="Họ và tên"
                 value={formData.name}
                 onChange={(e) => onChangeForm({ name: e.target.value })}
-                required
-                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: 'rgba(253, 252, 248, 0.95)',
-                  border: `1px solid ${GOLD_ACCENT}30`,
-                  color: '#334155'
-                }}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
+                style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
               />
               <input
                 type="tel"
-                placeholder="Số điện thoại..."
+                placeholder="Số điện thoại"
                 value={formData.phone}
                 onChange={(e) => onChangeForm({ phone: e.target.value })}
-                required
-                className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: 'rgba(253, 252, 248, 0.95)',
-                  border: `1px solid ${GOLD_ACCENT}30`,
-                  color: '#334155'
-                }}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
+                style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
               />
             </div>
             <textarea
-              placeholder="Viết lời chia buồn..."
+              placeholder="Lời chia buồn..."
               value={formData.message}
               onChange={(e) => onChangeForm({ message: e.target.value })}
-              rows={3}
-              required
-              className="w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 resize-none mb-4"
-              style={{
-                backgroundColor: 'rgba(253, 252, 248, 0.95)',
-                border: `1px solid ${GOLD_ACCENT}30`,
-                color: '#334155'
-              }}
+              rows={4}
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 resize-none"
+              style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
             />
             <button
               type="submit"
-              className="btn-hover w-full py-3 rounded-full font-semibold text-sm transition-all duration-300"
-              style={{
-                backgroundColor: NAVY_PRIMARY,
-                color: '#ffffff',
-                boxShadow: '0 6px 20px rgba(30, 58, 95, 0.3)'
-              }}
+              className="w-full py-3 rounded-xl font-bold text-white btn-hover transition-all"
+              style={{ backgroundColor: NAVY_PRIMARY }}
             >
+              <PenLine className="w-5 h-5 inline mr-2" />
               Gửi lời chia buồn
             </button>
           </form>
         </div>
 
-        {/* Subtle Divider */}
-        <div
-          style={{
-            height: '1px',
-            background: `linear-gradient(90deg, transparent 10%, ${GOLD_ACCENT}40 35%, ${GOLD_ACCENT}40 65%, transparent 90%)`,
-            marginBottom: 'clamp(20px, 3vh, 28px)'
-          }}
-        />
-
-        {/* ============ 5. SECTION D: GUESTBOOK (Tributes List) ============ */}
-        <div
-          className="card-hover transition-all duration-300 mb-8"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-            borderRadius: 'clamp(14px, 2vw, 20px)',
-            padding: 'clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-            border: `1px solid rgba(197, 160, 89, 0.2)`
-          }}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4 sm:mb-5">
-            <h2
-              className="text-base sm:text-lg md:text-xl font-bold"
-              style={{ color: NAVY_PRIMARY, letterSpacing: '-0.5px' }}
-            >
+        {/* Tributes List */}
+        <div className="card-hover p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
+          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
+            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
               Lời chia buồn
-            </h2>
-            <span
-              className="text-xs sm:text-sm px-3 py-1.5 rounded-full font-semibold"
-              style={{
-                backgroundColor: `${GOLD_ACCENT}18`,
-                color: GOLD_ACCENT,
-                border: `1px solid ${GOLD_ACCENT}30`
-              }}
-            >
-              {tributes.length} lời nhắn
             </span>
-          </div>
-
-          {/* 2-Column Grid for Tributes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          </h2>
+          <div className="space-y-4">
             {tributes.map((t) => (
-              <div
-                key={t.id}
-                className="p-4 rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-                style={{
-                  backgroundColor: '#ffffff',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-                  border: `1px solid rgba(226, 232, 240, 0.8)`
-                }}
-              >
+              <div key={t.id} className="p-4 rounded-xl" style={{ backgroundColor: '#ffffff', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: `1px solid rgba(226, 232, 240, 0.8)` }}>
                 <div className="flex items-center gap-3 mb-2">
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm"
-                    style={{
-                      background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
-                      color: '#ffffff',
-                      boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)'
-                    }}
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
+                    style={{ background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)` }}
                   >
                     {t.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-bold text-sm" style={{ color: NAVY_PRIMARY }}>
-                      {t.name}
-                    </p>
-                    <p className="text-xs" style={{ color: '#94a3b8' }}>
-                      {t.date}
-                    </p>
+                    <p className="font-bold" style={{ color: NAVY_PRIMARY }}>{t.name}</p>
+                    <p className="text-sm text-gray-400">{t.date}</p>
                   </div>
                 </div>
-                <p className="text-sm" style={{ color: '#475569', lineHeight: 1.6 }}>
-                  {t.message}
-                </p>
+                <p className="text-gray-600">{t.message}</p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Share Button */}
+        <button
+          onClick={onOpenShare}
+          className="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg btn-hover"
+          style={{ backgroundColor: NAVY_PRIMARY }}
+        >
+          <Share2 className="w-6 h-6" />
+        </button>
       </div>
 
-      {/* Photo Lightbox Dialog */}
+      {/* Photo Modal */}
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
-        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+        <DialogContent className="max-w-4xl p-0 overflow-hidden">
           {selectedPhoto && (
-            <div className="relative">
-              <img
-                src={selectedPhoto.url}
-                alt={selectedPhoto.caption || "Ảnh kỷ niệm"}
-                className="w-full max-h-[80vh] object-contain rounded-lg"
-              />
-              {selectedPhoto.caption && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 p-4 text-white text-center bg-gradient-to-t from-black/80 to-transparent rounded-b-lg"
-                >
-                  {selectedPhoto.caption}
-                </div>
-              )}
-            </div>
+            <img
+              src={selectedPhoto.url}
+              alt={selectedPhoto.caption || ''}
+              className="w-full h-auto"
+            />
           )}
         </DialogContent>
       </Dialog>
     </div>
   );
 }
-
-
