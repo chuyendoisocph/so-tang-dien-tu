@@ -646,9 +646,9 @@ export default function MemorialProfileWeb({
         style={{
           fontFamily: "'Inter', sans-serif",
           width: '1080px',
-          height: 'auto', // Changed from fixed height
-          minHeight: '1920px'
-          // Removed overflow: 'hidden' and maxHeight to allow expansion
+          height: '1920px', // Fixed height - NO scrollbar
+          maxHeight: '1920px',
+          overflow: 'hidden' // Prevent any overflow
         }}
       >
         {/* Premium CSS Gradient Background (Cream to Muted Gold) */}
@@ -727,28 +727,31 @@ export default function MemorialProfileWeb({
             padding: '0 clamp(24px, 5vw, 80px)'
           }}
         >
-          {/* ============ 1. HEADER - Profile + Name + Dates ============ */}
+          {/* ============ 1. HEADER - Profile + Name + Dates (~35% = ~672px) ============ */}
           <div
             style={{
-              padding: 'clamp(32px, 4vh, 60px) 0 clamp(24px, 3vh, 40px)',
+              height: '35%', // Fixed 35% of 1920px = ~672px
+              minHeight: '600px',
+              padding: 'clamp(40px, 5vh, 70px) 0 clamp(30px, 4vh, 50px)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
               flexShrink: 0
             }}
           >
-            {/* Profile Picture */}
-            <div className="float-slide" style={{ marginBottom: 'clamp(16px, 2vh, 28px)' }}>
+            {/* Profile Picture - FOCAL POINT ~250px */}
+            <div className="float-slide" style={{ marginBottom: 'clamp(20px, 2.5vh, 32px)' }}>
               <img
                 src={profile.avatarUrl}
                 alt={profile.name}
                 style={{
-                  width: 'clamp(140px, 18vw, 260px)',
-                  height: 'clamp(175px, 22vw, 325px)',
+                  width: 'clamp(180px, 22vw, 280px)', // Larger: ~250px focal point
+                  height: 'clamp(225px, 28vw, 350px)', // Proportional height
                   objectFit: 'cover',
-                  borderRadius: 'clamp(12px, 1.5vw, 20px)',
-                  border: `4px solid ${GOLD_ACCENT}`,
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.15)'
+                  borderRadius: 'clamp(14px, 1.8vw, 24px)',
+                  border: `5px solid ${GOLD_ACCENT}`,
+                  boxShadow: '0 24px 60px rgba(0,0,0,0.18)'
                 }}
               />
             </div>
@@ -756,12 +759,12 @@ export default function MemorialProfileWeb({
             {/* Name - Bold & Dark */}
             <h1
               style={{
-                fontSize: 'clamp(32px, 5vw, 58px)',
+                fontSize: 'clamp(36px, 5.5vw, 64px)', // Larger name
                 fontWeight: 900,
                 color: NAVY_PRIMARY,
                 textAlign: 'center',
                 letterSpacing: '-1.5px',
-                marginBottom: 'clamp(8px, 1vh, 14px)',
+                marginBottom: 'clamp(10px, 1.2vh, 16px)',
                 textTransform: 'uppercase'
               }}
             >
@@ -771,29 +774,29 @@ export default function MemorialProfileWeb({
             {/* Dates */}
             <div
               style={{
-                fontSize: 'clamp(18px, 2.5vw, 30px)',
+                fontSize: 'clamp(22px, 3vw, 34px)', // Larger dates
                 color: GOLD_ACCENT,
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 'clamp(8px, 1vw, 14px)',
-                marginBottom: 'clamp(12px, 1.5vh, 20px)'
+                gap: 'clamp(10px, 1.2vw, 16px)',
+                marginBottom: 'clamp(14px, 1.8vh, 24px)'
               }}
             >
-              <Calendar style={{ width: 'clamp(20px, 2.5vw, 30px)', height: 'clamp(20px, 2.5vw, 30px)' }} />
+              <Calendar style={{ width: 'clamp(24px, 3vw, 34px)', height: 'clamp(24px, 3vw, 34px)' }} />
               {years}
             </div>
 
-            {/* Resting Place Text - Normal case, not uppercase */}
+            {/* Resting Place Text */}
             <div
               style={{
                 textAlign: 'center',
-                fontSize: 'clamp(16px, 2vw, 22px)',
+                fontSize: 'clamp(18px, 2.2vw, 26px)', // Larger text
                 fontStyle: 'italic',
                 color: '#555555',
                 letterSpacing: '0.5px',
                 lineHeight: 1.4,
-                textTransform: 'none' // Ensure no uppercase transformation
+                textTransform: 'none'
               }}
             >
               {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
@@ -810,28 +813,30 @@ export default function MemorialProfileWeb({
             }}
           />
 
-          {/* ============ 2. SECTION A: BIOGRAPHY WITH AUTO-SCROLL (Full Width, Center-Aligned) ============ */}
+          {/* ============ 2. SECTION A: BIOGRAPHY (~30% = ~576px) ============ */}
           <div
             style={{
-              padding: 'clamp(24px, 3vh, 40px) 0',
-              height: 'clamp(400px, 45vh, 600px)', // Increased from 300-500px to 400-600px
+              padding: 'clamp(16px, 2vh, 24px) 0',
+              flex: 1, // Takes remaining ~30%
               display: 'flex',
               flexDirection: 'column',
-              minHeight: 0
+              minHeight: '400px',
+              overflow: 'hidden'
             }}
           >
             <div
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.96)',
-                borderRadius: 'clamp(16px, 2vw, 24px)',
-                padding: 'clamp(28px, 3.5vw, 44px) clamp(32px, 4.5vw, 56px) clamp(20px, 2vh, 32px)',
-                boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
+                borderRadius: 'clamp(18px, 2.2vw, 26px)',
+                padding: 'clamp(24px, 3vw, 36px) clamp(32px, 4vw, 48px) clamp(20px, 2.5vh, 28px)',
+                boxShadow: '0 14px 56px rgba(0,0,0,0.07)',
                 border: `2px solid rgba(197, 160, 89, 0.3)`,
                 position: 'relative',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%', minHeight: 0
+                flex: 1,
+                minHeight: 0
               }}
             >
               {/* Decorative accents */}
@@ -839,27 +844,27 @@ export default function MemorialProfileWeb({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                width: 'clamp(60px, 8vw, 100px)',
-                height: 'clamp(60px, 8vw, 100px)',
+                width: 'clamp(70px, 9vw, 110px)',
+                height: 'clamp(70px, 9vw, 110px)',
                 background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
-                borderTopLeftRadius: 'clamp(16px, 2vw, 24px)'
+                borderTopLeftRadius: 'clamp(18px, 2.2vw, 26px)'
               }} />
               <div style={{
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
-                width: 'clamp(60px, 8vw, 100px)',
-                height: 'clamp(60px, 8vw, 100px)',
+                width: 'clamp(70px, 9vw, 110px)',
+                height: 'clamp(70px, 9vw, 110px)',
                 background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
-                borderBottomRightRadius: 'clamp(16px, 2vw, 24px)'
+                borderBottomRightRadius: 'clamp(18px, 2.2vw, 26px)'
               }} />
               
               <h2
                 style={{
-                  fontSize: 'clamp(22px, 2.8vw, 32px)',
+                  fontSize: 'clamp(24px, 3vw, 34px)',
                   fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(12px, 1.5vh, 16px)',
+                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
                   position: 'relative',
@@ -868,14 +873,12 @@ export default function MemorialProfileWeb({
               >
                 <span style={{
                   borderBottom: `3px solid ${GOLD_ACCENT}`,
-                  paddingBottom: 'clamp(6px, 1vh, 8px)',
+                  paddingBottom: 'clamp(8px, 1vh, 10px)',
                   display: 'inline-block'
                 }}>
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
-              
-
               
               {/* Auto-scrolling Biography */}
               <BiographyScroll
@@ -978,24 +981,31 @@ export default function MemorialProfileWeb({
             />
           )}
 
-          {/* ============ 4. BOTTOM GUESTBOOK CARD (SAME WIDTH AS BIOGRAPHY) ============ */}
+          {/* ============ 4. BOTTOM GUESTBOOK CARD (~35% = ~672px) ============ */}
           <div
             style={{
-              padding: 'clamp(24px, 3vh, 40px) 0', // SAME padding as biography section
-              flexShrink: 0
+              padding: 'clamp(14px, 1.8vh, 20px) 0',
+              height: '35%', // Fixed 35% of 1920px = ~672px
+              minHeight: '600px',
+              display: 'flex',
+              flexDirection: 'column',
+              flexShrink: 0,
+              overflow: 'hidden'
             }}
           >
             <div
               className="guestbook-container"
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.96)', // SAME background as biography
-                borderRadius: 'clamp(16px, 2vw, 24px)', // SAME border radius as biography
-                padding: 'clamp(28px, 3.5vw, 44px) clamp(32px, 4.5vw, 56px) clamp(20px, 2vh, 32px)', // SAME padding as biography
-                boxShadow: '0 12px 48px rgba(0,0,0,0.07)', // SAME shadow as biography
-                border: `2px solid rgba(197, 160, 89, 0.3)`, // SAME border as biography
-                position: 'relative', // For decorative accents
+                backgroundColor: 'rgba(255, 255, 255, 0.96)',
+                borderRadius: 'clamp(18px, 2.2vw, 26px)',
+                padding: 'clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 40px) clamp(18px, 2.2vh, 28px)',
+                boxShadow: '0 14px 56px rgba(0,0,0,0.07)',
+                border: `2px solid rgba(197, 160, 89, 0.3)`,
+                position: 'relative',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                height: '100%',
+                overflow: 'hidden'
               }}
             >
               {/* Decorative accents - SAME as biography */}
@@ -1018,13 +1028,13 @@ export default function MemorialProfileWeb({
                 borderBottomRightRadius: 'clamp(16px, 2vw, 24px)'
               }} />
 
-              {/* Header - Updated to be more generic and accurate */}
+              {/* Header - Prominent */}
               <h2
                 style={{
-                  fontSize: 'clamp(22px, 2.8vw, 32px)', // SAME as biography
+                  fontSize: 'clamp(24px, 3vw, 34px)', // Larger header
                   fontWeight: 900,
                   color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(12px, 1.5vh, 16px)',
+                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
                   textAlign: 'center',
                   letterSpacing: '-0.5px',
                   position: 'relative',
@@ -1033,42 +1043,42 @@ export default function MemorialProfileWeb({
               >
                 <span style={{
                   borderBottom: `3px solid ${GOLD_ACCENT}`,
-                  paddingBottom: 'clamp(6px, 1vh, 8px)',
+                  paddingBottom: 'clamp(6px, 0.8vh, 10px)',
                   display: 'inline-block'
                 }}>
                   Sổ Tang & Thông Tin
                 </span>
               </h2>
 
-              {/* Compact QR Section - Reduced Size */}
+              {/* QR Section - Balanced */}
               <div
                 style={{
-                  padding: 'clamp(12px, 1.5vw, 16px)', // Reduced from 20-32px
-                  borderRadius: 'clamp(12px, 1.5vw, 16px)', // Reduced from 16-20px
+                  padding: 'clamp(14px, 1.8vw, 20px)',
+                  borderRadius: 'clamp(14px, 1.8vw, 18px)',
                   background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
                   border: `2px solid ${GOLD_ACCENT}`,
-                  boxShadow: `0 4px 12px rgba(197, 160, 89, 0.15)`, // Reduced shadow
+                  boxShadow: `0 6px 20px rgba(197, 160, 89, 0.18)`,
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1px 1fr', // Thinner divider
-                  gap: 'clamp(8px, 1vw, 12px)', // Reduced gap
+                  gridTemplateColumns: '1fr 2px 1fr',
+                  gap: 'clamp(12px, 1.5vw, 18px)',
                   alignItems: 'center',
-                  marginBottom: 'clamp(12px, 1.5vh, 16px)', // Reduced margin
+                  marginBottom: 'clamp(14px, 1.8vh, 20px)',
                   flexShrink: 0
                 }}
               >
-                {/* Left Column - Memorial Tribute - Compact */}
+                {/* Left Column - Memorial Tribute */}
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 'clamp(6px, 0.8vw, 8px)' // Reduced gap
+                    gap: 'clamp(6px, 0.8vw, 10px)'
                   }}
                 >
                   <div style={{ textAlign: 'center' }}>
                     <h3
                       style={{
-                        fontSize: 'clamp(13px, 1.6vw, 16px)', // Reduced font size
+                        fontSize: 'clamp(15px, 1.8vw, 19px)',
                         fontWeight: 700,
                         color: NAVY_PRIMARY,
                         margin: '0 0 2px 0', // Reduced margin
@@ -1079,7 +1089,7 @@ export default function MemorialProfileWeb({
                     </h3>
                     <p
                       style={{
-                        fontSize: 'clamp(10px, 1.2vw, 12px)', // Reduced font size
+                        fontSize: 'clamp(12px, 1.4vw, 15px)',
                         color: '#64748b',
                         margin: 0
                       }}
@@ -1090,47 +1100,47 @@ export default function MemorialProfileWeb({
                   <div
                     style={{
                       backgroundColor: '#ffffff',
-                      padding: 'clamp(4px, 0.5vw, 6px)', // Reduced padding
-                      borderRadius: 'clamp(6px, 0.8vw, 8px)', // Reduced border radius
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.08)', // Reduced shadow
+                      padding: 'clamp(6px, 0.8vw, 10px)',
+                      borderRadius: 'clamp(8px, 1vw, 12px)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                       border: `1px solid rgba(197, 160, 89, 0.3)`
                     }}
                   >
                     <QRCodeSVG
                       value={publicUrl}
-                      size={Math.max(70, Math.min(80, window.innerWidth * 0.08))} // Significantly reduced size
+                      size={Math.max(85, Math.min(105, window.innerWidth * 0.1))} // Balanced QR size
                       level="H"
                       fgColor={NAVY_PRIMARY}
                     />
                   </div>
                 </div>
 
-                {/* Vertical Divider - Thinner */}
+                {/* Vertical Divider */}
                 <div
                   style={{
-                    width: '1px', // Reduced from 2px
-                    height: '60px', // Reduced from 120px
+                    width: '2px',
+                    height: '90px',
                     background: `linear-gradient(to bottom, transparent, ${GOLD_ACCENT}60, transparent)`,
                     justifySelf: 'center'
                   }}
                 />
 
-                {/* Right Column - Homepage - Compact */}
+                {/* Right Column - Homepage */}
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 'clamp(6px, 0.8vw, 8px)' // Reduced gap
+                    gap: 'clamp(6px, 0.8vw, 10px)'
                   }}
                 >
                   <div style={{ textAlign: 'center' }}>
                     <h3
                       style={{
-                        fontSize: 'clamp(13px, 1.6vw, 16px)', // Reduced font size
+                        fontSize: 'clamp(15px, 1.8vw, 19px)',
                         fontWeight: 700,
                         color: NAVY_PRIMARY,
-                        margin: '0 0 2px 0', // Reduced margin
+                        margin: '0 0 3px 0',
                         letterSpacing: '-0.2px'
                       }}
                     >
@@ -1138,7 +1148,7 @@ export default function MemorialProfileWeb({
                     </h3>
                     <p
                       style={{
-                        fontSize: 'clamp(10px, 1.2vw, 12px)', // Reduced font size
+                        fontSize: 'clamp(12px, 1.4vw, 15px)',
                         color: '#64748b',
                         margin: 0
                       }}
@@ -1149,15 +1159,15 @@ export default function MemorialProfileWeb({
                   <div
                     style={{
                       backgroundColor: '#ffffff',
-                      padding: 'clamp(4px, 0.5vw, 6px)', // Reduced padding
-                      borderRadius: 'clamp(6px, 0.8vw, 8px)', // Reduced border radius
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.08)', // Reduced shadow
+                      padding: 'clamp(6px, 0.8vw, 10px)',
+                      borderRadius: 'clamp(8px, 1vw, 12px)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                       border: `1px solid rgba(197, 160, 89, 0.3)`
                     }}
                   >
                     <QRCodeSVG
                       value="https://cphaco.vn"
-                      size={Math.max(70, Math.min(80, window.innerWidth * 0.08))} // Significantly reduced size
+                      size={Math.max(85, Math.min(105, window.innerWidth * 0.1))} // Balanced QR size
                       level="H"
                       fgColor={NAVY_PRIMARY}
                     />
@@ -1165,26 +1175,26 @@ export default function MemorialProfileWeb({
                 </div>
               </div>
 
-              {/* Sub-header for Messages Section - Reduced spacing */}
+              {/* Sub-header for Messages Section */}
               <h3
                 style={{
-                  fontSize: 'clamp(14px, 1.8vw, 18px)', // Slightly reduced
+                  fontSize: 'clamp(16px, 2vw, 22px)',
                   fontWeight: 700,
                   color: NAVY_PRIMARY,
-                  marginBottom: 'clamp(6px, 0.8vh, 8px)', // Reduced margin
+                  marginBottom: 'clamp(10px, 1.2vh, 14px)',
                   textAlign: 'left',
                   letterSpacing: '-0.2px',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 'clamp(6px, 0.8vw, 8px)' // Reduced gap
+                  gap: 'clamp(8px, 1vw, 12px)'
                 }}
               >
                 Lời nhắn mới nhất
                 <span
                   style={{
-                    fontSize: 'clamp(10px, 1.1vw, 12px)', // Reduced font size
-                    padding: 'clamp(3px, 0.4vw, 4px) clamp(6px, 0.8vw, 8px)', // Reduced padding
+                    fontSize: 'clamp(11px, 1.3vw, 14px)',
+                    padding: 'clamp(4px, 0.5vw, 6px) clamp(8px, 1vw, 12px)',
                     borderRadius: '9999px',
                     backgroundColor: `${GOLD_ACCENT}18`,
                     color: GOLD_ACCENT,
@@ -1196,56 +1206,62 @@ export default function MemorialProfileWeb({
                 </span>
               </h3>
 
-              {/* 4 Messages in 2x2 Grid - Compact Design */}
+              {/* 4 Messages in 2x2 Grid - Balanced Cards */}
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr', // 2 columns
-                  gridTemplateRows: '1fr 1fr', // 2 rows
-                  gap: 'clamp(8px, 1vw, 10px)', // Reduced gap
-                  flexShrink: 0
+                  gridTemplateColumns: '1fr 1fr',
+                  gridTemplateRows: '1fr 1fr',
+                  gap: 'clamp(10px, 1.2vw, 14px)',
+                  flex: 1,
+                  overflow: 'hidden'
                 }}
               >
-                {tributes.slice(0, 4).map((t) => ( // Changed from 2 to 4 messages
+                {tributes.slice(0, 4).map((t) => (
                   <div
                     key={t.id}
                     style={{
-                      padding: 'clamp(8px, 1vw, 10px)', // Reduced padding significantly
-                      borderRadius: 'clamp(8px, 1vw, 10px)', // Reduced border radius
+                      padding: 'clamp(12px, 1.5vw, 18px)',
+                      borderRadius: 'clamp(12px, 1.5vw, 16px)',
                       backgroundColor: '#ffffff',
-                      boxShadow: '0 1px 4px rgba(0,0,0,0.04)', // Reduced shadow
-                      border: `1px solid rgba(226, 232, 240, 0.8)`
+                      boxShadow: '0 3px 12px rgba(0,0,0,0.05)',
+                      border: `1px solid rgba(226, 232, 240, 0.8)`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      overflow: 'hidden'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 0.8vw, 8px)', marginBottom: 'clamp(4px, 0.5vh, 6px)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(10px, 1.2vw, 14px)', marginBottom: 'clamp(8px, 1vh, 10px)' }}>
                       <div
                         style={{
-                          width: 'clamp(20px, 2.5vw, 24px)', // Reduced avatar size
-                          height: 'clamp(20px, 2.5vw, 24px)', // Reduced avatar size
+                          width: 'clamp(32px, 4vw, 42px)',
+                          height: 'clamp(32px, 4vw, 42px)',
                           borderRadius: '50%',
                           background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#ffffff',
-                          fontSize: 'clamp(10px, 1.2vw, 12px)', // Reduced font size
+                          fontSize: 'clamp(14px, 1.7vw, 18px)',
                           fontWeight: 700,
-                          boxShadow: '0 1px 3px rgba(197, 160, 89, 0.3)' // Reduced shadow
+                          boxShadow: '0 3px 10px rgba(197, 160, 89, 0.3)',
+                          flexShrink: 0
                         }}
                       >
                         {t.name.charAt(0)}
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}> {/* Added flex and minWidth for text truncation */}
-                        <p style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700, color: NAVY_PRIMARY, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 'clamp(14px, 1.7vw, 18px)', fontWeight: 700, color: NAVY_PRIMARY, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {t.name}
                         </p>
-                        <p style={{ fontSize: 'clamp(8px, 1vw, 10px)', color: '#94a3b8', margin: 0 }}>
+                        <p style={{ fontSize: 'clamp(10px, 1.2vw, 13px)', color: '#94a3b8', margin: 0 }}>
                           {t.date}
                         </p>
                       </div>
                     </div>
-                    <p style={{ fontSize: 'clamp(9px, 1.1vw, 11px)', color: '#475569', lineHeight: 1.3, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {t.message.length > 45 ? t.message.slice(0, 45) + '...' : t.message} {/* Reduced character limit for compact display */}
+                    <p style={{ fontSize: 'clamp(12px, 1.5vw, 16px)', color: '#475569', lineHeight: 1.4, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {t.message.length > 65 ? t.message.slice(0, 65) + '...' : t.message}
                     </p>
                   </div>
                 ))}
