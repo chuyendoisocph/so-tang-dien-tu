@@ -276,7 +276,7 @@ export default function MemorialProfileWeb({
                 background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
                 borderBottomRightRadius: '24px'
               }} />
-              
+
               <h2
                 style={{
                   fontSize: '32px',
@@ -297,8 +297,8 @@ export default function MemorialProfileWeb({
                   Tiểu sử & Cuộc đời
                 </span>
               </h2>
-              
-              
+
+
               {/* Auto-scrolling Biography */}
               <BiographyScroll
                 biography={profile.biography}
@@ -509,14 +509,14 @@ export default function MemorialProfileWeb({
           </div>
 
           {/* ============ FOOTER - DUAL QR CODE SECTION (Fixed Bottom) ============ */}
-            <div
-              style={{
-                marginTop: 'auto',
-                backgroundColor: NAVY_PRIMARY,
-                padding: '40px 40px 50px', // Increased padding
-                flexShrink: 0
-              }}
-            >
+          <div
+            style={{
+              marginTop: 'auto',
+              backgroundColor: NAVY_PRIMARY,
+              padding: '40px 40px 50px', // Increased padding
+              flexShrink: 0
+            }}
+          >
             {/* Dual QR Grid */}
             <div
               style={{
@@ -844,7 +844,7 @@ export default function MemorialProfileWeb({
               background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
               borderBottomRightRadius: '20px'
             }} />
-            
+
             <h2
               style={{
                 fontSize: '26px',
@@ -865,7 +865,7 @@ export default function MemorialProfileWeb({
                 Tiểu sử & Cuộc đời
               </span>
             </h2>
-            
+
             {/* Auto-scrolling Biography with strong gradient mask */}
             <div className="bio-scroll-mask" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
               <BiographyScroll
@@ -998,10 +998,10 @@ export default function MemorialProfileWeb({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
-                    Thông Tin CPHACO
+                    Kết nối với Hoa Viên
                   </h3>
                   <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-                    Quét để xem thông tin
+                    Giải pháp trọn vẹn
                   </p>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
@@ -1045,7 +1045,7 @@ export default function MemorialProfileWeb({
                 gridTemplateRows: '1fr 1fr',
                 gap: '14px',
                 flex: 1,
-  
+                overflow: 'hidden'
               }}
             >
               {tributes.slice(0, 4).map((t) => (
@@ -1166,8 +1166,8 @@ export default function MemorialProfileWeb({
           }}
         >
           {/* Profile Picture */}
-          <div 
-            className="float-normal cursor-pointer" 
+          <div
+            className="float-normal cursor-pointer"
             style={{ marginBottom: 'clamp(14px, 2vh, 24px)' }}
             onClick={() => setSelectedPhoto({ id: 'avatar', url: profile.avatarUrl, caption: profile.name, display_order: null })}
           >
@@ -1227,7 +1227,7 @@ export default function MemorialProfileWeb({
               Tiểu sử & Cuộc đời
             </span>
           </h2>
-          <div 
+          <div
             className="prose prose-lg max-w-none"
             style={{ color: '#374151', lineHeight: 1.8 }}
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
