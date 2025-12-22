@@ -1254,10 +1254,10 @@ export default function MemorialProfileWeb({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
-                    Quét để gửi lời chia buồn
+                    Gửi lời chia buồn
                   </h3>
                   <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-
+                    Quét để gửi lời chia buồn
                   </p>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
@@ -1272,10 +1272,10 @@ export default function MemorialProfileWeb({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
-                    Quét mã QR để nhận khuyến mãi
+                    Kết nối với Hoa Viên
                   </h3>
                   <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-
+                    Quét mã QR để nhận khuyến mãi
                   </p>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
@@ -1602,7 +1602,7 @@ export default function MemorialProfileWeb({
               paddingBottom: '8px',
               display: 'inline-block'
             }}>
-              Tiểu sử & Cuộc đời 
+              Tiểu sử & Cuộc đời
             </span>
           </h2>
           <div
