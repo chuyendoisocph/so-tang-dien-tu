@@ -1602,7 +1602,7 @@ export default function MemorialProfileWeb({
               paddingBottom: '8px',
               display: 'inline-block'
             }}>
-              Tiểu sử & Cuộc đời
+              Tiểu sử & Cuộc đời 
             </span>
           </h2>
           <div
