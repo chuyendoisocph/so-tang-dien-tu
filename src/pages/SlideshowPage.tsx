@@ -170,7 +170,7 @@ const SlideshowPage = () => {
 
         {/* Main Title */}
         <h1 className="font-serif text-7xl font-bold uppercase tracking-[0.2em] text-card mb-8">
-          Vĩnh Biệt
+          Tưởng niệm
         </h1>
 
         {/* Portrait Frame */}

@@ -1,0 +1,17 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#3B82F6" stroke="#1E40AF" stroke-width="2"/>
+  
+  <!-- CPHACO text -->
+  <text x="32" y="24" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">CPHACO</text>
+  
+  <!-- Admin icon -->
+  <rect x="24" y="28" width="16" height="12" rx="2" fill="white" opacity="0.9"/>
+  <rect x="26" y="30" width="12" height="2" fill="#3B82F6"/>
+  <rect x="26" y="33" width="8" height="1" fill="#3B82F6"/>
+  <rect x="26" y="35" width="10" height="1" fill="#3B82F6"/>
+  <rect x="26" y="37" width="6" height="1" fill="#3B82F6"/>
+  
+  <!-- Crown icon for admin -->
+  <path d="M28 26 L30 24 L32 26 L34 24 L36 26 L35 28 L29 28 Z" fill="#FFD700"/>
+</svg>

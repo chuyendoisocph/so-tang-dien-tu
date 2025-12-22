@@ -44,7 +44,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <MobileHeader onToggle={toggleSidebar} />
 
       <Sidebar
@@ -54,14 +54,16 @@ const Index = () => {
         onToggle={toggleSidebar}
       />
 
-      <main className="lg:ml-64 pt-16 lg:pt-0 p-4 sm:p-6 lg:p-10 min-h-screen">
-        {activeTab === "profiles" && (
-          <ProfilesTab onCreateNew={handleCreateNew} onEdit={handleEdit} />
-        )}
-        {activeTab === "create" && (
-          <CreateEditTab onBack={handleBackToProfiles} editingProfile={editingProfile} />
-        )}
-        {activeTab === "slideshow" && <SlideshowTab />}
+      <main className="lg:ml-64 pt-20 lg:pt-6 px-3 pb-6 sm:px-4 lg:px-6 min-h-screen flex items-start justify-center">
+        <div className="w-full max-w-6xl">
+          {activeTab === "profiles" && (
+            <ProfilesTab onCreateNew={handleCreateNew} onEdit={handleEdit} />
+          )}
+          {activeTab === "create" && (
+            <CreateEditTab onBack={handleBackToProfiles} editingProfile={editingProfile} />
+          )}
+          {activeTab === "slideshow" && <SlideshowTab />}
+        </div>
       </main>
     </div>
   );

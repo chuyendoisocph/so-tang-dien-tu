@@ -138,220 +138,272 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             {editingProfile ? "Chỉnh sửa Hồ Sơ" : "Tạo Hồ Sơ Mới"}
           </h1>
-          <p className="text-muted-foreground hidden sm:block">
-            Nhập thông tin chi tiết để hiển thị.
+          <p className="text-muted-foreground text-sm">
+            {editingProfile ? `Cập nhật thông tin cho ${editingProfile.name}` : "Nhập thông tin chi tiết để tạo trang tưởng niệm"}
           </p>
         </div>
-        <Button variant="outline" onClick={onBack} className="bg-card">
+        <Button variant="outline" onClick={onBack} className="bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Quay lại
+          Quay lại danh sách
         </Button>
       </div>
 
       {/* Form Card */}
-      <Card className="shadow-card">
-        <CardContent className="p-6 sm:p-8">
-          <form onSubmit={handleSubmit}>
+      <Card className="shadow-xl border-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
+        <CardContent className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Info Section */}
-            <h5 className="text-primary font-bold mb-6 text-lg">Thông tin cơ bản</h5>
-
-            {/* Row 1: Name and Slug */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-2">
-                <Label htmlFor="full_name">
-                  Họ và Tên <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="full_name"
-                  placeholder="VD: Hoàng Nam Tiến"
-                  className="font-semibold"
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  required
-                />
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                  <span className="text-primary font-bold text-xs">1</span>
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">Thông tin cơ bản</h3>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="slug">Mã Hồ Sơ</Label>
-                <Input
-                  id="slug"
-                  placeholder="Tự động tạo từ họ tên..."
-                  value={slug}
-                  onChange={(e) => handleSlugChange(e.target.value.toUpperCase())}
-                  className="font-mono uppercase"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Mã dùng cho link QR. Tự động tạo hoặc nhập tùy chỉnh.
-                </p>
-              </div>
-            </div>
-
-            {/* Row 2: Years and Publish */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="space-y-2">
-                <Label htmlFor="birth_year">Năm sinh</Label>
-                <Input
-                  id="birth_year"
-                  type="number"
-                  placeholder="1960"
-                  min={1800}
-                  max={new Date().getFullYear()}
-                  value={birthYear}
-                  onChange={(e) => setBirthYear(e.target.value)}
-                  className="text-center"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="death_year">Năm mất</Label>
-                <Input
-                  id="death_year"
-                  type="number"
-                  placeholder="2025"
-                  min={1800}
-                  max={new Date().getFullYear() + 1}
-                  value={deathYear}
-                  onChange={(e) => setDeathYear(e.target.value)}
-                  className="text-center"
-                />
-              </div>
-
-              <div className="col-span-2 flex items-end">
-                <div className="flex items-center justify-between w-full p-3 rounded-lg border bg-muted/30">
-                  <div>
-                    <Label className="font-medium">Xuất bản</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Hiển thị công khai
-                    </p>
-                  </div>
-                  <Switch
-                    checked={isPublished}
-                    onCheckedChange={setIsPublished}
+              {/* Row 1: Name and Slug */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Họ và Tên <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="full_name"
+                    placeholder="VD: Hoàng Nam Tiến"
+                    className="font-semibold border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                    value={name}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    required
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="slug" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Mã Hồ Sơ
+                  </Label>
+                  <Input
+                    id="slug"
+                    placeholder="Tự động tạo từ họ tên..."
+                    value={slug}
+                    onChange={(e) => handleSlugChange(e.target.value.toUpperCase())}
+                    className="font-mono uppercase border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  />
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Mã dùng cho link QR. Tự động tạo hoặc nhập tùy chỉnh.
+                  </p>
+                </div>
+              </div>
+
+              {/* Row 2: Years and Publish */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="birth_year" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Năm sinh
+                  </Label>
+                  <Input
+                    id="birth_year"
+                    type="number"
+                    placeholder="1960"
+                    min={1800}
+                    max={new Date().getFullYear()}
+                    value={birthYear}
+                    onChange={(e) => setBirthYear(e.target.value)}
+                    className="text-center border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="death_year" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Năm mất
+                  </Label>
+                  <Input
+                    id="death_year"
+                    type="number"
+                    placeholder="2025"
+                    min={1800}
+                    max={new Date().getFullYear() + 1}
+                    value={deathYear}
+                    onChange={(e) => setDeathYear(e.target.value)}
+                    className="text-center border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  />
+                </div>
+
+                <div className="col-span-2 flex items-end">
+                  <div className="flex items-center justify-between w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950">
+                    <div>
+                      <Label className="font-semibold text-green-700 dark:text-green-300 text-sm">Xuất bản</Label>
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        Hiển thị công khai trên web
+                      </p>
+                    </div>
+                    <Switch
+                      checked={isPublished}
+                      onCheckedChange={setIsPublished}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Image Upload */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="space-y-2">
-                <Label>Ảnh chân dung (Avatar)</Label>
-                <ImageUpload
-                  value={avatarUrl}
-                  onChange={setAvatarUrl}
-                  onRemove={() => setAvatarUrl("")}
-                  aspectRatio="square"
-                  placeholder="Nhấn hoặc kéo thả ảnh vào đây"
-                />
+            {/* Image Upload Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center">
+                  <span className="text-blue-600 font-bold text-sm">2</span>
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Hình ảnh</h3>
               </div>
 
-              <div className="space-y-2">
-                <Label>Ảnh bìa (Cover)</Label>
-                <ImageUpload
-                  value={coverUrl}
-                  onChange={setCoverUrl}
-                  onRemove={() => setCoverUrl("")}
-                  aspectRatio="square"
-                  placeholder="Nhấn hoặc kéo thả ảnh vào đây"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Ảnh chân dung (Avatar)
+                  </Label>
+                  <ImageUpload
+                    value={avatarUrl}
+                    onChange={setAvatarUrl}
+                    onRemove={() => setAvatarUrl("")}
+                    aspectRatio="square"
+                    placeholder="Nhấn hoặc kéo thả ảnh vào đây"
+                  />
+                  <p className="text-xs text-slate-500">Khuyến nghị: 400x400px, định dạng JPG/PNG</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Ảnh bìa (Cover)
+                  </Label>
+                  <ImageUpload
+                    value={coverUrl}
+                    onChange={setCoverUrl}
+                    onRemove={() => setCoverUrl("")}
+                    aspectRatio="square"
+                    placeholder="Nhấn hoặc kéo thả ảnh vào đây"
+                  />
+                  <p className="text-xs text-slate-500">Khuyến nghị: 1200x800px, định dạng JPG/PNG</p>
+                </div>
               </div>
             </div>
 
             {/* Detail Section */}
-            <h5 className="text-primary font-bold mb-6 text-lg">Nội dung chi tiết</h5>
-
-            <div className="mb-6">
-              <Label htmlFor="biography">Tiểu sử (Web)</Label>
-              <Textarea
-                id="biography"
-                className="mt-2 min-h-[200px]"
-                placeholder="Nhập tiểu sử..."
-                value={biography}
-                onChange={(e) => setBiography(e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Roles */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label>Danh sách Chức vụ (TV)</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addRole}>
-                    <Plus className="h-4 w-4 mr-1" />
-                    Thêm
-                  </Button>
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center">
+                  <span className="text-purple-600 font-bold text-sm">3</span>
                 </div>
-                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
-                  {roles.map((role, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
-                      <Input
-                        placeholder={`Chức vụ ${index + 1}`}
-                        className="flex-1"
-                        value={role}
-                        onChange={(e) => updateRole(index, e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeRole(index)}
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Nội dung chi tiết</h3>
               </div>
 
-              {/* Locations */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label>Địa điểm tổ chức (TV)</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addLocation}>
-                    <Plus className="h-4 w-4 mr-1" />
-                    Thêm
-                  </Button>
+              <div className="space-y-3">
+                <Label htmlFor="biography" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Tiểu sử (Hiển thị trên web)
+                </Label>
+                <Textarea
+                  id="biography"
+                  className="min-h-[200px] border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  placeholder="Nhập tiểu sử, thành tích, kỷ niệm đáng nhớ..."
+                  value={biography}
+                  onChange={(e) => setBiography(e.target.value)}
+                />
+                <p className="text-xs text-slate-500">Mô tả cuộc đời, sự nghiệp và những kỷ niệm đáng nhớ</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Roles */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      Danh sách Chức vụ (TV)
+                    </Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addRole} className="shadow-sm">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Thêm
+                    </Button>
+                  </div>
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50 space-y-3 max-h-64 overflow-y-auto">
+                    {roles.map((role, index) => (
+                      <div key={index} className="flex items-center gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <Input
+                          placeholder={`Chức vụ ${index + 1}`}
+                          className="flex-1 border-slate-300 focus:border-primary"
+                          value={role}
+                          onChange={(e) => updateRole(index, e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeRole(index)}
+                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="border rounded-lg p-4 bg-card space-y-2 max-h-64 overflow-y-auto">
-                  {locations.map((location, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded-lg">
-                      <Input
-                        placeholder={`Địa điểm ${index + 1}`}
-                        className="flex-1"
-                        value={location}
-                        onChange={(e) => updateLocation(index, e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeLocation(index)}
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+
+                {/* Locations */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      Địa điểm tổ chức (TV)
+                    </Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addLocation} className="shadow-sm">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Thêm
+                    </Button>
+                  </div>
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50 space-y-3 max-h-64 overflow-y-auto">
+                    {locations.map((location, index) => (
+                      <div key={index} className="flex items-center gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <Input
+                          placeholder={`Địa điểm ${index + 1}`}
+                          className="flex-1 border-slate-300 focus:border-primary"
+                          value={location}
+                          onChange={(e) => updateLocation(index, e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeLocation(index)}
+                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-              <Button type="button" variant="secondary" onClick={onBack} className="sm:order-1" disabled={isSubmitting}>
-                Hủy
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-8 border-t border-slate-200 dark:border-slate-700">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onBack} 
+                className="sm:order-1 bg-white/50 backdrop-blur-sm" 
+                disabled={isSubmitting}
+              >
+                Hủy bỏ
               </Button>
-              <Button type="submit" className="shadow-sm sm:order-2" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                className="shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/90 sm:order-2" 
+                disabled={isSubmitting}
+              >
                 {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {editingProfile ? "Cập nhật Hồ Sơ" : "Lưu Hồ Sơ"}
+                {editingProfile ? "Cập nhật Hồ Sơ" : "Lưu Hồ Sơ Mới"}
               </Button>
             </div>
           </form>

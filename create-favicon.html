@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Favicon from Logo</title>
+</head>
+<body>
+    <h2>Tạo Favicon từ Logo</h2>
+    <p>Để tạo favicon từ logo "CPH LOGO 1.png", bạn có thể:</p>
+    
+    <h3>Cách 1: Sử dụng Online Tool (Khuyến nghị)</h3>
+    <ol>
+        <li>Truy cập: <a href="https://favicon.io/favicon-converter/" target="_blank">https://favicon.io/favicon-converter/</a></li>
+        <li>Upload file: <code>src/assets/images/logos/CPH LOGO 1.png</code></li>
+        <li>Download favicon package</li>
+        <li>Copy các file vào thư mục <code>public/</code>:
+            <ul>
+                <li>favicon.ico</li>
+                <li>favicon-16x16.png</li>
+                <li>favicon-32x32.png</li>
+                <li>apple-touch-icon.png</li>
+                <li>android-chrome-192x192.png</li>
+                <li>android-chrome-512x512.png</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>Cách 2: Sử dụng ImageMagick (nếu đã cài)</h3>
+    <pre>
+# Tạo favicon.ico
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 16x16 -resize 32x32 -resize 48x48 public/favicon.ico
+
+# Tạo các PNG sizes
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 16x16 public/favicon-16x16.png
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 32x32 public/favicon-32x32.png
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 180x180 public/apple-touch-icon.png
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 192x192 public/android-chrome-192x192.png
+magick "src/assets/images/logos/CPH LOGO 1.png" -resize 512x512 public/android-chrome-512x512.png
+    </pre>
+
+    <h3>Hiện tại đã setup:</h3>
+    <ul>
+        <li>✅ Logo component sử dụng "CPH LOGO 1.png"</li>
+        <li>✅ Logo hiển thị trong Sidebar (desktop & mobile)</li>
+        <li>✅ Favicon tạm thời sử dụng logo.png</li>
+        <li>⏳ Cần tạo favicon.ico và các sizes khác</li>
+    </ul>
+
+    <canvas id="canvas" width="32" height="32" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <p><small>Preview favicon 32x32px</small></p>
+
+    <script>
+        // Simple favicon preview
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const img = new Image();
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0, 32, 32);
+        };
+        img.src = '/logo.png';
+    </script>
+</body>
+</html>

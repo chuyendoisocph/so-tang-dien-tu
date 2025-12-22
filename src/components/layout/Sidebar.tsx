@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Users, UserPlus, PlayCircle, X, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/ui/Logo";
 
 interface SidebarProps {
   activeTab: string;
@@ -44,12 +45,15 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
         </div>
 
         {/* Brand */}
-        <div className="hidden lg:flex flex-col items-center p-6 border-b border-sidebar-border">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-            <span className="text-2xl font-bold text-primary">CPH</span>
+        <div className="hidden lg:flex flex-col items-center p-6 border-b border-sidebar-border bg-gradient-to-b from-primary/5 to-transparent">
+          <div className="w-16 h-16 rounded-xl bg-white shadow-lg flex items-center justify-center mb-3 p-2">
+            <Logo size="md" className="max-w-full max-h-full object-contain" />
           </div>
           <span className="text-primary font-bold text-sm uppercase tracking-wide">
-            Admin Portal
+            CPHACO Admin
+          </span>
+          <span className="text-xs text-muted-foreground mt-1">
+            Sổ Tang Điện Tử
           </span>
         </div>
 
@@ -89,15 +93,18 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
 
 export const MobileHeader = ({ onToggle }: { onToggle: () => void }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-30 lg:hidden">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-border z-30 lg:hidden shadow-sm">
       <div className="flex items-center justify-between h-full px-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary">CPH</span>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-white shadow-md flex items-center justify-center p-1">
+            <Logo size="sm" className="max-w-full max-h-full object-contain" />
           </div>
-          <span className="font-bold text-primary">CPHACO ADMIN</span>
+          <div>
+            <span className="font-bold text-primary text-sm">CPHACO ADMIN</span>
+            <p className="text-xs text-muted-foreground">Sổ Tang Điện Tử</p>
+          </div>
         </div>
-        <Button variant="outline" size="icon" onClick={onToggle}>
+        <Button variant="outline" size="icon" onClick={onToggle} className="shadow-sm">
           <Menu className="h-5 w-5" />
         </Button>
       </div>
