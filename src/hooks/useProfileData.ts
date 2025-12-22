@@ -134,6 +134,7 @@ export function useProfileData(profileIdOrSlug: string | undefined) {
     profile: transformedProfile,
     photos: photosQuery.data || [],
     timeline: timelineQuery.data || [],
+    actualProfileId: profileQuery.data?.id, // Return the actual UUID
     isLoading:
       profileQuery.isLoading ||
       photosQuery.isLoading ||

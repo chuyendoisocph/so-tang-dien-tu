@@ -11,13 +11,13 @@ const SlideshowPage = () => {
   const navigate = useNavigate();
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [nextIndex, setNextIndex] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [isVisible, setIsVisible] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [animationPhase, setAnimationPhase] = useState('enter'); // 'enter', 'stay', 'exit'
+  const [animationPhase, setAnimationPhase] = useState('stay'); // 'enter', 'stay', 'exit'
 
   const intervalTime = parseInt(searchParams.get("time") || "15") * 1000;
   const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
@@ -60,15 +60,12 @@ const SlideshowPage = () => {
   useEffect(() => {
     const title = playlist ? `Trình Chiếu - ${playlist.name}` : "Trình Chiếu Tưởng Niệm";
     document.title = title;
-    if (!isLoadingProfiles && !isLoadingPlaylist) {
-      // Smooth entrance animation
-      setTimeout(() => {
-        setIsVisible(true);
-        setAnimationPhase('enter');
-        setTimeout(() => setAnimationPhase('stay'), 800);
-      }, 200);
+    if (!isLoadingProfiles && !isLoadingPlaylist && profiles.length > 0) {
+      // Initialize next index
+      setNextIndex(1 % profiles.length);
+      setAnimationPhase('stay');
     }
-  }, [isLoadingProfiles, isLoadingPlaylist, playlist]);
+  }, [isLoadingProfiles, isLoadingPlaylist, playlist, profiles.length]);
 
   // Clock update
   useEffect(() => {
@@ -100,45 +97,62 @@ const SlideshowPage = () => {
   }, [progress]);
 
   const nextSlide = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || profiles.length === 0) return;
     
     setIsTransitioning(true);
     setAnimationPhase('exit');
     
+    // Much faster transition - 300ms total
     setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % profiles.length);
+      const newIndex = (currentIndex + 1) % profiles.length;
+      setCurrentIndex(newIndex);
+      setNextIndex((newIndex + 1) % profiles.length);
       setProgress(0);
       setAnimationPhase('enter');
       
+      // Quick enter animation - 300ms
       setTimeout(() => {
         setAnimationPhase('stay');
         setIsTransitioning(false);
-      }, 1000);
-    }, 800);
-  }, [profiles.length, isTransitioning]);
+      }, 300);
+    }, 300);
+  }, [profiles.length, isTransitioning, currentIndex]);
 
   const prevSlide = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || profiles.length === 0) return;
     
     setIsTransitioning(true);
     setAnimationPhase('exit');
     
+    // Much faster transition - 300ms total
     setTimeout(() => {
-      setCurrentIndex((prev) => (prev - 1 + profiles.length) % profiles.length);
+      const newIndex = (currentIndex - 1 + profiles.length) % profiles.length;
+      setCurrentIndex(newIndex);
+      setNextIndex((newIndex + 1) % profiles.length);
       setProgress(0);
       setAnimationPhase('enter');
       
+      // Quick enter animation - 300ms
       setTimeout(() => {
         setAnimationPhase('stay');
         setIsTransitioning(false);
-      }, 1000);
-    }, 800);
-  }, [profiles.length, isTransitioning]);
+      }, 300);
+    }, 300);
+  }, [profiles.length, isTransitioning, currentIndex]);
 
   const togglePause = () => setIsPaused(!isPaused);
   const exitSlideshow = () => navigate("/");
 
   const currentProfile = profiles[currentIndex];
+  const nextProfile = profiles[nextIndex];
+
+  // Preload next profile image
+  useEffect(() => {
+    if (nextProfile?.avatarUrl) {
+      const img = new Image();
+      img.src = nextProfile.avatarUrl;
+    }
+  }, [nextProfile]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
@@ -192,22 +206,12 @@ const SlideshowPage = () => {
         @keyframes slideEnter {
           0% {
             opacity: 0;
-            transform: translateY(80px) scale(0.9) rotateX(10deg);
-            filter: blur(12px);
-          }
-          30% {
-            opacity: 0.3;
-            transform: translateY(40px) scale(0.95) rotateX(5deg);
-            filter: blur(6px);
-          }
-          70% {
-            opacity: 0.8;
-            transform: translateY(10px) scale(0.99) rotateX(1deg);
-            filter: blur(1px);
+            transform: translateY(30px) scale(0.95);
+            filter: blur(4px);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1) rotateX(0deg);
+            transform: translateY(0) scale(1);
             filter: blur(0);
           }
         }
@@ -215,60 +219,46 @@ const SlideshowPage = () => {
         @keyframes slideExit {
           0% {
             opacity: 1;
-            transform: translateY(0) scale(1) rotateX(0deg);
+            transform: translateY(0) scale(1);
             filter: blur(0);
-          }
-          30% {
-            opacity: 0.8;
-            transform: translateY(-10px) scale(1.01) rotateX(-1deg);
-            filter: blur(1px);
-          }
-          70% {
-            opacity: 0.3;
-            transform: translateY(-40px) scale(1.05) rotateX(-5deg);
-            filter: blur(6px);
           }
           100% {
             opacity: 0;
-            transform: translateY(-80px) scale(1.1) rotateX(-10deg);
-            filter: blur(12px);
+            transform: translateY(-30px) scale(1.05);
+            filter: blur(4px);
           }
         }
         
         @keyframes fadeInUp {
           0% {
             opacity: 0;
-            transform: translateY(40px) scale(0.95);
+            transform: translateY(20px);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
           }
         }
         
         @keyframes fadeInDown {
           0% {
             opacity: 0;
-            transform: translateY(-40px) scale(0.95);
+            transform: translateY(-20px);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
           }
         }
         
         @keyframes fadeInScale {
           0% {
             opacity: 0;
-            transform: scale(0.7) rotate(-5deg);
-          }
-          50% {
-            opacity: 0.7;
-            transform: scale(1.05) rotate(2deg);
+            transform: scale(0.9);
           }
           100% {
             opacity: 1;
-            transform: scale(1) rotate(0deg);
+            transform: scale(1);
           }
         }
         
@@ -314,29 +304,29 @@ const SlideshowPage = () => {
         }
         
         .slide-enter {
-          animation: slideEnter 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+          animation: slideEnter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
         
         .slide-exit {
-          animation: slideExit 0.8s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+          animation: slideExit 0.3s cubic-bezier(0.55, 0.06, 0.66, 0.19) forwards;
         }
         
         .fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
+          animation: fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
         
         .fade-in-down {
-          animation: fadeInDown 0.8s ease-out forwards;
+          animation: fadeInDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
         
         .fade-in-scale {
-          animation: fadeInScale 1s ease-out forwards;
+          animation: fadeInScale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
         
         .shimmer-effect {
           background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.4), transparent);
           background-size: 200% 100%;
-          animation: shimmer 3s infinite;
+          animation: shimmer 3s ease-in-out infinite;
         }
         
         .glow-effect {
@@ -349,19 +339,19 @@ const SlideshowPage = () => {
           inset: -10px;
           border: 2px solid rgba(251, 191, 36, 0.3);
           border-radius: inherit;
-          animation: pulse-ring 2s infinite;
+          animation: pulse-ring 2s ease-out infinite;
         }
         
         .float-effect {
           animation: float 6s ease-in-out infinite;
         }
         
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-        .stagger-6 { animation-delay: 0.6s; }
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .stagger-6 { animation-delay: 0.3s; }
       `}</style>
 
       {/* Dynamic Background with Gradient Shift */}

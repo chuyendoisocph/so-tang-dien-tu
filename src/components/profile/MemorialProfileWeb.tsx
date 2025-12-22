@@ -16,7 +16,7 @@ type MemorialProfile = {
 };
 
 type Tribute = {
-  id: number;
+  id: string; // Changed from number to string to match database
   name: string;
   phone: string;
   message: string;

@@ -14,8 +14,8 @@ export default function ProfilePage() {
   const isSlideshow = searchParams.get("slideshow") === "1";
   const isKiosk = searchParams.get("kiosk") === "1";
 
-  const { profile, photos, isLoading, error } = useProfileData(profileId);
-  const { comments, loading: commentsLoading, addComment } = useComments(profileId || '');
+  const { profile, photos, isLoading, error, actualProfileId } = useProfileData(profileId);
+  const { comments, loading: commentsLoading, addComment, error: commentsError } = useComments(actualProfileId || '');
 
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -28,6 +28,19 @@ export default function ProfilePage() {
     message: comment.content,
     date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
   }));
+
+  // Debug: Log comments data
+  useEffect(() => {
+    console.log('ProfilePage Debug:', {
+      urlSlug: profileId,
+      actualProfileId,
+      commentsCount: comments.length,
+      commentsLoading,
+      commentsError,
+      comments: comments.slice(0, 3), // Log first 3 comments
+      tributes: tributes.slice(0, 3)  // Log first 3 tributes
+    });
+  }, [profileId, actualProfileId, comments, commentsLoading, commentsError, tributes]);
 
   useEffect(() => {
     if (profile?.name) {
@@ -100,6 +113,33 @@ export default function ProfilePage() {
 
   return (
     <>
+      {/* Debug Info - chỉ hiện khi có ?debug=1 trong URL */}
+      {searchParams.get("debug") === "1" && (
+        <div className="fixed top-4 right-4 bg-black/80 text-white p-4 rounded-lg z-50 max-w-sm text-xs">
+          <h4 className="font-bold mb-2">Debug Info:</h4>
+          <div>URL Param (slug): {profileId}</div>
+          <div>Actual UUID: {actualProfileId}</div>
+          <div>Comments Loading: {commentsLoading ? 'Yes' : 'No'}</div>
+          <div>Comments Count: {comments.length}</div>
+          <div>Tributes Count: {tributes.length}</div>
+          {commentsError && (
+            <div className="text-red-300 mt-2">
+              <div>Comments Error:</div>
+              <div>{commentsError}</div>
+            </div>
+          )}
+          {comments.length > 0 && (
+            <div className="mt-2">
+              <div>Latest Comment:</div>
+              <div>- Name: {comments[0]?.author_name}</div>
+              <div>- Content: {comments[0]?.content?.slice(0, 30)}...</div>
+              <div>- Approved: {comments[0]?.is_approved ? 'Yes' : 'No'}</div>
+              <div>- Public: {comments[0]?.is_public ? 'Yes' : 'No'}</div>
+            </div>
+          )}
+        </div>
+      )}
+
       <MemorialProfileWeb
         profile={profile}
         tributes={tributes}

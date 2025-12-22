@@ -14,18 +14,46 @@ export const useComments = (profileId: string) => {
   const fetchComments = async () => {
     try {
       setLoading(true);
+      setError(null);
+      console.log('Fetching comments for profileId:', profileId);
+      
+      if (!profileId) {
+        console.log('No profileId provided, skipping fetch');
+        setComments([]);
+        return;
+      }
+
+      // Simplified query - just get all comments for this profile
       const { data, error } = await supabase
         .from('comments')
         .select('*')
         .eq('profile_id', profileId)
-        .eq('is_approved', true)
-        .eq('is_public', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setComments(data || []);
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        setError(`Database error: ${error.message}`);
+        setComments([]);
+        return;
+      }
+      
+      console.log('Fetched comments raw data:', data);
+      console.log('Comments count:', data?.length || 0);
+      
+      // Filter approved and public comments in JavaScript instead of SQL
+      const filteredComments = (data || []).filter(comment => {
+        const isApproved = comment.is_approved === true || comment.is_approved === null;
+        const isPublic = comment.is_public === true || comment.is_public === null;
+        return isApproved && isPublic;
+      });
+      
+      console.log('Filtered comments:', filteredComments);
+      setComments(filteredComments);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      console.error('fetchComments error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
+      setError(errorMessage);
+      setComments([]);
     } finally {
       setLoading(false);
     }
@@ -34,6 +62,8 @@ export const useComments = (profileId: string) => {
   // Add new comment
   const addComment = async (commentData: { name: string; phone: string; message: string }) => {
     try {
+      console.log('Adding comment:', { profileId, commentData });
+      
       const { data, error } = await supabase
         .from('comments')
         .insert({
@@ -41,15 +71,25 @@ export const useComments = (profileId: string) => {
           author_email: commentData.phone, // Using phone as email for now
           content: commentData.message,
           profile_id: profileId,
+          is_approved: true, // Auto-approve for now
+          is_public: true,   // Make public by default
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
       
-      // Don't add to local state since it needs approval
+      console.log('Comment inserted successfully:', data);
+      
+      // Refresh comments to show the new one immediately
+      await fetchComments();
+      
       return { success: true, data };
     } catch (err) {
+      console.error('addComment error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi gửi bình luận';
       setError(errorMessage);
       return { success: false, error: errorMessage };

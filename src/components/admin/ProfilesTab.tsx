@@ -31,6 +31,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAllProfiles, useDeleteProfile } from "@/hooks/useProfiles";
 import { format } from "date-fns";
+import { CommentTest } from "./CommentTest";
+import { useState } from "react";
 
 interface ProfilesTabProps {
   onCreateNew: () => void;
@@ -41,6 +43,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
   const navigate = useNavigate();
   const { data: profiles, isLoading, error } = useAllProfiles();
   const deleteProfile = useDeleteProfile();
+  const [showCommentTest, setShowCommentTest] = useState(false);
 
   const handleDelete = async (id: string) => {
     await deleteProfile.mutateAsync(id);
@@ -84,6 +87,13 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
         <Button onClick={onCreateNew} className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Tạo Hồ Sơ Mới
+        </Button>
+        <Button 
+          onClick={() => setShowCommentTest(!showCommentTest)} 
+          variant="outline" 
+          className="w-full sm:w-auto"
+        >
+          {showCommentTest ? 'Ẩn' : 'Hiện'} Comment Test
         </Button>
       </div>
 
@@ -297,6 +307,15 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
           )}
         </CardContent>
       </Card>
+
+      {/* Comment Test Section */}
+      {showCommentTest && (
+        <Card className="shadow-lg border-0 bg-yellow-50/50 dark:bg-yellow-900/20 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <CommentTest />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
