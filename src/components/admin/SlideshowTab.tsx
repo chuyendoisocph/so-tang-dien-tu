@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useAllProfiles } from "@/hooks/useProfiles";
+import { PlaylistManager } from "./PlaylistManager";
 
 export const SlideshowTab = () => {
   const [slideSeconds, setSlideSeconds] = useState(15);
@@ -45,6 +46,11 @@ export const SlideshowTab = () => {
     const url = `/slideshow-profile?time=${slideSeconds}${profileIds ? `&profiles=${profileIds}` : ""}`;
     window.open(url, "_blank", "noopener,noreferrer");
     toast.success("Đã mở Profile Mode");
+  };
+
+  const openPlaylist = (playlistId: string) => {
+    // This will be handled by the playlist URLs
+    toast.success("Đã mở playlist");
   };
 
   const formatDateRange = (birthDate: string | null, deathDate: string | null) => {
@@ -270,6 +276,17 @@ export const SlideshowTab = () => {
                 ))}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Playlist Manager */}
+        <Card className="shadow-lg border-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm lg:col-span-2">
+          <CardContent className="p-6">
+            <PlaylistManager
+              selectedProfiles={selectedProfiles}
+              slideSeconds={slideSeconds}
+              onPlayPlaylist={openPlaylist}
+            />
           </CardContent>
         </Card>
       </div>

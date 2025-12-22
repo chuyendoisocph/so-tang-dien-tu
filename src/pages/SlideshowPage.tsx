@@ -4,6 +4,7 @@ import { Play, Pause, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { useAllProfiles } from "@/hooks/useProfiles";
+import { usePlaylist } from "@/hooks/usePlaylists";
 
 const SlideshowPage = () => {
   const [searchParams] = useSearchParams();
@@ -18,13 +19,35 @@ const SlideshowPage = () => {
 
   const intervalTime = parseInt(searchParams.get("time") || "15") * 1000;
   const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
+  const playlistId = searchParams.get("playlist");
 
   const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfiles();
+  const { data: playlist, isLoading: isLoadingPlaylist } = usePlaylist(playlistId);
 
-  // Filter to only published profiles, and optionally filter by selected IDs
+  // Determine which profiles to show and settings to use
+  const getPlaylistSettings = () => {
+    if (playlist) {
+      return {
+        profileIds: playlist.profile_ids,
+        slideTime: playlist.slide_duration * 1000,
+        autoPlay: playlist.auto_play,
+        loop: playlist.loop
+      };
+    }
+    return {
+      profileIds: selectedProfileIds,
+      slideTime: intervalTime,
+      autoPlay: true,
+      loop: true
+    };
+  };
+
+  const playlistSettings = getPlaylistSettings();
+
+  // Filter to only published profiles, and optionally filter by selected IDs or playlist
   const profiles = (allProfiles || [])
     .filter(p => p.is_published)
-    .filter(p => selectedProfileIds.length === 0 || selectedProfileIds.includes(p.id))
+    .filter(p => playlistSettings.profileIds.length === 0 || playlistSettings.profileIds.includes(p.id))
     .map(p => ({
       id: p.slug || p.id,
       name: p.name,
@@ -33,11 +56,12 @@ const SlideshowPage = () => {
     }));
 
   useEffect(() => {
-    document.title = "Trình Chiếu Tưởng Niệm";
-    if (!isLoadingProfiles) {
+    const title = playlist ? `Trình Chiếu - ${playlist.name}` : "Trình Chiếu Tưởng Niệm";
+    document.title = title;
+    if (!isLoadingProfiles && !isLoadingPlaylist) {
       setIsVisible(true);
     }
-  }, [isLoadingProfiles]);
+  }, [isLoadingProfiles, isLoadingPlaylist, playlist]);
 
   // Clock update
   useEffect(() => {
@@ -54,12 +78,12 @@ const SlideshowPage = () => {
         if (prev >= 100) {
           return 0;
         }
-        return prev + (100 / (intervalTime / 100));
+        return prev + (100 / (playlistSettings.slideTime / 100));
       });
     }, 100);
 
     return () => clearInterval(progressTimer);
-  }, [isPaused, intervalTime, profiles.length]);
+  }, [isPaused, playlistSettings.slideTime, profiles.length]);
 
   // Handle slide change when progress reaches 100
   useEffect(() => {
@@ -103,12 +127,14 @@ const SlideshowPage = () => {
     return `${window.location.origin}/profile/${profileId}`;
   };
 
-  if (isLoadingProfiles) {
+  if (isLoadingProfiles || isLoadingPlaylist) {
     return (
       <div className="min-h-screen bg-foreground flex items-center justify-center">
         <div className="text-center text-card">
           <Loader2 className="w-12 h-12 animate-spin text-amber-400 mx-auto mb-4" />
-          <p className="text-lg text-slate-400">Đang tải danh sách...</p>
+          <p className="text-lg text-slate-400">
+            {playlist ? `Đang tải playlist "${playlist.name}"...` : "Đang tải danh sách..."}
+          </p>
         </div>
       </div>
     );
@@ -118,8 +144,12 @@ const SlideshowPage = () => {
     return (
       <div className="min-h-screen bg-foreground flex items-center justify-center">
         <div className="text-center text-card">
-          <p className="text-xl mb-4 text-amber-400">Không có hồ sơ nào được xuất bản</p>
-          <p className="text-slate-400 mb-6">Vui lòng xuất bản ít nhất một hồ sơ trước khi trình chiếu.</p>
+          <p className="text-xl mb-4 text-amber-400">
+            {playlist ? `Playlist "${playlist.name}" không có hồ sơ nào` : "Không có hồ sơ nào được xuất bản"}
+          </p>
+          <p className="text-slate-400 mb-6">
+            {playlist ? "Vui lòng cập nhật playlist với các hồ sơ đã xuất bản." : "Vui lòng xuất bản ít nhất một hồ sơ trước khi trình chiếu."}
+          </p>
           <Button onClick={exitSlideshow}>Quay lại</Button>
         </div>
       </div>
@@ -148,6 +178,12 @@ const SlideshowPage = () => {
       >
         {/* Clock Widget */}
         <div className="absolute top-8 right-10 flex items-center gap-5 text-card/90">
+          {playlist && (
+            <div className="text-right mr-4">
+              <span className="text-lg font-medium text-amber-400">Playlist:</span>
+              <span className="text-lg font-medium ml-2">{playlist.name}</span>
+            </div>
+          )}
           <span className="text-2xl font-medium">{formatDate(currentTime)}</span>
           <span className="text-2xl font-medium">{formatTime(currentTime)}</span>
         </div>
