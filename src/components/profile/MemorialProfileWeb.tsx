@@ -1254,10 +1254,10 @@ export default function MemorialProfileWeb({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
-                    Sổ Tang Điện Tử
+                    Quét để gửi lời chia buồn
                   </h3>
                   <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-                    Quét để gửi lời chia buồn
+
                   </p>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
@@ -1272,10 +1272,10 @@ export default function MemorialProfileWeb({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ fontSize: '22px', fontWeight: 700, color: NAVY_PRIMARY, margin: '0 0 6px 0' }}>
-                    Kết nối với Hoa Viên
+                    Quét mã QR để nhận khuyến mãi
                   </h3>
                   <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-                    Giải pháp trọn vẹn
+
                   </p>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
@@ -1356,11 +1356,11 @@ export default function MemorialProfileWeb({
                       {t.name.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ 
-                        fontSize: '15px', 
-                        fontWeight: 700, 
-                        color: NAVY_PRIMARY, 
-                        margin: 0, 
+                      <p style={{
+                        fontSize: '15px',
+                        fontWeight: 700,
+                        color: NAVY_PRIMARY,
+                        margin: 0,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis'
@@ -1373,10 +1373,10 @@ export default function MemorialProfileWeb({
                     </div>
                   </div>
                   {/* Message Body - 2 lines with ellipsis */}
-                  <p style={{ 
-                    fontSize: '13px', 
-                    color: '#475569', 
-                    lineHeight: 1.4, 
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#475569',
+                    lineHeight: 1.4,
                     margin: 0,
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
@@ -1465,7 +1465,7 @@ export default function MemorialProfileWeb({
       {/* Main Content Wrapper - Responsive Container */}
       <div
         className="relative z-10 flex flex-col w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-4 sm:py-6 lg:py-8"
-        style={{ 
+        style={{
           zIndex: 2,
           maxWidth: 'min(100vw - 2rem, 1200px)' // Responsive max width
         }}
@@ -1555,13 +1555,13 @@ export default function MemorialProfileWeb({
         />
 
         {/* ============ 2. RESPONSIVE BIOGRAPHY SECTION ============ */}
-        <div 
+        <div
           className="card-hover transition-all duration-300 mb-6"
-          style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.96)', 
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
             borderRadius: 'clamp(16px, 3vw, 24px)',
             padding: 'clamp(20px, 5vw, 40px)',
-            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)', 
+            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)',
             border: `2px solid rgba(197, 160, 89, 0.3)`,
             position: 'relative',
             overflow: 'hidden'
@@ -1586,9 +1586,9 @@ export default function MemorialProfileWeb({
             background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
             borderBottomRightRadius: 'clamp(16px, 3vw, 24px)'
           }} />
-          
-          <h2 
-            style={{ 
+
+          <h2
+            style={{
               fontSize: 'clamp(20px, 5vw, 32px)',
               fontWeight: 900,
               color: NAVY_PRIMARY,
@@ -1597,8 +1597,8 @@ export default function MemorialProfileWeb({
               position: 'relative'
             }}
           >
-            <span style={{ 
-              borderBottom: `3px solid ${GOLD_ACCENT}`, 
+            <span style={{
+              borderBottom: `3px solid ${GOLD_ACCENT}`,
               paddingBottom: '8px',
               display: 'inline-block'
             }}>
@@ -1606,8 +1606,8 @@ export default function MemorialProfileWeb({
             </span>
           </h2>
           <div
-            style={{ 
-              color: '#374151', 
+            style={{
+              color: '#374151',
               lineHeight: 1.7,
               fontSize: 'clamp(14px, 3.5vw, 18px)'
             }}
@@ -1617,18 +1617,18 @@ export default function MemorialProfileWeb({
 
         {/* ============ 3. RESPONSIVE CAREER SECTION ============ */}
         {hasCareerData && (
-          <div 
+          <div
             className="card-hover transition-all duration-300 mb-6"
-            style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.92)', 
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.92)',
               borderRadius: 'clamp(16px, 3vw, 24px)',
               padding: 'clamp(20px, 5vw, 40px)',
-              boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)', 
+              boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)',
               border: `1px solid rgba(197, 160, 89, 0.2)`
             }}
           >
-            <h2 
-              style={{ 
+            <h2
+              style={{
                 fontSize: 'clamp(18px, 4.5vw, 28px)',
                 fontWeight: 900,
                 color: NAVY_PRIMARY,
@@ -1638,7 +1638,7 @@ export default function MemorialProfileWeb({
             >
               Quá trình công tác
             </h2>
-            <div 
+            <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -1646,28 +1646,28 @@ export default function MemorialProfileWeb({
               }}
             >
               {profile.roles.map((role, index) => (
-                <div 
-                  key={index} 
-                  style={{ 
+                <div
+                  key={index}
+                  style={{
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: 'clamp(8px, 2vw, 12px)',
                     padding: 'clamp(12px, 3vw, 20px)',
                     borderRadius: 'clamp(12px, 2.5vw, 16px)',
-                    backgroundColor: 'rgba(253, 252, 248, 0.8)', 
+                    backgroundColor: 'rgba(253, 252, 248, 0.8)',
                     border: `1px solid rgba(197, 160, 89, 0.15)`
                   }}
                 >
-                  <Briefcase 
-                    style={{ 
-                      width: 'clamp(18px, 4vw, 24px)', 
+                  <Briefcase
+                    style={{
+                      width: 'clamp(18px, 4vw, 24px)',
                       height: 'clamp(18px, 4vw, 24px)',
                       color: GOLD_ACCENT,
                       flexShrink: 0,
                       marginTop: '2px'
-                    }} 
+                    }}
                   />
-                  <p style={{ 
+                  <p style={{
                     fontSize: 'clamp(14px, 3.5vw, 18px)',
                     color: '#374151',
                     lineHeight: 1.5,
@@ -1682,18 +1682,18 @@ export default function MemorialProfileWeb({
         )}
 
         {/* ============ 4. RESPONSIVE TRIBUTE FORM ============ */}
-        <div 
+        <div
           className="card-hover transition-all duration-300 mb-6"
-          style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.96)', 
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
             borderRadius: 'clamp(16px, 3vw, 24px)',
             padding: 'clamp(20px, 5vw, 40px)',
-            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)', 
+            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)',
             border: `2px solid rgba(197, 160, 89, 0.3)`
           }}
         >
-          <h2 
-            style={{ 
+          <h2
+            style={{
               fontSize: 'clamp(18px, 4.5vw, 28px)',
               fontWeight: 900,
               color: NAVY_PRIMARY,
@@ -1701,8 +1701,8 @@ export default function MemorialProfileWeb({
               marginBottom: 'clamp(16px, 4vw, 24px)'
             }}
           >
-            <span style={{ 
-              borderBottom: `3px solid ${GOLD_ACCENT}`, 
+            <span style={{
+              borderBottom: `3px solid ${GOLD_ACCENT}`,
               paddingBottom: '8px',
               display: 'inline-block'
             }}>
@@ -1710,7 +1710,7 @@ export default function MemorialProfileWeb({
             </span>
           </h2>
           <form onSubmit={onSubmitTribute}>
-            <div 
+            <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -1801,26 +1801,26 @@ export default function MemorialProfileWeb({
         </div>
 
         {/* ============ 5. RESPONSIVE TRIBUTES LIST ============ */}
-        <div 
+        <div
           className="card-hover transition-all duration-300 mb-8"
-          style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.92)', 
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
             borderRadius: 'clamp(16px, 3vw, 24px)',
             padding: 'clamp(20px, 5vw, 40px)',
-            boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)', 
+            boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)',
             border: `1px solid rgba(197, 160, 89, 0.2)`
           }}
         >
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: 'clamp(8px, 2vw, 16px)',
             marginBottom: 'clamp(16px, 4vw, 24px)'
           }}>
-            <h2 
-              style={{ 
+            <h2
+              style={{
                 fontSize: 'clamp(18px, 4.5vw, 28px)',
                 fontWeight: 900,
                 color: NAVY_PRIMARY,
@@ -1844,7 +1844,7 @@ export default function MemorialProfileWeb({
             </span>
           </div>
 
-          <div 
+          <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -1863,10 +1863,10 @@ export default function MemorialProfileWeb({
                   border: `1px solid rgba(226, 232, 240, 0.8)`
                 }}
               >
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 'clamp(8px, 2vw, 12px)', 
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'clamp(8px, 2vw, 12px)',
                   marginBottom: 'clamp(8px, 2vw, 12px)'
                 }}>
                   <div
@@ -1888,10 +1888,10 @@ export default function MemorialProfileWeb({
                     {t.name.charAt(0)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ 
-                      fontSize: 'clamp(14px, 3.5vw, 18px)', 
-                      fontWeight: 700, 
-                      color: NAVY_PRIMARY, 
+                    <p style={{
+                      fontSize: 'clamp(14px, 3.5vw, 18px)',
+                      fontWeight: 700,
+                      color: NAVY_PRIMARY,
                       margin: 0,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -1899,20 +1899,20 @@ export default function MemorialProfileWeb({
                     }}>
                       {t.name}
                     </p>
-                    <p style={{ 
-                      fontSize: 'clamp(12px, 3vw, 14px)', 
-                      color: '#94a3b8', 
-                      margin: 0 
+                    <p style={{
+                      fontSize: 'clamp(12px, 3vw, 14px)',
+                      color: '#94a3b8',
+                      margin: 0
                     }}>
                       {t.date}
                     </p>
                   </div>
                 </div>
-                <p style={{ 
-                  fontSize: 'clamp(13px, 3.2vw, 16px)', 
-                  color: '#475569', 
-                  lineHeight: 1.6, 
-                  margin: 0 
+                <p style={{
+                  fontSize: 'clamp(13px, 3.2vw, 16px)',
+                  color: '#475569',
+                  lineHeight: 1.6,
+                  margin: 0
                 }}>
                   {t.message}
                 </p>
@@ -1949,7 +1949,7 @@ export default function MemorialProfileWeb({
 
       {/* Responsive Photo Modal */}
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
-        <DialogContent 
+        <DialogContent
           style={{
             maxWidth: 'min(90vw, 800px)',
             padding: 0,
