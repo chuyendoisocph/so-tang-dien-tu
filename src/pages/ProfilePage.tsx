@@ -6,115 +6,7 @@ import { toast } from "sonner";
 
 import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
 import { useProfileData } from "@/hooks/useProfileData";
-
-// Mock tributes (to be replaced with real data later)
-const mockTributes = [
-  {
-    id: 1,
-    name: "Nguyễn Văn An",
-    phone: "0901***456",
-    message: "Xin chia buồn cùng gia đình. Anh ra đi là mất mát lớn cho cộng đồng.",
-    date: "15/12/2025",
-  },
-  {
-    id: 2,
-    name: "Trần Thị Bình",
-    phone: "0912***789",
-    message: "Cầu mong anh yên nghỉ. Anh mãi là tấm gương sáng cho chúng em.",
-    date: "14/12/2025",
-  },
-  {
-    id: 3,
-    name: "Lê Minh Châu",
-    phone: "0987***321",
-    message: "Vĩnh biệt anh. Những đóng góp của anh sẽ mãi được ghi nhớ.",
-    date: "14/12/2025",
-  },
-  {
-    id: 4,
-    name: "Phạm Văn Đức",
-    phone: "0976***654",
-    message: "Xin gửi lời chia buồn sâu sắc đến gia đình.",
-    date: "13/12/2025",
-  },
-  {
-    id: 5,
-    name: "Hoàng Thị Mai",
-    phone: "0938***123",
-    message: "Anh là người thầy tuyệt vời, luôn tận tâm với nghề. Chúng em sẽ nhớ mãi.",
-    date: "13/12/2025",
-  },
-  {
-    id: 6,
-    name: "Võ Minh Tuấn",
-    phone: "0945***789",
-    message: "Những bài học từ anh sẽ mãi là kim chỉ nam cho chúng em.",
-    date: "12/12/2025",
-  },
-  {
-    id: 7,
-    name: "Đặng Thị Lan",
-    phone: "0967***456",
-    message: "Anh đã cống hiến hết mình cho nghệ thuật. Xin chia buồn cùng gia đình.",
-    date: "12/12/2025",
-  },
-  {
-    id: 8,
-    name: "Bùi Văn Hùng",
-    phone: "0923***321",
-    message: "Tiếng hát của anh sẽ mãi vang vọng trong lòng người hâm mộ.",
-    date: "11/12/2025",
-  },
-  {
-    id: 9,
-    name: "Ngô Thị Hương",
-    phone: "0934***654",
-    message: "Anh là nghệ sĩ tài năng và con người tốt bụng. Chúc anh yên nghỉ.",
-    date: "11/12/2025",
-  },
-  {
-    id: 10,
-    name: "Lý Văn Phong",
-    phone: "0956***987",
-    message: "Những tác phẩm của anh sẽ sống mãi với thời gian.",
-    date: "10/12/2025",
-  },
-  {
-    id: 11,
-    name: "Trương Thị Nga",
-    phone: "0912***234",
-    message: "Anh đã để lại dấu ấn đẹp trong lòng mọi người. Vĩnh biệt anh!",
-    date: "10/12/2025",
-  },
-  {
-    id: 12,
-    name: "Phan Văn Thành",
-    phone: "0987***567",
-    message: "Cảm ơn anh vì những đóng góp to lớn cho nền nghệ thuật Việt Nam.",
-    date: "09/12/2025",
-  },
-  {
-    id: 13,
-    name: "Đinh Thị Xuân",
-    phone: "0943***890",
-    message: "Anh mãi là niềm tự hào của làng nghệ thuật. Xin chia buồn.",
-    date: "09/12/2025",
-  },
-  {
-    id: 14,
-    name: "Vũ Minh Đức",
-    phone: "0965***123",
-    message: "Những kỷ niệm đẹp với anh sẽ mãi trong tim chúng em.",
-    date: "08/12/2025",
-  },
-  {
-    id: 15,
-    name: "Cao Thị Linh",
-    phone: "0978***456",
-    message: "Anh đã sống một cuộc đời ý nghĩa. Cầu mong anh an nghỉ.",
-    date: "08/12/2025",
-  }
-];
+import { useComments } from "@/hooks/useComments";
 
 export default function ProfilePage() {
   const [searchParams] = useSearchParams();
@@ -123,10 +15,19 @@ export default function ProfilePage() {
   const isKiosk = searchParams.get("kiosk") === "1";
 
   const { profile, photos, isLoading, error } = useProfileData(profileId);
+  const { comments, loading: commentsLoading, addComment } = useComments(profileId || '');
 
-  const [tributes, setTributes] = useState(mockTributes);
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [shareModalOpen, setShareModalOpen] = useState(false);
+
+  // Transform comments to match the expected format
+  const tributes = comments.map(comment => ({
+    id: comment.id,
+    name: comment.author_name,
+    phone: comment.author_email ? comment.author_email.slice(0, 4) + "***" : "***",
+    message: comment.content,
+    date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
+  }));
 
   useEffect(() => {
     if (profile?.name) {
@@ -134,24 +35,26 @@ export default function ProfilePage() {
     }
   }, [profile?.name]);
 
-  const handleSubmitTribute = (e: React.FormEvent) => {
+  const handleSubmitTribute = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.message) {
       toast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
 
-    const newTribute = {
-      id: tributes.length + 1,
-      name: formData.name,
-      phone: formData.phone.slice(0, 4) + "***" + formData.phone.slice(-3),
-      message: formData.message,
-      date: new Date().toLocaleDateString("vi-VN"),
-    };
-
-    setTributes([newTribute, ...tributes]);
-    setFormData({ name: "", phone: "", message: "" });
-    toast.success("Đã gửi lời chia buồn");
+    try {
+      await addComment({
+        name: formData.name,
+        phone: formData.phone,
+        message: formData.message,
+      });
+      
+      setFormData({ name: "", phone: "", message: "" });
+      toast.success("Đã gửi lời chia buồn");
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast.error("Có lỗi xảy ra khi gửi lời chia buồn");
+    }
   };
 
   const copyLink = () => {

@@ -32,12 +32,14 @@ export const useComments = (profileId: string) => {
   };
 
   // Add new comment
-  const addComment = async (commentData: Omit<CommentInsert, 'profile_id'>) => {
+  const addComment = async (commentData: { name: string; phone: string; message: string }) => {
     try {
       const { data, error } = await supabase
         .from('comments')
         .insert({
-          ...commentData,
+          author_name: commentData.name,
+          author_email: commentData.phone, // Using phone as email for now
+          content: commentData.message,
           profile_id: profileId,
         })
         .select()
