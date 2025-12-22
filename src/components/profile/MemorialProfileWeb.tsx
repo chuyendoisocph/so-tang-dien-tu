@@ -58,6 +58,7 @@ export default function MemorialProfileWeb({
   onOpenShare,
   slideshowMode = false,
   kioskMode = false,
+  adminMode = false,
 }: {
   profile: MemorialProfile;
   tributes: Tribute[];
@@ -68,6 +69,7 @@ export default function MemorialProfileWeb({
   onOpenShare: () => void;
   slideshowMode?: boolean;
   kioskMode?: boolean;
+  adminMode?: boolean;
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const publicUrl = buildPublicProfileUrl(profile.id);
@@ -638,6 +640,278 @@ export default function MemorialProfileWeb({
     );
   }
 
+  // ADMIN MODE - Professional Admin Interface (1080x1920 Portrait)
+  if (adminMode) {
+    return (
+      <div
+        className="memorial-profile-admin relative"
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          width: '1080px',
+          height: '1920px',
+          maxHeight: '1920px',
+          minHeight: '1920px',
+          overflow: 'hidden',
+          position: 'relative',
+          background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
+        }}
+      >
+        {/* Admin Header */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '80px',
+            backgroundColor: NAVY_PRIMARY,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+            zIndex: 20
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                fontSize: '20px',
+                fontWeight: 700
+              }}
+            >
+              A
+            </div>
+            <div>
+              <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+                Admin Dashboard
+              </h1>
+              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+                Memorial Profile Management
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                backgroundColor: `${GOLD_ACCENT}20`,
+                border: `1px solid ${GOLD_ACCENT}`,
+                color: GOLD_ACCENT,
+                fontSize: '14px',
+                fontWeight: 600
+              }}
+            >
+              Settings
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '80px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            padding: '24px',
+            overflow: 'auto'
+          }}
+        >
+          {/* Profile Overview Card */}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(226, 232, 240, 0.8)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+              <img
+                src={profile.avatarUrl}
+                alt={profile.name}
+                style={{
+                  width: '80px',
+                  height: '100px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  border: `3px solid ${GOLD_ACCENT}`
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: '28px', fontWeight: 900, color: NAVY_PRIMARY, margin: '0 0 8px 0' }}>
+                  {profile.name}
+                </h2>
+                <p style={{ fontSize: '16px', color: GOLD_ACCENT, fontWeight: 600, margin: '0 0 8px 0' }}>
+                  {years}
+                </p>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <span style={{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    backgroundColor: `${GOLD_ACCENT}15`,
+                    color: GOLD_ACCENT,
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>
+                    {tributes.length} Tributes
+                  </span>
+                  <span style={{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    backgroundColor: `${NAVY_PRIMARY}15`,
+                    color: NAVY_PRIMARY,
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>
+                    {photos.length} Photos
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              border: '1px solid rgba(226, 232, 240, 0.8)'
+            }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', margin: '0 0 8px 0' }}>
+                Total Tributes
+              </h3>
+              <p style={{ fontSize: '32px', fontWeight: 900, color: NAVY_PRIMARY, margin: 0 }}>
+                {tributes.length}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              border: '1px solid rgba(226, 232, 240, 0.8)'
+            }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', margin: '0 0 8px 0' }}>
+                Photo Gallery
+              </h3>
+              <p style={{ fontSize: '32px', fontWeight: 900, color: GOLD_ACCENT, margin: 0 }}>
+                {photos.length}
+              </p>
+            </div>
+          </div>
+
+          {/* Recent Tributes */}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(226, 232, 240, 0.8)'
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: NAVY_PRIMARY, marginBottom: '16px' }}>
+              Recent Tributes
+            </h3>
+            <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+              {tributes.slice(0, 6).map((t) => (
+                <div
+                  key={t.id}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    backgroundColor: '#f8fafc',
+                    marginBottom: '12px',
+                    border: '1px solid rgba(226, 232, 240, 0.5)'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        fontSize: '14px',
+                        fontWeight: 700
+                      }}
+                    >
+                      {t.name.charAt(0)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: '16px', fontWeight: 600, color: NAVY_PRIMARY, margin: 0 }}>
+                        {t.name}
+                      </p>
+                      <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>
+                        {t.date}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '14px', color: '#475569', lineHeight: 1.5, margin: 0 }}>
+                    {t.message.length > 120 ? t.message.slice(0, 120) + '...' : t.message}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* QR Code Section */}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(226, 232, 240, 0.8)'
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: NAVY_PRIMARY, marginBottom: '16px' }}>
+              QR Code Access
+            </h3>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '32px' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                  <QRCodeSVG value={publicUrl} size={120} level="H" fgColor={NAVY_PRIMARY} />
+                </div>
+                <p style={{ fontSize: '14px', fontWeight: 600, color: NAVY_PRIMARY, margin: 0 }}>
+                  Memorial Profile
+                </p>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                  <QRCodeSVG value="https://cphaco.vn" size={120} level="H" fgColor={NAVY_PRIMARY} />
+                </div>
+                <p style={{ fontSize: '14px', fontWeight: 600, color: NAVY_PRIMARY, margin: 0 }}>
+                  CPHACO Homepage
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // SLIDESHOW MODE - Professional Digital Signage (Vertical Stack Layout)
   // STRICT: 35% Header | 25% Bio | 40% Footer = 100% (1920px)
   if (slideshowMode) {
@@ -781,7 +1055,7 @@ export default function MemorialProfileWeb({
               letterSpacing: '0.5px'
             }}
           >
-            {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
+            <strong>{toTitleCase(profile.name)}</strong> đang an nghỉ tại <strong>Đường Nghệ sĩ - Hoa Viên Bình Dương</strong>
           </div>
         </div>
 
@@ -1122,7 +1396,7 @@ export default function MemorialProfileWeb({
     );
   }
 
-  // NORMAL MODE - Vertical Stack Layout (Same as Slideshow, with Form instead of QR)
+  // NORMAL MODE - Responsive Design for PC, Tablet, Mobile
   return (
     <div
       className="relative flex flex-col min-h-screen"
@@ -1151,7 +1425,7 @@ export default function MemorialProfileWeb({
         }}
       />
 
-      {/* Animation Styles */}
+      {/* Responsive Animation Styles */}
       <style>{`
         @keyframes float-normal {
           0%, 100% { transform: translateY(0px); }
@@ -1168,132 +1442,317 @@ export default function MemorialProfileWeb({
           transform: translateY(-2px);
           box-shadow: 0 8px 30px rgba(0,0,0,0.08) !important;
         }
+        
+        /* Responsive breakpoints */
+        @media (max-width: 640px) {
+          .mobile-stack { flex-direction: column; }
+          .mobile-full { width: 100%; }
+          .mobile-text-sm { font-size: 14px; }
+          .mobile-p-4 { padding: 16px; }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .tablet-grid-2 { grid-template-columns: repeat(2, 1fr); }
+          .tablet-text-base { font-size: 16px; }
+        }
+        
+        @media (min-width: 1025px) {
+          .desktop-grid-3 { grid-template-columns: repeat(3, 1fr); }
+          .desktop-max-w-6xl { max-width: 72rem; }
+        }
       `}</style>
 
-      {/* Main Content Wrapper - Vertical Stack */}
+      {/* Main Content Wrapper - Responsive Container */}
       <div
-        className="relative z-10 flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
-        style={{ zIndex: 2 }}
+        className="relative z-10 flex flex-col w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-4 sm:py-6 lg:py-8"
+        style={{ 
+          zIndex: 2,
+          maxWidth: 'min(100vw - 2rem, 1200px)' // Responsive max width
+        }}
       >
-        {/* ============ 1. HEADER - Profile + Name + Dates ============ */}
+        {/* ============ 1. RESPONSIVE HEADER - Profile + Name + Dates ============ */}
         <div
+          className="flex flex-col items-center text-center"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            marginBottom: 'clamp(20px, 3vh, 32px)'
+            marginBottom: 'clamp(16px, 4vw, 32px)',
+            padding: '0 clamp(8px, 2vw, 16px)'
           }}
         >
-          {/* Profile Picture */}
+          {/* Profile Picture - Responsive Sizes */}
           <div
-            className="float-normal cursor-pointer"
-            style={{ marginBottom: 'clamp(14px, 2vh, 24px)' }}
+            className="float-normal cursor-pointer mb-4 sm:mb-6"
             onClick={() => setSelectedPhoto({ id: 'avatar', url: profile.avatarUrl, caption: profile.name, display_order: null })}
           >
             <img
               src={profile.avatarUrl}
               alt={profile.name}
-              className="w-32 h-40 sm:w-40 sm:h-52 md:w-48 md:h-60 object-cover transition-transform duration-300 hover:scale-105"
               style={{
-                borderRadius: 'clamp(12px, 1.5vw, 18px)',
-                border: `4px solid ${GOLD_ACCENT}`,
-                boxShadow: '0 16px 40px rgba(0,0,0,0.15)'
+                width: 'clamp(120px, 20vw, 200px)',
+                height: 'clamp(150px, 25vw, 250px)',
+                objectFit: 'cover',
+                borderRadius: 'clamp(12px, 2vw, 20px)',
+                border: `clamp(3px, 0.5vw, 5px) solid ${GOLD_ACCENT}`,
+                boxShadow: '0 clamp(8px, 2vw, 20px) clamp(20px, 4vw, 40px) rgba(0,0,0,0.15)',
+                transition: 'transform 0.3s ease'
               }}
+              className="hover:scale-105"
             />
           </div>
 
-          {/* Name - Bold & Dark */}
+          {/* Name - Responsive Typography */}
           <h1
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-center uppercase mb-2 sm:mb-3"
             style={{
+              fontSize: 'clamp(24px, 6vw, 48px)',
+              fontWeight: 900,
               color: NAVY_PRIMARY,
-              letterSpacing: '-1px'
+              letterSpacing: '-0.02em',
+              textTransform: 'uppercase',
+              marginBottom: 'clamp(8px, 2vw, 16px)',
+              lineHeight: 1.1
             }}
           >
             {profile.name}
           </h1>
 
-          {/* Dates */}
+          {/* Dates - Responsive */}
           <div
-            className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2 mb-3 sm:mb-4"
-            style={{ color: GOLD_ACCENT }}
+            style={{
+              fontSize: 'clamp(16px, 4vw, 24px)',
+              color: GOLD_ACCENT,
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'clamp(8px, 2vw, 12px)',
+              marginBottom: 'clamp(8px, 2vw, 16px)'
+            }}
           >
-            <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Calendar style={{ width: 'clamp(20px, 4vw, 28px)', height: 'clamp(20px, 4vw, 28px)' }} />
             {years}
           </div>
 
-          {/* Resting Place */}
+          {/* Resting Place - Responsive */}
           <div
-            className="text-center text-sm sm:text-base md:text-lg italic"
-            style={{ color: '#555555' }}
+            style={{
+              textAlign: 'center',
+              fontSize: 'clamp(14px, 3vw, 18px)',
+              fontStyle: 'italic',
+              color: '#555555',
+              letterSpacing: '0.3px',
+              lineHeight: 1.4
+            }}
           >
-            {toTitleCase(profile.name)} đang an nghỉ tại Đường Nghệ sĩ Hoa Viên Bình Dương
+            <strong>{toTitleCase(profile.name)}</strong> đang an nghỉ tại <strong>Đường Nghệ sĩ - Hoa Viên Bình Dương</strong>
           </div>
         </div>
 
-        {/* Divider */}
+        {/* Responsive Divider */}
         <div
-          className="h-0.5 mx-8 sm:mx-16 mb-6"
           style={{
-            background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`
+            height: '2px',
+            background: `linear-gradient(90deg, transparent 5%, ${GOLD_ACCENT} 25%, ${GOLD_ACCENT} 75%, transparent 95%)`,
+            margin: '0 clamp(16px, 4vw, 64px) clamp(16px, 4vw, 32px)'
           }}
         />
 
-        {/* Biography Section */}
-        <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
-          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
-            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
+        {/* ============ 2. RESPONSIVE BIOGRAPHY SECTION ============ */}
+        <div 
+          className="card-hover transition-all duration-300 mb-6"
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.96)', 
+            borderRadius: 'clamp(16px, 3vw, 24px)',
+            padding: 'clamp(20px, 5vw, 40px)',
+            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)', 
+            border: `2px solid rgba(197, 160, 89, 0.3)`,
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Decorative corners */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 'clamp(40px, 8vw, 80px)',
+            height: 'clamp(40px, 8vw, 80px)',
+            background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
+            borderTopLeftRadius: 'clamp(16px, 3vw, 24px)'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: 'clamp(40px, 8vw, 80px)',
+            height: 'clamp(40px, 8vw, 80px)',
+            background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
+            borderBottomRightRadius: 'clamp(16px, 3vw, 24px)'
+          }} />
+          
+          <h2 
+            style={{ 
+              fontSize: 'clamp(20px, 5vw, 32px)',
+              fontWeight: 900,
+              color: NAVY_PRIMARY,
+              textAlign: 'center',
+              marginBottom: 'clamp(16px, 4vw, 24px)',
+              position: 'relative'
+            }}
+          >
+            <span style={{ 
+              borderBottom: `3px solid ${GOLD_ACCENT}`, 
+              paddingBottom: '8px',
+              display: 'inline-block'
+            }}>
               Tiểu sử & Cuộc đời
             </span>
           </h2>
           <div
-            className="prose prose-lg max-w-none"
-            style={{ color: '#374151', lineHeight: 1.8 }}
+            style={{ 
+              color: '#374151', 
+              lineHeight: 1.7,
+              fontSize: 'clamp(14px, 3.5vw, 18px)'
+            }}
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
           />
         </div>
 
-        {/* Career Section */}
+        {/* ============ 3. RESPONSIVE CAREER SECTION ============ */}
         {hasCareerData && (
-          <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.92)', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', border: `1px solid rgba(197, 160, 89, 0.2)` }}>
-            <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
+          <div 
+            className="card-hover transition-all duration-300 mb-6"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.92)', 
+              borderRadius: 'clamp(16px, 3vw, 24px)',
+              padding: 'clamp(20px, 5vw, 40px)',
+              boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)', 
+              border: `1px solid rgba(197, 160, 89, 0.2)`
+            }}
+          >
+            <h2 
+              style={{ 
+                fontSize: 'clamp(18px, 4.5vw, 28px)',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
+                textAlign: 'center',
+                marginBottom: 'clamp(16px, 4vw, 24px)'
+              }}
+            >
               Quá trình công tác
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div 
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 'clamp(12px, 3vw, 20px)'
+              }}
+            >
               {profile.roles.map((role, index) => (
-                <div key={index} className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(253, 252, 248, 0.8)', border: `1px solid rgba(197, 160, 89, 0.15)` }}>
-                  <Briefcase className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: GOLD_ACCENT }} />
-                  <p className="text-base" style={{ color: '#374151' }}>{role}</p>
+                <div 
+                  key={index} 
+                  style={{ 
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 'clamp(8px, 2vw, 12px)',
+                    padding: 'clamp(12px, 3vw, 20px)',
+                    borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                    backgroundColor: 'rgba(253, 252, 248, 0.8)', 
+                    border: `1px solid rgba(197, 160, 89, 0.15)`
+                  }}
+                >
+                  <Briefcase 
+                    style={{ 
+                      width: 'clamp(18px, 4vw, 24px)', 
+                      height: 'clamp(18px, 4vw, 24px)',
+                      color: GOLD_ACCENT,
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }} 
+                  />
+                  <p style={{ 
+                    fontSize: 'clamp(14px, 3.5vw, 18px)',
+                    color: '#374151',
+                    lineHeight: 1.5,
+                    margin: 0
+                  }}>
+                    {role}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Tribute Form */}
-        <div className="card-hover mb-6 p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
-          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
-            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
+        {/* ============ 4. RESPONSIVE TRIBUTE FORM ============ */}
+        <div 
+          className="card-hover transition-all duration-300 mb-6"
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.96)', 
+            borderRadius: 'clamp(16px, 3vw, 24px)',
+            padding: 'clamp(20px, 5vw, 40px)',
+            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)', 
+            border: `2px solid rgba(197, 160, 89, 0.3)`
+          }}
+        >
+          <h2 
+            style={{ 
+              fontSize: 'clamp(18px, 4.5vw, 28px)',
+              fontWeight: 900,
+              color: NAVY_PRIMARY,
+              textAlign: 'center',
+              marginBottom: 'clamp(16px, 4vw, 24px)'
+            }}
+          >
+            <span style={{ 
+              borderBottom: `3px solid ${GOLD_ACCENT}`, 
+              paddingBottom: '8px',
+              display: 'inline-block'
+            }}>
               Gửi lời chia buồn
             </span>
           </h2>
-          <form onSubmit={onSubmitTribute} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form onSubmit={onSubmitTribute}>
+            <div 
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: 'clamp(12px, 3vw, 20px)',
+                marginBottom: 'clamp(16px, 4vw, 24px)'
+              }}
+            >
               <input
                 type="text"
                 placeholder="Họ và tên"
                 value={formData.name}
                 onChange={(e) => onChangeForm({ name: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
-                style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
+                style={{
+                  width: '100%',
+                  padding: 'clamp(12px, 3vw, 16px)',
+                  borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                  border: '1px solid rgba(197, 160, 89, 0.3)',
+                  backgroundColor: '#FDFCF8',
+                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  outline: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onFocus={(e) => e.target.style.borderColor = GOLD_ACCENT}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(197, 160, 89, 0.3)'}
               />
               <input
                 type="tel"
                 placeholder="Số điện thoại"
                 value={formData.phone}
                 onChange={(e) => onChangeForm({ phone: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
-                style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
+                style={{
+                  width: '100%',
+                  padding: 'clamp(12px, 3vw, 16px)',
+                  borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                  border: '1px solid rgba(197, 160, 89, 0.3)',
+                  backgroundColor: '#FDFCF8',
+                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  outline: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onFocus={(e) => e.target.style.borderColor = GOLD_ACCENT}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(197, 160, 89, 0.3)'}
               />
             </div>
             <textarea
@@ -1301,66 +1760,215 @@ export default function MemorialProfileWeb({
               value={formData.message}
               onChange={(e) => onChangeForm({ message: e.target.value })}
               rows={4}
-              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 resize-none"
-              style={{ borderColor: 'rgba(197, 160, 89, 0.3)', backgroundColor: '#FDFCF8' }}
+              style={{
+                width: '100%',
+                padding: 'clamp(12px, 3vw, 16px)',
+                borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                border: '1px solid rgba(197, 160, 89, 0.3)',
+                backgroundColor: '#FDFCF8',
+                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                outline: 'none',
+                resize: 'vertical',
+                marginBottom: 'clamp(16px, 4vw, 24px)',
+                transition: 'all 0.3s ease'
+              }}
+              onFocus={(e) => e.target.style.borderColor = GOLD_ACCENT}
+              onBlur={(e) => e.target.style.borderColor = 'rgba(197, 160, 89, 0.3)'}
             />
             <button
               type="submit"
-              className="w-full py-3 rounded-xl font-bold text-white btn-hover transition-all"
-              style={{ backgroundColor: NAVY_PRIMARY }}
+              className="btn-hover transition-all duration-300"
+              style={{
+                width: '100%',
+                padding: 'clamp(12px, 3vw, 16px)',
+                borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                backgroundColor: NAVY_PRIMARY,
+                color: '#ffffff',
+                fontSize: 'clamp(14px, 3.5vw, 18px)',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
-              <PenLine className="w-5 h-5 inline mr-2" />
+              <PenLine style={{ width: 'clamp(16px, 4vw, 20px)', height: 'clamp(16px, 4vw, 20px)' }} />
               Gửi lời chia buồn
             </button>
           </form>
         </div>
 
-        {/* Tributes List */}
-        <div className="card-hover p-6 sm:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.96)', boxShadow: '0 12px 48px rgba(0,0,0,0.07)', border: `2px solid rgba(197, 160, 89, 0.3)` }}>
-          <h2 className="text-xl sm:text-2xl font-black text-center mb-4" style={{ color: NAVY_PRIMARY }}>
-            <span style={{ borderBottom: `3px solid ${GOLD_ACCENT}`, paddingBottom: '8px' }}>
+        {/* ============ 5. RESPONSIVE TRIBUTES LIST ============ */}
+        <div 
+          className="card-hover transition-all duration-300 mb-8"
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.92)', 
+            borderRadius: 'clamp(16px, 3vw, 24px)',
+            padding: 'clamp(20px, 5vw, 40px)',
+            boxShadow: '0 clamp(6px, 1.5vw, 12px) clamp(20px, 5vw, 40px) rgba(0,0,0,0.05)', 
+            border: `1px solid rgba(197, 160, 89, 0.2)`
+          }}
+        >
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 'clamp(8px, 2vw, 16px)',
+            marginBottom: 'clamp(16px, 4vw, 24px)'
+          }}>
+            <h2 
+              style={{ 
+                fontSize: 'clamp(18px, 4.5vw, 28px)',
+                fontWeight: 900,
+                color: NAVY_PRIMARY,
+                margin: 0
+              }}
+            >
               Lời chia buồn
+            </h2>
+            <span
+              style={{
+                fontSize: 'clamp(12px, 3vw, 16px)',
+                padding: 'clamp(6px, 1.5vw, 12px) clamp(12px, 3vw, 20px)',
+                borderRadius: '9999px',
+                backgroundColor: `${GOLD_ACCENT}18`,
+                color: GOLD_ACCENT,
+                fontWeight: 600,
+                border: `1px solid ${GOLD_ACCENT}30`
+              }}
+            >
+              {tributes.length} lời nhắn
             </span>
-          </h2>
-          <div className="space-y-4">
+          </div>
+
+          <div 
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 'clamp(12px, 3vw, 20px)'
+            }}
+          >
             {tributes.map((t) => (
-              <div key={t.id} className="p-4 rounded-xl" style={{ backgroundColor: '#ffffff', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: `1px solid rgba(226, 232, 240, 0.8)` }}>
-                <div className="flex items-center gap-3 mb-2">
+              <div
+                key={t.id}
+                className="transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                style={{
+                  padding: 'clamp(16px, 4vw, 24px)',
+                  borderRadius: 'clamp(12px, 2.5vw, 16px)',
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+                  border: `1px solid rgba(226, 232, 240, 0.8)`
+                }}
+              >
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 'clamp(8px, 2vw, 12px)', 
+                  marginBottom: 'clamp(8px, 2vw, 12px)'
+                }}>
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)` }}
+                    style={{
+                      width: 'clamp(36px, 8vw, 48px)',
+                      height: 'clamp(36px, 8vw, 48px)',
+                      borderRadius: '50%',
+                      background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      fontSize: 'clamp(14px, 3.5vw, 18px)',
+                      fontWeight: 700,
+                      boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)',
+                      flexShrink: 0
+                    }}
                   >
                     {t.name.charAt(0)}
                   </div>
-                  <div>
-                    <p className="font-bold" style={{ color: NAVY_PRIMARY }}>{t.name}</p>
-                    <p className="text-sm text-gray-400">{t.date}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ 
+                      fontSize: 'clamp(14px, 3.5vw, 18px)', 
+                      fontWeight: 700, 
+                      color: NAVY_PRIMARY, 
+                      margin: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {t.name}
+                    </p>
+                    <p style={{ 
+                      fontSize: 'clamp(12px, 3vw, 14px)', 
+                      color: '#94a3b8', 
+                      margin: 0 
+                    }}>
+                      {t.date}
+                    </p>
                   </div>
                 </div>
-                <p className="text-gray-600">{t.message}</p>
+                <p style={{ 
+                  fontSize: 'clamp(13px, 3.2vw, 16px)', 
+                  color: '#475569', 
+                  lineHeight: 1.6, 
+                  margin: 0 
+                }}>
+                  {t.message}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Share Button */}
+        {/* Responsive Share Button */}
         <button
           onClick={onOpenShare}
-          className="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg btn-hover"
-          style={{ backgroundColor: NAVY_PRIMARY }}
+          className="btn-hover transition-all duration-300"
+          style={{
+            position: 'fixed',
+            bottom: 'clamp(16px, 4vw, 24px)',
+            right: 'clamp(16px, 4vw, 24px)',
+            width: 'clamp(48px, 12vw, 64px)',
+            height: 'clamp(48px, 12vw, 64px)',
+            borderRadius: '50%',
+            backgroundColor: NAVY_PRIMARY,
+            color: '#ffffff',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(30, 58, 95, 0.3)',
+            zIndex: 1000
+          }}
         >
-          <Share2 className="w-6 h-6" />
+          <Share2 style={{ width: 'clamp(20px, 5vw, 28px)', height: 'clamp(20px, 5vw, 28px)' }} />
         </button>
       </div>
 
-      {/* Photo Modal */}
+      {/* Responsive Photo Modal */}
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden">
+        <DialogContent 
+          style={{
+            maxWidth: 'min(90vw, 800px)',
+            padding: 0,
+            backgroundColor: 'transparent',
+            border: 'none',
+            boxShadow: 'none'
+          }}
+        >
           {selectedPhoto && (
             <img
               src={selectedPhoto.url}
               alt={selectedPhoto.caption || ''}
-              className="w-full h-auto"
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: '80vh',
+                objectFit: 'contain',
+                borderRadius: 'clamp(8px, 2vw, 16px)'
+              }}
             />
           )}
         </DialogContent>
