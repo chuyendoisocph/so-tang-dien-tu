@@ -15,10 +15,8 @@ export const useComments = (profileId: string) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching comments for profileId:', profileId);
       
       if (!profileId) {
-        console.log('No profileId provided, skipping fetch');
         setComments([]);
         return;
       }
@@ -31,14 +29,10 @@ export const useComments = (profileId: string) => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Supabase fetch error:', error);
         setError(`Database error: ${error.message}`);
         setComments([]);
         return;
       }
-      
-      console.log('Fetched comments raw data:', data);
-      console.log('Comments count:', data?.length || 0);
       
       // Filter approved and public comments in JavaScript instead of SQL
       const filteredComments = (data || []).filter(comment => {
@@ -47,10 +41,8 @@ export const useComments = (profileId: string) => {
         return isApproved && isPublic;
       });
       
-      console.log('Filtered comments:', filteredComments);
       setComments(filteredComments);
     } catch (err) {
-      console.error('fetchComments error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
       setError(errorMessage);
       setComments([]);
@@ -62,8 +54,6 @@ export const useComments = (profileId: string) => {
   // Add new comment
   const addComment = async (commentData: { name: string; phone: string; message: string }) => {
     try {
-      console.log('Adding comment:', { profileId, commentData });
-      
       const { data, error } = await supabase
         .from('comments')
         .insert({
@@ -77,19 +67,13 @@ export const useComments = (profileId: string) => {
         .select()
         .single();
 
-      if (error) {
-        console.error('Supabase insert error:', error);
-        throw error;
-      }
-      
-      console.log('Comment inserted successfully:', data);
+      if (error) throw error;
       
       // Refresh comments to show the new one immediately
       await fetchComments();
       
       return { success: true, data };
     } catch (err) {
-      console.error('addComment error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi gửi bình luận';
       setError(errorMessage);
       return { success: false, error: errorMessage };
