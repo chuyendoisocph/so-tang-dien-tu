@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { Facebook, Link2, MessageCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,37 +11,45 @@ import { useComments } from "@/hooks/useComments";
 export default function ProfilePage() {
   const [searchParams] = useSearchParams();
   const { profileId } = useParams();
+  const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+
+  // Parse URL parameters
   const isSlideshow = searchParams.get("slideshow") === "1";
   const isKiosk = searchParams.get("kiosk") === "1";
+  const isDebug = searchParams.get("debug") === "1";
 
   const { profile, photos, isLoading, error, actualProfileId } = useProfileData(profileId);
   const { comments, loading: commentsLoading, addComment, error: commentsError } = useComments(actualProfileId || '');
 
-  const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
-  const [shareModalOpen, setShareModalOpen] = useState(false);
+  // Memoize transformed tributes to prevent unnecessary re-renders
+  const tributes = useMemo(() => 
+    comments.map(comment => ({
+      id: comment.id,
+      name: comment.author_name,
+      phone: comment.author_email ? comment.author_email.slice(0, 4) + "***" : "***",
+      message: comment.content,
+      date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
+    })), 
+    [comments]
+  );
 
-  // Transform comments to match the expected format
-  const tributes = comments.map(comment => ({
-    id: comment.id,
-    name: comment.author_name,
-    phone: comment.author_email ? comment.author_email.slice(0, 4) + "***" : "***",
-    message: comment.content,
-    date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
-  }));
-
-  // Debug: Log comments data
+  // Debug logging (only in development)
   useEffect(() => {
-    console.log('ProfilePage Debug:', {
-      urlSlug: profileId,
-      actualProfileId,
-      commentsCount: comments.length,
-      commentsLoading,
-      commentsError,
-      comments: comments.slice(0, 3), // Log first 3 comments
-      tributes: tributes.slice(0, 3)  // Log first 3 tributes
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('ProfilePage Debug:', {
+        urlSlug: profileId,
+        actualProfileId,
+        commentsCount: comments.length,
+        commentsLoading,
+        commentsError,
+        comments: comments.slice(0, 3),
+        tributes: tributes.slice(0, 3)
+      });
+    }
   }, [profileId, actualProfileId, comments, commentsLoading, commentsError, tributes]);
 
+  // Set document title
   useEffect(() => {
     if (profile?.name) {
       document.title = `Sổ Tang Điện Tử - ${profile.name}`;
@@ -113,8 +121,8 @@ export default function ProfilePage() {
 
   return (
     <>
-      {/* Debug Info - chỉ hiện khi có ?debug=1 trong URL */}
-      {searchParams.get("debug") === "1" && (
+      {/* Debug Info - only show in debug mode */}
+      {isDebug && (
         <div className="fixed top-4 right-4 bg-black/80 text-white p-4 rounded-lg z-50 max-w-sm text-xs">
           <h4 className="font-bold mb-2">Debug Info:</h4>
           <div>URL Param (slug): {profileId}</div>
@@ -181,7 +189,7 @@ export default function ProfilePage() {
         </DialogContent>
       </Dialog>
 
-      {/* Accessibility: ensure at least one in-page landmark */}
+      {/* Accessibility landmark */}
       <span className="sr-only">
         <MessageCircle className="h-0 w-0" />
       </span>
