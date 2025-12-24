@@ -1,7 +1,16 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink, Loader2, Users } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink, Loader2, Users, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -41,6 +50,42 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
   const navigate = useNavigate();
   const { data: profiles, isLoading, error } = useAllProfiles();
   const deleteProfile = useDeleteProfile();
+
+  // State for filtering and pagination
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Filtered and paginated data
+  const filteredProfiles = useMemo(() => {
+    if (!profiles) return [];
+    
+    return profiles.filter(profile => {
+      // Search filter
+      const matchesSearch = profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (profile.slug || profile.id).toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Status filter
+      const matchesStatus = statusFilter === "all" || 
+                           (statusFilter === "published" && profile.is_published) ||
+                           (statusFilter === "draft" && !profile.is_published);
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [profiles, searchTerm, statusFilter]);
+
+  const paginatedProfiles = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProfiles.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProfiles, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredProfiles.length / itemsPerPage);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, itemsPerPage]);
 
   const handleDelete = async (id: string) => {
     await deleteProfile.mutateAsync(id);
@@ -130,6 +175,62 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
         </Card>
       </div>
 
+      {/* Search and Filter Controls */}
+      <Card className="shadow-sm border-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Tìm kiếm theo tên hoặc mã hồ sơ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            {/* Status Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Select value={statusFilter} onValueChange={(value: "all" | "published" | "draft") => setStatusFilter(value)}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="published">Đã xuất bản</SelectItem>
+                  <SelectItem value="draft">Bản nháp</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Items per page */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Hiển thị:</span>
+              <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(parseInt(value))}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Results info */}
+          <div className="mt-4 text-sm text-muted-foreground">
+            Hiển thị {paginatedProfiles.length} trong tổng số {filteredProfiles.length} hồ sơ
+            {searchTerm && ` (tìm kiếm: "${searchTerm}")`}
+            {statusFilter !== "all" && ` (lọc: ${statusFilter === "published" ? "Đã xuất bản" : "Bản nháp"})`}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Table Card */}
       <Card className="shadow-lg border-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
         <CardContent className="p-0">
@@ -146,9 +247,11 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {profiles?.map((profile, index) => (
+                {paginatedProfiles.map((profile, index) => (
                   <TableRow key={profile.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800">
-                    <TableCell className="font-medium text-slate-600 dark:text-slate-400">{index + 1}</TableCell>
+                    <TableCell className="font-medium text-slate-600 dark:text-slate-400">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </TableCell>
                     <TableCell>
                       <span className="px-3 py-1.5 bg-gradient-to-r from-primary/10 to-primary/5 text-primary rounded-full font-mono text-sm font-medium border border-primary/20">
                         {profile.slug || profile.id.slice(0, 8)}
@@ -295,8 +398,117 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
               </Button>
             </div>
           )}
+
+          {filteredProfiles.length === 0 && profiles && profiles.length > 0 && (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
+                <Search className="h-8 w-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Không tìm thấy kết quả</h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-4">
+                Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                }}
+              >
+                Xóa bộ lọc
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {filteredProfiles.length > 0 && totalPages > 1 && (
+        <Card className="shadow-sm border-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Page info */}
+              <div className="text-sm text-muted-foreground">
+                Trang {currentPage} / {totalPages} 
+                <span className="ml-2">
+                  ({((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredProfiles.length)} của {filteredProfiles.length})
+                </span>
+              </div>
+
+              {/* Pagination controls */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="hidden sm:flex"
+                >
+                  Đầu
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Trước</span>
+                </Button>
+
+                {/* Page numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  <span className="hidden sm:inline mr-1">Sau</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="hidden sm:flex"
+                >
+                  Cuối
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
