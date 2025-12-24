@@ -17,7 +17,6 @@ const SlideshowProfilePage = () => {
   const [loadedFrames, setLoadedFrames] = useState<Set<number>>(new Set());
 
   const intervalTime = parseInt(searchParams.get("time") || "30") * 1000;
-  const useKioskMode = searchParams.get("kiosk") === "1";
   const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
 
   const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfiles();
@@ -133,7 +132,7 @@ const SlideshowProfilePage = () => {
         {profiles.map((profile, index) => (
           <iframe
             key={profile.id}
-            src={`/profile/${profile.id}?${useKioskMode ? 'kiosk=1' : 'slideshow=1'}`}
+            src={`/profile/${profile.id}?slideshow=1`}
             className={`
               transition-opacity duration-1000 ease-in-out
               ${index === currentIndex ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}

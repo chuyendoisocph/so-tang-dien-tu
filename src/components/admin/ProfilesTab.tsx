@@ -1,4 +1,4 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink, Loader2, Users, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Users, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -307,15 +307,6 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950"
-                          onClick={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
-                          aria-label={`Xem kiosk ${profile.name}`}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
 
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -330,13 +321,6 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               Xem trang
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="cursor-pointer"
-                              onSelect={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Xem chế độ Kiosk
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem

@@ -1,4 +1,4 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, ExternalLink, Loader2, Users } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -164,15 +164,6 @@ export const ProfilesTabWithDataTable = ({ onCreateNew, onEdit }: ProfilesTabPro
           >
             <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950 hidden sm:flex"
-            onClick={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
-            aria-label={`Xem kiosk ${profile.name}`}
-          >
-            <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -187,13 +178,6 @@ export const ProfilesTabWithDataTable = ({ onCreateNew, onEdit }: ProfilesTabPro
               >
                 <Eye className="h-4 w-4 mr-2" />
                 Xem trang
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onSelect={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Xem chế độ Kiosk
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -339,13 +323,6 @@ export const ProfilesTabWithDataTable = ({ onCreateNew, onEdit }: ProfilesTabPro
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       Xem trang
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onSelect={() => navigate(`/profile/${profile.slug || profile.id}?kiosk=1`)}
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Xem chế độ Kiosk
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

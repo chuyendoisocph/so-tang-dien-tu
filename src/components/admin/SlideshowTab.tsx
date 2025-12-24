@@ -34,18 +34,11 @@ export const SlideshowTab = () => {
     }
   };
 
-  const openStandee = () => {
-    const profileIds = Array.from(selectedProfiles).join(",");
-    const url = `/slideshow?time=${slideSeconds}${profileIds ? `&profiles=${profileIds}` : ""}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-    toast.success("Đã mở Standee Mode");
-  };
-
   const openProfileMode = () => {
     const profileIds = Array.from(selectedProfiles).join(",");
     const url = `/slideshow-profile?time=${slideSeconds}${profileIds ? `&profiles=${profileIds}` : ""}`;
     window.open(url, "_blank", "noopener,noreferrer");
-    toast.success("Đã mở Profile Mode");
+    toast.success("Đã mở trình chiếu");
   };
 
   const openPlaylist = (playlistId: string) => {
@@ -67,25 +60,16 @@ export const SlideshowTab = () => {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Cấu hình Trình chiếu
           </h1>
-          <p className="text-muted-foreground text-sm">Thiết lập hiển thị cho màn hình TV Standee và Profile Mode</p>
+          <p className="text-muted-foreground text-sm">Thiết lập hiển thị cho màn hình trình chiếu</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            className="flex-1 sm:flex-initial hover:shadow-md transition-all bg-white/50 backdrop-blur-sm"
-            onClick={openStandee}
-            disabled={selectedProfiles.size === 0}
-          >
-            <Monitor className="h-4 w-4 mr-2" />
-            Standee Mode
-          </Button>
           <Button
             className="flex-1 sm:flex-initial shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/90"
             onClick={openProfileMode}
             disabled={selectedProfiles.size === 0}
           >
             <Play className="h-4 w-4 mr-2" />
-            Profile Mode
+            Bắt đầu trình chiếu
           </Button>
         </div>
       </div>
@@ -143,38 +127,10 @@ export const SlideshowTab = () => {
               <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
                 <Monitor className="h-4 w-4 text-purple-600" />
               </div>
-              Chế độ trình chiếu
+              Chế độ hiển thị
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 p-6">
-            {/* Standee Mode */}
-            <div
-              className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600"
-              role="button"
-              tabIndex={0}
-              onClick={openStandee}
-              onKeyDown={(e) => e.key === 'Enter' && openStandee()}
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-28 bg-gradient-to-b from-memorial-hero-from to-memorial-hero-to rounded-lg flex-shrink-0 flex flex-col items-center justify-center p-2 shadow-md">
-                  <div className="text-gold text-[6px] font-semibold uppercase">Tưởng Niệm</div>
-                  <div className="w-6 h-8 bg-foreground/20 rounded mt-1" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-slate-800 dark:text-slate-200">Standee Mode</h4>
-                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                    Hiển thị dạng Standee TV dọc 1080x1920, nền gradient tối với ảnh chân dung và QR code.
-                  </p>
-                  <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
-                    Phù hợp: TV dọc, màn hình cảm ứng
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Profile Mode */}
             <div
               className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer hover:shadow-md hover:border-green-300 dark:hover:border-green-600"
@@ -191,7 +147,7 @@ export const SlideshowTab = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-slate-800 dark:text-slate-200">Profile Mode</h4>
+                    <h4 className="font-semibold text-slate-800 dark:text-slate-200">Trình chiếu Profile</h4>
                     <ExternalLink className="h-3 w-3 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
