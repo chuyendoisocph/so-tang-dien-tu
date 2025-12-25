@@ -3,6 +3,7 @@ import { Sidebar, MobileHeader } from "@/components/layout/Sidebar";
 import { ProfilesTab } from "@/components/admin/ProfilesTab";
 import { CreateEditTab } from "@/components/admin/CreateEditTab";
 import { SlideshowTab } from "@/components/admin/SlideshowTab";
+import { CommentsTab } from "@/components/admin/CommentsTab";
 
 interface EditingProfile {
   id: string;
@@ -62,6 +63,7 @@ const Index = () => {
           {activeTab === "create" && (
             <CreateEditTab onBack={handleBackToProfiles} editingProfile={editingProfile} />
           )}
+          {activeTab === "comments" && <CommentsTab />}
           {activeTab === "slideshow" && <SlideshowTab />}
         </div>
       </main>

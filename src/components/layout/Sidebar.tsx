@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Users, UserPlus, PlayCircle, X, Menu } from "lucide-react";
+import { Users, UserPlus, PlayCircle, X, Menu, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/Logo";
 
@@ -13,6 +13,7 @@ interface SidebarProps {
 const navItems = [
   { id: "profiles", label: "Danh sách Hồ Sơ", icon: Users },
   { id: "create", label: "Thêm Mới / Sửa", icon: UserPlus },
+  { id: "comments", label: "Quản lý Bình luận", icon: MessageSquare },
   { id: "slideshow", label: "Cấu hình Trình chiếu", icon: PlayCircle },
 ];
 
