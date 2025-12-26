@@ -6,15 +6,9 @@ export interface Comment {
   id: string;
   author_name: string;
   author_email?: string;
-  author_phone?: string;
-  author_relationship?: string;
   content: string;
-  status: "pending" | "approved" | "rejected";
   profile_id: string;
   profile_name?: string;
-  ip_address?: string;
-  user_agent?: string;
-  location?: string;
   created_at: string;
   updated_at: string;
 }
@@ -53,10 +47,7 @@ export const useAllComments = () => {
         throw error;
       }
 
-      return (data || []).map((comment: any) => ({
-        ...comment,
-        status: comment.is_approved ? "approved" : "pending"
-      })) as Comment[];
+      return (data || []) as Comment[];
     },
   });
 };
@@ -92,7 +83,6 @@ export const useProfileComments = (profileId: string) => {
         .from("comments")
         .select("*")
         .eq("profile_id", profileId)
-        .eq("is_approved", true) // Only show approved comments
         .eq("is_public", true)   // Only show public comments
         .order("created_at", { ascending: false });
 
@@ -101,11 +91,7 @@ export const useProfileComments = (profileId: string) => {
         throw error;
       }
 
-      // Transform comments to include status field for compatibility
-      return (data || []).map((comment: any) => ({
-        ...comment,
-        status: comment.is_approved ? "approved" : "pending"
-      })) as Comment[];
+      return (data || []) as Comment[];
     },
     enabled: !!profileId,
   });
@@ -129,8 +115,8 @@ export const useCreateComment = () => {
           author_name: commentData.author_name,
           author_email: commentData.author_email,
           content: commentData.content,
-          is_approved: false, // New comments need approval
-          is_public: true,
+          is_approved: true, // Auto-approve all comments
+          is_public: true,   // Make all comments public
         }])
         .select()
         .single();
@@ -144,79 +130,11 @@ export const useCreateComment = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast.success("Đã gửi lời chia buồn và đang chờ duyệt");
+      toast.success("Đã gửi lời chia buồn thành công");
     },
     onError: (error) => {
       console.error("Error creating comment:", error);
       toast.error("Có lỗi xảy ra khi gửi lời chia buồn");
-    },
-  });
-};
-
-// Approve a comment
-export const useApproveComment = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (commentId: string) => {
-      const { data, error } = await supabase
-        .from("comments")
-        .update({ 
-          is_approved: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq("id", commentId)
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error approving comment:", error);
-        throw error;
-      }
-
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast.success("Bình luận đã được duyệt");
-    },
-    onError: (error) => {
-      console.error("Error approving comment:", error);
-      toast.error("Có lỗi xảy ra khi duyệt bình luận");
-    },
-  });
-};
-
-// Reject a comment
-export const useRejectComment = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (commentId: string) => {
-      const { data, error } = await supabase
-        .from("comments")
-        .update({ 
-          is_approved: false,
-          updated_at: new Date().toISOString()
-        })
-        .eq("id", commentId)
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error rejecting comment:", error);
-        throw error;
-      }
-
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast.success("Bình luận đã bị từ chối");
-    },
-    onError: (error) => {
-      console.error("Error rejecting comment:", error);
-      toast.error("Có lỗi xảy ra khi từ chối bình luận");
     },
   });
 };
@@ -250,39 +168,6 @@ export const useDeleteComment = () => {
   });
 };
 
-// Bulk approve comments
-export const useBulkApproveComments = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (commentIds: string[]) => {
-      const { data, error } = await supabase
-        .from("comments")
-        .update({ 
-          is_approved: true,
-          updated_at: new Date().toISOString()
-        })
-        .in("id", commentIds)
-        .select();
-
-      if (error) {
-        console.error("Error bulk approving comments:", error);
-        throw error;
-      }
-
-      return data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast.success(`Đã duyệt ${data?.length || 0} bình luận`);
-    },
-    onError: (error) => {
-      console.error("Error bulk approving comments:", error);
-      toast.error("Có lỗi xảy ra khi duyệt hàng loạt");
-    },
-  });
-};
-
 // Get comment statistics
 export const useCommentStats = () => {
   return useQuery({
@@ -290,7 +175,7 @@ export const useCommentStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comments")
-        .select("is_approved, created_at");
+        .select("created_at");
 
       if (error) {
         console.error("Error fetching comment stats:", error);
@@ -299,11 +184,6 @@ export const useCommentStats = () => {
 
       const stats = {
         total: data?.length || 0,
-        pending: data?.filter((c: any) => !c.is_approved).length || 0,
-        approved: data?.filter((c: any) => c.is_approved).length || 0,
-        rejected: 0, // No rejected status in current schema
-        relationships: {} as Record<string, number>,
-        locations: {} as Record<string, number>,
         dailyStats: {} as Record<string, number>,
       };
 
