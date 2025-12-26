@@ -111,9 +111,36 @@ const SlideshowProfilePage = () => {
     );
   }
 
+  // Handle touch/click interactions for controls visibility
+  const toggleControls = () => setShowControls(prev => !prev);
+
+  const [scale, setScale] = useState(1);
+
+  // Calculate scale to fit 1080x1920 content into current viewport
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const targetWidth = 1080;
+      const targetHeight = 1920;
+
+      const scaleX = windowWidth / targetWidth;
+      const scaleY = windowHeight / targetHeight;
+
+      // Use the smaller scale to fit entirely within screen
+      const newScale = Math.min(scaleX, scaleY);
+      setScale(newScale);
+    };
+
+    handleResize(); // Initial calc
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div
-      className="slideshow-container"
+      className="slideshow-container bg-black"
+      onClick={toggleControls} // Click anywhere to toggle controls
       onMouseMove={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -128,7 +155,10 @@ const SlideshowProfilePage = () => {
       )}
 
       {/* Slideshow Frame - 1080x1920 Portrait */}
-      <div className="slideshow-frame">
+      <div
+        className="slideshow-frame"
+        style={{ transform: `scale(${scale})` }}
+      >
         {profiles.map((profile, index) => (
           <iframe
             key={profile.id}
@@ -139,6 +169,8 @@ const SlideshowProfilePage = () => {
             `}
             onLoad={() => handleFrameLoad(index)}
             title={profile.name}
+            // Add style to prevent iframe from capturing clicks so parent onClick works
+            style={{ pointerEvents: 'none' }}
           />
         ))}
       </div>
@@ -154,44 +186,57 @@ const SlideshowProfilePage = () => {
       {/* Slide Counter */}
       <div
         className={`
-          fixed top-5 left-5 bg-foreground/70 text-card px-5 py-2.5 rounded-lg text-sm z-[1001]
+          fixed top-6 left-6 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm z-[1001]
+          border border-white/10 font-medium
           transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}
         `}
       >
-        <span>{currentIndex + 1}</span> / <span>{profiles.length}</span>
+        <span>{currentIndex + 1}</span> <span className="text-white/50">/</span> <span>{profiles.length}</span>
       </div>
 
-      {/* Controls Overlay */}
+      {/* Controls Overlay - Responsive & Touch Friendly */}
       <div
         className={`
-          fixed top-5 right-5 flex gap-2.5 z-[1001]
-          transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}
+          fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-[1001]
+          p-2 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl
+          transition-all duration-300 
+          ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}
         `}
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking controls
       >
         <button
           onClick={prevSlide}
-          className="bg-foreground/70 hover:bg-foreground/90 text-card border-none px-3 py-1.5 rounded-md cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
+          className="p-3 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition-colors active:scale-95 touch-manipulation"
+          title="Trước"
         >
-          <ChevronLeft className="h-3 w-3" /> Trước
+          <ChevronLeft className="h-6 w-6" />
         </button>
+
         <button
           onClick={togglePause}
-          className="bg-foreground/70 hover:bg-foreground/90 text-card border-none px-3 py-1.5 rounded-md cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-semibold transition-colors active:scale-95 touch-manipulation"
         >
-          {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
-          {isPaused ? "Tiếp tục" : "Tạm dừng"}
+          {isPaused ? <Play className="h-5 w-5 fill-current" /> : <Pause className="h-5 w-5 fill-current" />}
+          <span className="hidden sm:inline">{isPaused ? "Tiếp tục" : "Tạm dừng"}</span>
         </button>
-        <button
-          onClick={nextSlide}
-          className="bg-foreground/70 hover:bg-foreground/90 text-card border-none px-3 py-1.5 rounded-md cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
-        >
-          Sau <ChevronRight className="h-3 w-3" />
-        </button>
+
         <button
           onClick={exitSlideshow}
-          className="bg-foreground/70 hover:bg-foreground/90 text-card border-none px-3 py-1.5 rounded-md cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
+          className="flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 hover:text-red-400 hover:bg-red-500/10 transition-colors active:scale-95 touch-manipulation"
+          title="Thoát"
         >
-          <X className="h-3 w-3" /> Thoát
+          <X className="h-5 w-5" />
+          <span className="hidden sm:inline">Thoát</span>
+        </button>
+
+        <div className="w-px h-8 bg-white/10 mx-1 hidden sm:block"></div>
+
+        <button
+          onClick={nextSlide}
+          className="p-3 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition-colors active:scale-95 touch-manipulation"
+          title="Sau"
+        >
+          <ChevronRight className="h-6 w-6" />
         </button>
       </div>
     </div>
