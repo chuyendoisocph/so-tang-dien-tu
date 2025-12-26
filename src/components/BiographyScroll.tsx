@@ -25,16 +25,25 @@ export const BiographyScroll: React.FC<BiographyScrollProps> = ({
   );
 
   // Measure container height
+  // Measure container height
   useEffect(() => {
     if (containerRef.current) {
       const height = containerRef.current.offsetHeight;
-      setContainerHeight(height);
+
+      // Prevent infinite loop: Only update if height changed significantly
+      if (Math.abs(containerHeight - height) > 1) {
+        setContainerHeight(height);
+      }
 
       // Check if scrolling is needed
       const needsScroll = needsScrolling(biography, height);
-      setShouldAnimate(needsScroll && shouldScroll);
+      const newShouldAnimate = needsScroll && shouldScroll;
+
+      if (shouldAnimate !== newShouldAnimate) {
+        setShouldAnimate(newShouldAnimate);
+      }
     }
-  }, [biography, shouldScroll]);
+  }, [biography, shouldScroll, containerHeight, shouldAnimate]);
 
   // Prepare content for seamless loop
   const displayContent = seamlessLoop && shouldAnimate

@@ -15,6 +15,7 @@ const SlideshowProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const [loadedFrames, setLoadedFrames] = useState<Set<number>>(new Set());
+  const [scale, setScale] = useState(1);
 
   const intervalTime = parseInt(searchParams.get("time") || "30") * 1000;
   const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
@@ -29,6 +30,27 @@ const SlideshowProfilePage = () => {
       id: p.slug || p.id,
       name: p.name,
     }));
+
+  // Calculate scale to fit 1080x1920 content into current viewport
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const targetWidth = 1080;
+      const targetHeight = 1920;
+
+      const scaleX = windowWidth / targetWidth;
+      const scaleY = windowHeight / targetHeight;
+
+      // Use the smaller scale to fit entirely within screen
+      const newScale = Math.min(scaleX, scaleY);
+      setScale(newScale);
+    };
+
+    handleResize(); // Initial calc
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.title = "Trình Chiếu - Giao diện Profile";
@@ -114,28 +136,9 @@ const SlideshowProfilePage = () => {
   // Handle touch/click interactions for controls visibility
   const toggleControls = () => setShowControls(prev => !prev);
 
-  const [scale, setScale] = useState(1);
+
 
   // Calculate scale to fit 1080x1920 content into current viewport
-  useEffect(() => {
-    const handleResize = () => {
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      const targetWidth = 1080;
-      const targetHeight = 1920;
-
-      const scaleX = windowWidth / targetWidth;
-      const scaleY = windowHeight / targetHeight;
-
-      // Use the smaller scale to fit entirely within screen
-      const newScale = Math.min(scaleX, scaleY);
-      setScale(newScale);
-    };
-
-    handleResize(); // Initial calc
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   return (
     <div
