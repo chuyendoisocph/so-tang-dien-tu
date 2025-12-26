@@ -1479,6 +1479,22 @@ export default function MemorialProfileWeb({
             padding: '0 clamp(8px, 2vw, 16px)'
           }}
         >
+          {/* Brand Header */}
+          <div
+            style={{
+              fontSize: 'clamp(24px, 5vw, 42px)',
+              fontWeight: 900,
+              letterSpacing: 'clamp(2px, 0.5vw, 6px)',
+              textTransform: 'uppercase',
+              color: GOLD_ACCENT,
+              textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+              marginBottom: 'clamp(20px, 4vw, 32px)',
+              fontFamily: "'Playfair Display', Georgia, serif"
+            }}
+          >
+            HOA VIÊN BÌNH DƯƠNG
+          </div>
+
           {/* Profile Picture - Responsive Sizes */}
           <div
             className="float-normal cursor-pointer mb-4 sm:mb-6"
@@ -1608,12 +1624,10 @@ export default function MemorialProfileWeb({
           </h2>
           <ExpandableText
             text={profile.biography}
-            maxLength={300}
+            maxLines={8} // Show reasonable amount of text before truncating
             isHtml={true}
-            showOnMobile={true}
+            textClassName="text-gray-700 leading-relaxed"
             style={{
-              color: '#374151',
-              lineHeight: 1.7,
               fontSize: 'clamp(14px, 3.5vw, 18px)'
             }}
           />
@@ -1912,17 +1926,14 @@ export default function MemorialProfileWeb({
                     </p>
                   </div>
                 </div>
-                <ExpandableText
-                  text={t.message}
-                  maxLength={150}
-                  showOnMobile={true}
+                <div
+                  className="text-slate-600 leading-relaxed"
                   style={{
-                    fontSize: 'clamp(13px, 3.2vw, 16px)',
-                    color: '#475569',
-                    lineHeight: 1.6,
-                    margin: 0
+                    fontSize: 'clamp(13px, 3.2vw, 16px)'
                   }}
-                />
+                >
+                  {t.message}
+                </div>
               </div>
             ))}
           </div>

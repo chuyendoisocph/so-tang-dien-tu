@@ -40,9 +40,9 @@ export default function ProfilePage() {
       comments,
       commentsLoading,
       commentsError,
-      tributesLength: tributes.length
+      tributesLength: comments.length
     });
-  }, [actualProfileId, comments, commentsLoading, commentsError, tributes.length]);
+  }, [actualProfileId, comments, commentsLoading, commentsError]);
 
   // Set document title
   useEffect(() => {

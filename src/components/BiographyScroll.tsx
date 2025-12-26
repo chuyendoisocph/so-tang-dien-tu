@@ -29,7 +29,7 @@ export const BiographyScroll: React.FC<BiographyScrollProps> = ({
     if (containerRef.current) {
       const height = containerRef.current.offsetHeight;
       setContainerHeight(height);
-      
+
       // Check if scrolling is needed
       const needsScroll = needsScrolling(biography, height);
       setShouldAnimate(needsScroll && shouldScroll);
@@ -37,37 +37,32 @@ export const BiographyScroll: React.FC<BiographyScrollProps> = ({
   }, [biography, shouldScroll]);
 
   // Prepare content for seamless loop
-  const displayContent = seamlessLoop && shouldAnimate 
-    ? biography + '\n\n' + biography 
+  const displayContent = seamlessLoop && shouldAnimate
+    ? biography + '<div class="my-8"></div>' + biography
     : biography;
 
   const animationStyle = shouldAnimate
     ? {
-        animationDuration: duration,
-        animationName: seamlessLoop ? 'biography-scroll-continuous' : 'biography-scroll',
-      }
+      animationDuration: duration,
+      animationName: seamlessLoop ? 'biography-scroll-continuous' : 'biography-scroll',
+    }
     : {};
 
   return (
     <div
       ref={containerRef}
-      className={`biography-scroll-container ${className} ${
-        pauseOnHover ? 'pause-on-hover' : ''
-      }`}
+      className={`biography-scroll-container ${className} ${pauseOnHover ? 'pause-on-hover' : ''
+        }`}
     >
       <div
-        className={`biography-scroll-content ${scrollClass} ${
-          shouldAnimate ? 'animate' : 'static'
-        } ${seamlessLoop ? 'continuous' : ''}`}
+        className={`biography-scroll-content ${scrollClass} ${shouldAnimate ? 'animate' : 'static'
+          } ${seamlessLoop ? 'continuous' : ''}`}
         style={animationStyle}
       >
-        <div className="biography-scroll-text">
-          {displayContent.split('\n').map((paragraph, index) => (
-            <p key={index} className="mb-4 last:mb-0">
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        <div
+          className="biography-scroll-text text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: displayContent }}
+        />
       </div>
     </div>
   );

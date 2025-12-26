@@ -33,7 +33,7 @@ const SlideshowProfilePage = () => {
   useEffect(() => {
     document.title = "Trình Chiếu - Giao diện Profile";
     document.body.classList.add('slideshow-mode');
-    
+
     return () => {
       document.body.classList.remove('slideshow-mode');
     };

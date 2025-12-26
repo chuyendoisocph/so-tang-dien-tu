@@ -1,45 +1,45 @@
 # ExpandableText Component
 
-A responsive component that provides "Read More" functionality for long text content, specifically designed for mobile devices.
+A responsive React component that truncates long text content and provides expand/collapse functionality with "Xem thêm" (Show more) and "Thu gọn" (Collapse) buttons.
 
 ## Features
 
-- **Mobile-first**: Only shows expand/collapse functionality on mobile screens (< 640px)
-- **HTML Support**: Can handle both plain text and HTML content with proper truncation
-- **Responsive**: Automatically detects screen size and adjusts behavior
-- **Customizable**: Configurable text length limits and styling
-- **Accessible**: Proper button styling with hover states
+- **Responsive Design**: Automatically adjusts max length based on screen size
+  - Mobile (< 640px): 60% of base max length
+  - Tablet (640px - 1024px): 80% of base max length  
+  - Desktop (> 1024px): Full max length
+- **HTML Support**: Can render HTML content safely
+- **Customizable**: Fully customizable styling and text
+- **Accessible**: Includes proper ARIA attributes
+- **Vietnamese Localization**: Default button text in Vietnamese
 
 ## Usage
 
 ### Basic Text
 ```tsx
-<ExpandableText
-  text="This is a long text that will be truncated on mobile devices..."
-  maxLength={150}
+<ExpandableText 
+  text="Long text content here..." 
+  maxLength={200}
 />
 ```
 
 ### HTML Content
 ```tsx
-<ExpandableText
-  text="<p>This is <strong>HTML content</strong> that will be properly truncated...</p>"
-  maxLength={200}
+<ExpandableText 
+  text="<p>HTML content with <strong>formatting</strong></p>" 
+  maxLength={300}
   isHtml={true}
 />
 ```
 
 ### Custom Styling
 ```tsx
-<ExpandableText
-  text="Custom styled text..."
-  maxLength={100}
-  style={{
-    fontSize: '16px',
-    color: '#333',
-    lineHeight: 1.6
-  }}
-  className="custom-class"
+<ExpandableText 
+  text="Content here..."
+  maxLength={250}
+  textClassName="text-gray-700 leading-relaxed"
+  buttonClassName="custom-button-styles"
+  style={{ fontSize: 'clamp(14px, 3.5vw, 18px)' }}
 />
 ```
 
@@ -48,30 +48,54 @@ A responsive component that provides "Read More" functionality for long text con
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `text` | `string` | - | The text content to display (required) |
-| `maxLength` | `number` | - | Maximum characters before truncation (required) |
-| `className` | `string` | `''` | Additional CSS classes |
+| `maxLength` | `number` | `200` | Base maximum length before truncation |
+| `className` | `string` | `""` | CSS classes for the container |
+| `showMoreText` | `string` | `"Xem thêm"` | Text for expand button |
+| `showLessText` | `string` | `"Thu gọn"` | Text for collapse button |
+| `buttonClassName` | `string` | `""` | CSS classes for the button |
+| `textClassName` | `string` | `""` | CSS classes for the text content |
+| `isHtml` | `boolean` | `false` | Whether to render content as HTML |
 | `style` | `React.CSSProperties` | `{}` | Inline styles for the container |
-| `isHtml` | `boolean` | `false` | Whether the text contains HTML content |
-| `showOnMobile` | `boolean` | `true` | Whether to show expand/collapse on mobile |
 
-## Behavior
+## Responsive Behavior
 
-- **Desktop/Tablet**: Shows full text content without truncation
-- **Mobile**: Shows truncated text with "Xem thêm" (Read More) button
-- **Expanded**: Shows full text with "Thu gọn" (Collapse) button
-- **HTML Mode**: Properly handles HTML tags during truncation
+The component automatically adjusts the truncation length based on screen size:
+
+- **Mobile**: Shows 60% of the specified `maxLength`
+- **Tablet**: Shows 80% of the specified `maxLength`  
+- **Desktop**: Shows the full `maxLength`
+
+This ensures optimal reading experience across all device types.
+
+## Integration Example
+
+Used in the Memorial Profile Web component for biography and comment sections:
+
+```tsx
+// Biography section
+<ExpandableText
+  text={profile.biography}
+  maxLength={400}
+  isHtml={true}
+  textClassName="text-gray-700 leading-relaxed"
+  style={{ fontSize: 'clamp(14px, 3.5vw, 18px)' }}
+/>
+
+// Comments section
+<ExpandableText
+  text={comment.message}
+  maxLength={200}
+  textClassName="text-slate-600 leading-relaxed"
+  style={{ fontSize: 'clamp(13px, 3.2vw, 16px)' }}
+/>
+```
 
 ## Styling
 
-The component uses the application's design system colors:
-- Button color: `#C5A059` (GOLD_ACCENT)
-- Hover color: `#1e3a5f` (NAVY_PRIMARY)
-- Responsive font sizing with `clamp()`
+The component uses default Tailwind CSS classes for the expand/collapse button:
+- Blue color scheme with hover effects
+- Rounded corners and subtle shadows
+- Smooth transitions
+- Focus states for accessibility
 
-## Implementation Notes
-
-- Uses `useExpandableText` hook for state management
-- Implements proper HTML truncation that preserves tag structure
-- Responsive breakpoint: 640px (Tailwind's `sm` breakpoint)
-- Automatically strips HTML tags for length calculation
-- Includes hover effects and smooth transitions
+You can override these styles by providing a custom `buttonClassName` prop.
