@@ -985,9 +985,9 @@ export default function MemorialProfileWeb({
           {/* Brand Name - GRAND & MAJESTIC */}
           <div
             style={{
-              fontSize: '58px',
+              fontSize: '52px',
               fontWeight: 900,
-              letterSpacing: '6px',
+              letterSpacing: '4px',
               textTransform: 'uppercase',
               color: GOLD_ACCENT,
               textShadow: '0 4px 8px rgba(0,0,0,0.2)',

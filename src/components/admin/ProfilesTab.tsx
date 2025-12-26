@@ -60,17 +60,17 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
   // Filtered and paginated data
   const filteredProfiles = useMemo(() => {
     if (!profiles) return [];
-    
+
     return profiles.filter(profile => {
       // Search filter
       const matchesSearch = profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (profile.slug || profile.id).toLowerCase().includes(searchTerm.toLowerCase());
-      
+        (profile.slug || profile.id).toLowerCase().includes(searchTerm.toLowerCase());
+
       // Status filter
-      const matchesStatus = statusFilter === "all" || 
-                           (statusFilter === "published" && profile.is_published) ||
-                           (statusFilter === "draft" && !profile.is_published);
-      
+      const matchesStatus = statusFilter === "all" ||
+        (statusFilter === "published" && profile.is_published) ||
+        (statusFilter === "draft" && !profile.is_published);
+
       return matchesSearch && matchesStatus;
     });
   }, [profiles, searchTerm, statusFilter]);
@@ -145,7 +145,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -159,7 +159,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -189,7 +189,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                 className="pl-10"
               />
             </div>
-            
+
             {/* Status Filter */}
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
@@ -273,7 +273,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                         <div>
                           <span className="font-semibold text-slate-900 dark:text-slate-100">{profile.name}</span>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {profile.birth_date && profile.death_date && 
+                            {profile.birth_date && profile.death_date &&
                               `${new Date(profile.birth_date).getFullYear()} - ${new Date(profile.death_date).getFullYear()}`
                             }
                           </p>
@@ -344,7 +344,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Xác nhận xóa hồ sơ</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    Bạn có chắc muốn xóa hồ sơ "<strong>{profile.name}</strong>"? 
+                                    Bạn có chắc muốn xóa hồ sơ "<strong>{profile.name}</strong>"?
                                     Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
@@ -392,8 +392,8 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
               <p className="text-slate-500 dark:text-slate-400 mb-4">
                 Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
               </p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setSearchTerm("");
                   setStatusFilter("all");
@@ -413,7 +413,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Page info */}
               <div className="text-sm text-muted-foreground">
-                Trang {currentPage} / {totalPages} 
+                Trang {currentPage} / {totalPages}
                 <span className="ml-2">
                   ({((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredProfiles.length)} của {filteredProfiles.length})
                 </span>
@@ -430,7 +430,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                 >
                   Đầu
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -478,7 +478,7 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                   <span className="hidden sm:inline mr-1">Sau</span>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   size="sm"
