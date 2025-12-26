@@ -55,7 +55,7 @@ export const useAllComments = () => {
 
       return (data || []).map((comment: any) => ({
         ...comment,
-        status: comment.status || (comment.is_approved ? "approved" : "pending")
+        status: comment.is_approved ? "approved" : "pending"
       })) as Comment[];
     },
   });
@@ -76,9 +76,8 @@ export const useComments = (profileId: string) => {
       return addComment.mutateAsync({
         profile_id: profileId,
         author_name: commentData.name,
-        author_phone: commentData.phone,
+        author_email: commentData.phone, // Store phone in email field for now
         content: commentData.message,
-        status: "pending" as const,
       });
     },
   };
@@ -93,6 +92,8 @@ export const useProfileComments = (profileId: string) => {
         .from("comments")
         .select("*")
         .eq("profile_id", profileId)
+        .eq("is_approved", true) // Only show approved comments
+        .eq("is_public", true)   // Only show public comments
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -100,16 +101,11 @@ export const useProfileComments = (profileId: string) => {
         throw error;
       }
 
-      // Filter and transform comments
-      return (data || [])
-        .filter((comment: any) => {
-          // Check if comment is approved using either status or is_approved field
-          return comment.status === "approved" || comment.is_approved === true;
-        })
-        .map((comment: any) => ({
-          ...comment,
-          status: comment.status || (comment.is_approved ? "approved" : "pending")
-        })) as Comment[];
+      // Transform comments to include status field for compatibility
+      return (data || []).map((comment: any) => ({
+        ...comment,
+        status: comment.is_approved ? "approved" : "pending"
+      })) as Comment[];
     },
     enabled: !!profileId,
   });
@@ -124,19 +120,17 @@ export const useCreateComment = () => {
       profile_id: string;
       author_name: string;
       author_email?: string;
-      author_phone?: string;
-      author_relationship?: string;
       content: string;
-      status: "pending" | "approved" | "rejected";
-      ip_address?: string;
-      user_agent?: string;
-      location?: string;
     }) => {
       const { data, error } = await supabase
         .from("comments")
         .insert([{
-          ...commentData,
-          status: "pending", // All new comments start as pending
+          profile_id: commentData.profile_id,
+          author_name: commentData.author_name,
+          author_email: commentData.author_email,
+          content: commentData.content,
+          is_approved: false, // New comments need approval
+          is_public: true,
         }])
         .select()
         .single();
@@ -150,11 +144,11 @@ export const useCreateComment = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast.success("Bình luận đã được gửi và đang chờ duyệt");
+      toast.success("Đã gửi lời chia buồn và đang chờ duyệt");
     },
     onError: (error) => {
       console.error("Error creating comment:", error);
-      toast.error("Có lỗi xảy ra khi gửi bình luận");
+      toast.error("Có lỗi xảy ra khi gửi lời chia buồn");
     },
   });
 };
@@ -168,7 +162,7 @@ export const useApproveComment = () => {
       const { data, error } = await supabase
         .from("comments")
         .update({ 
-          status: "approved",
+          is_approved: true,
           updated_at: new Date().toISOString()
         })
         .eq("id", commentId)
@@ -202,7 +196,7 @@ export const useRejectComment = () => {
       const { data, error } = await supabase
         .from("comments")
         .update({ 
-          status: "rejected",
+          is_approved: false,
           updated_at: new Date().toISOString()
         })
         .eq("id", commentId)
@@ -265,7 +259,7 @@ export const useBulkApproveComments = () => {
       const { data, error } = await supabase
         .from("comments")
         .update({ 
-          status: "approved",
+          is_approved: true,
           updated_at: new Date().toISOString()
         })
         .in("id", commentIds)
@@ -296,7 +290,7 @@ export const useCommentStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comments")
-        .select("status, author_relationship, location, created_at");
+        .select("is_approved, created_at");
 
       if (error) {
         console.error("Error fetching comment stats:", error);
@@ -305,29 +299,13 @@ export const useCommentStats = () => {
 
       const stats = {
         total: data?.length || 0,
-        pending: data?.filter((c: any) => c.status === "pending").length || 0,
-        approved: data?.filter((c: any) => c.status === "approved").length || 0,
-        rejected: data?.filter((c: any) => c.status === "rejected").length || 0,
+        pending: data?.filter((c: any) => !c.is_approved).length || 0,
+        approved: data?.filter((c: any) => c.is_approved).length || 0,
+        rejected: 0, // No rejected status in current schema
         relationships: {} as Record<string, number>,
         locations: {} as Record<string, number>,
         dailyStats: {} as Record<string, number>,
       };
-
-      // Calculate relationship stats
-      data?.forEach((comment: any) => {
-        if (comment.author_relationship) {
-          stats.relationships[comment.author_relationship] = 
-            (stats.relationships[comment.author_relationship] || 0) + 1;
-        }
-      });
-
-      // Calculate location stats
-      data?.forEach((comment: any) => {
-        if (comment.location) {
-          const city = comment.location.split(',')[0].trim();
-          stats.locations[city] = (stats.locations[city] || 0) + 1;
-        }
-      });
 
       // Calculate daily stats (last 7 days)
       const last7Days = Array.from({ length: 7 }, (_, i) => {

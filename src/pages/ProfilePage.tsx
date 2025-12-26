@@ -26,7 +26,7 @@ export default function ProfilePage() {
     comments.map(comment => ({
       id: comment.id,
       name: comment.author_name,
-      phone: comment.author_phone ? comment.author_phone.slice(0, 4) + "***" : "***",
+      phone: comment.author_email ? comment.author_email.slice(0, 4) + "***" : "***", // Use email field for phone
       message: comment.content,
       date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
     })), 

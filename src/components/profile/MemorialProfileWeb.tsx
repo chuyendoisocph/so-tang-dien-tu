@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { BiographyScroll } from "@/components/BiographyScroll";
+import { ExpandableText } from "@/components/ui/ExpandableText";
 
 type MemorialProfile = {
   id: string;
@@ -1605,13 +1606,16 @@ export default function MemorialProfileWeb({
               Tiểu sử & Cuộc đời
             </span>
           </h2>
-          <div
+          <ExpandableText
+            text={profile.biography}
+            maxLength={300}
+            isHtml={true}
+            showOnMobile={true}
             style={{
               color: '#374151',
               lineHeight: 1.7,
               fontSize: 'clamp(14px, 3.5vw, 18px)'
             }}
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
           />
         </div>
 
@@ -1908,14 +1912,17 @@ export default function MemorialProfileWeb({
                     </p>
                   </div>
                 </div>
-                <p style={{
-                  fontSize: 'clamp(13px, 3.2vw, 16px)',
-                  color: '#475569',
-                  lineHeight: 1.6,
-                  margin: 0
-                }}>
-                  {t.message}
-                </p>
+                <ExpandableText
+                  text={t.message}
+                  maxLength={150}
+                  showOnMobile={true}
+                  style={{
+                    fontSize: 'clamp(13px, 3.2vw, 16px)',
+                    color: '#475569',
+                    lineHeight: 1.6,
+                    margin: 0
+                  }}
+                />
               </div>
             ))}
           </div>
