@@ -1056,7 +1056,7 @@ export default function MemorialProfileWeb({
               letterSpacing: '0.5px'
             }}
           >
-            <strong>{toTitleCase(profile.name)}</strong> đang an nghỉ tại <strong>Đường Nghệ sĩ - Hoa Viên Bình Dương</strong>
+            <strong>{toTitleCase(profile.name)}</strong> sẽ được an nghỉ tại <strong>Đường Nghệ sĩ - Hoa Viên Bình Dương</strong>
           </div>
         </div>
 
