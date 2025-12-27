@@ -60,6 +60,7 @@ export default function MemorialProfileWeb({
   slideshowMode = false,
   kioskMode = false,
   adminMode = false,
+  standeeMode = false,
 }: {
   profile: MemorialProfile;
   tributes: Tribute[];
@@ -71,6 +72,7 @@ export default function MemorialProfileWeb({
   slideshowMode?: boolean;
   kioskMode?: boolean;
   adminMode?: boolean;
+  standeeMode?: boolean;
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const publicUrl = buildPublicProfileUrl(profile.id);
@@ -88,6 +90,214 @@ export default function MemorialProfileWeb({
 
   // Check if career/roles data exists
   const hasCareerData = profile.roles && profile.roles.length > 0;
+
+  // STANDEE MODE - A4 Print Layout (Ratio 1:1.41)
+  if (standeeMode) {
+    return (
+      <div
+        className="memorial-profile-standee relative flex flex-col"
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          width: '794px', // A4 width at 96 DPI
+          height: '1123px', // A4 height at 96 DPI
+          margin: '0',
+          backgroundColor: '#FEF9E7', // Exact Cream from reference
+          overflow: 'hidden',
+          color: '#1e3a5f'
+        }}
+      >
+        {/* Background Gradient */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, #FEF9E7 0%, #FFFDF5 60%, #FEF9E7 100%)',
+            zIndex: 0
+          }}
+        />
+
+        {/* Brand Header */}
+        <div style={{ position: 'relative', zIndex: 10, padding: '36px 0 10px', textAlign: 'center' }}>
+          <div style={{
+            fontSize: '34px', // Increased size as requested
+            fontWeight: 900,
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: '#C5A059',
+            textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+            fontFamily: "'Playfair Display', Georgia, serif"
+          }}>
+            HOA VIÊN BÌNH DƯƠNG
+          </div>
+        </div>
+
+        {/* Main Content Container - Flex Column */}
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          padding: '0 48px 40px 48px' // Bottom padding ensures space
+        }}>
+
+          {/* Profile Header */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px', flexShrink: 0 }}>
+            <img
+              src={profile.avatarUrl}
+              alt={profile.name}
+              style={{
+                width: '240px',
+                height: '300px',
+                objectFit: 'cover',
+                borderRadius: '16px',
+                border: `4px solid #C5A059`,
+                boxShadow: '0 12px 30px rgba(0,0,0,0.1)',
+                marginBottom: '20px',
+                backgroundColor: '#ffffff'
+              }}
+            />
+            <h1 style={{
+              fontSize: '44px',
+              fontWeight: 900,
+              color: '#1e3a5f',
+              textAlign: 'center',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              lineHeight: 1.1
+            }}>
+              {profile.name}
+            </h1>
+            <div style={{
+              fontSize: '24px',
+              color: '#C5A059',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '8px'
+            }}>
+              <Calendar style={{ width: '24px', height: '24px', color: '#C5A059' }} />
+              {years}
+            </div>
+            <div style={{
+              fontSize: '15px',
+              fontStyle: 'italic',
+              color: '#64748b',
+              textAlign: 'center',
+              maxWidth: '80%'
+            }}>
+              {profile.name} sẽ được an nghỉ tại Đường Nghệ sĩ - Hoa Viên Bình Dương
+            </div>
+          </div>
+
+          {/* Biography Card - Scaled to content */}
+          <div style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            borderRadius: '24px',
+            padding: '20px 24px', // Reduced padding
+            boxShadow: '0 4px 20px rgba(0,0,0,0.01)',
+            flex: 'initial', // Ensure no growing
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            marginBottom: '16px',
+            maxHeight: '240px' // Added maxHeight
+          }}>
+            <h2 style={{
+              fontSize: '22px',
+              fontWeight: 800,
+              color: '#1e3a5f',
+              textAlign: 'center',
+              borderBottom: `2px solid #C5A059`,
+              paddingBottom: '8px',
+              marginBottom: '16px',
+              display: 'table',
+              margin: '0 auto 16px auto'
+            }}>
+              Tiểu sử & Cuộc đời
+            </h2>
+
+            <div
+              className="prose prose-sm max-w-none"
+              style={{
+                fontSize: '15px',
+                lineHeight: 1.6,
+                color: '#334155',
+                textAlign: 'justify',
+                // flex: 1, // Removed
+                overflow: 'hidden'
+              }}
+            >
+              <div
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 6, // Reduced lines
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+              />
+            </div>
+          </div>
+
+          {/* QR Codes Footer - Compact & Anchored Bottom */}
+          <div style={{
+            marginTop: '16px', // Push to bottom if extra space
+            backgroundColor: '#ffffff',
+            borderRadius: '20px',
+            padding: '20px 30px', // Balanced padding
+            boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+            flexShrink: 0
+          }}>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: 800,
+              color: '#1e3a5f',
+              textAlign: 'center',
+              borderBottom: `1px solid #C5A059`,
+              paddingBottom: '6px',
+              marginBottom: '16px',
+              display: 'table',
+              margin: '0 auto 16px auto'
+            }}>
+              Sổ Tang & Thông Tin
+            </h2>
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              {/* Left QR */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ fontWeight: 700, color: '#1e3a5f', fontSize: '13px', marginBottom: '4px' }}>Gửi lời chia buồn</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '6px' }}>Quét để gửi lời chia buồn</div>
+                <div style={{ background: 'white', padding: '4px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <QRCodeSVG value={publicUrl} size={80} level="M" fgColor="#1e3a5f" />
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ width: '1px', height: '60px', backgroundColor: '#e2e8f0' }}></div>
+
+              {/* Right QR */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ fontWeight: 700, color: '#1e3a5f', fontSize: '13px', marginBottom: '4px' }}>Kết nối với Hoa Viên</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '6px' }}>Quét mã QR để nhận khuyến mãi</div>
+                <div style={{ background: 'white', padding: '4px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <QRCodeSVG value="https://cphaco.vn" size={80} level="M" fgColor="#1e3a5f" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
 
   // KIOSK MODE - Professional Digital Signage (1080x1920 Vertical Stack)
   if (kioskMode) {

@@ -1,4 +1,4 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Users, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Users, Search, Filter, ChevronLeft, ChevronRight, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAllProfiles, useDeleteProfile } from "@/hooks/useProfiles";
 import { format } from "date-fns";
+import { toPng } from "html-to-image";
+import { useRef } from "react";
+import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
+import { toast } from "sonner";
 
 interface ProfilesTabProps {
   onCreateNew: () => void;
@@ -98,6 +102,42 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
     } catch {
       return dateString;
     }
+  };
+
+  // Standee Generation Logic
+  const standeeRef = useRef<HTMLDivElement>(null);
+  const [standeeProfile, setStandeeProfile] = useState<any>(null);
+
+  const handleDownloadStandee = async (profile: any) => {
+    setStandeeProfile(profile);
+
+    // Give time for the component to render in the hidden container
+    setTimeout(async () => {
+      if (standeeRef.current) {
+        try {
+          toast.info("Đang tạo ảnh standee (A4)...");
+
+          // Force some styles to ensure print quality
+          const dataUrl = await toPng(standeeRef.current, {
+            quality: 1.0,
+            pixelRatio: 3, // High resolution for print
+            backgroundColor: '#FEF9E7',
+          });
+
+          const link = document.createElement("a");
+          link.download = `${profile.name}-standee-A4.png`;
+          link.href = dataUrl;
+          link.click();
+
+          toast.success("Đã tải xuống ảnh standee!");
+        } catch (err) {
+          console.error("Error generating standee:", err);
+          toast.error("Lỗi khi tạo ảnh standee");
+        } finally {
+          setStandeeProfile(null);
+        }
+      }
+    }, 1000); // 1 sec delay for images/fonts to settle
   };
 
   if (isLoading) {
@@ -322,6 +362,13 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                               <Eye className="h-4 w-4 mr-2" />
                               Xem trang
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={() => handleDownloadStandee(profile)}
+                            >
+                              <Image className="h-4 w-4 mr-2" />
+                              Tải ảnh in (A4)
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="cursor-pointer"
@@ -492,6 +539,32 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Hidden Container for Standee Generation */}
+      {standeeProfile && (
+        <div style={{ position: "fixed", top: "-9999px", left: "-9999px", zIndex: -1 }}>
+          <div ref={standeeRef}>
+            <MemorialProfileWeb
+              profile={{
+                id: standeeProfile.id,
+                name: standeeProfile.name,
+                dateRange: `${new Date(standeeProfile.birth_date || '').getFullYear()} - ${new Date(standeeProfile.death_date || '').getFullYear()}`,
+                avatarUrl: standeeProfile.avatar_url,
+                biography: standeeProfile.biography || '',
+                roles: [], // You might need to fetch roles if they aren't in the basic profile object, or pass empty if acceptable
+                coverUrl: standeeProfile.cover_url
+              }}
+              tributes={[]} // No tributes for standee
+              photos={[]}
+              formData={{ name: '', phone: '', message: '' }}
+              onChangeForm={() => { }}
+              onSubmitTribute={() => { }}
+              onOpenShare={() => { }}
+              standeeMode={true}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
