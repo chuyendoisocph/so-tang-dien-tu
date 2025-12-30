@@ -1904,7 +1904,7 @@ export default function MemorialProfileWeb({
           </div>
 
           <a
-            href="https://www.google.com/maps/search/?api=1&query=Hoa+Viên+Nghĩa+Trang+Bình+Dương"
+            href="https://maps.app.goo.gl/fdndFTN9vcnbuDVQ6?g_st=iz"
             target="_blank"
             rel="noopener noreferrer"
             style={{
