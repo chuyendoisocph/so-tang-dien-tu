@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
 import { useProfileData } from "@/hooks/useProfileData";
 import { useComments } from "@/hooks/useComments";
+import { updateMetaTags, resetMetaTags } from "@/utils/metaTags";
 
 export default function ProfilePage() {
   const [searchParams] = useSearchParams();
@@ -44,12 +45,26 @@ export default function ProfilePage() {
     });
   }, [actualProfileId, comments, commentsLoading, commentsError]);
 
-  // Set document title
+  // Set document title and meta tags
   useEffect(() => {
     if (profile?.name) {
-      document.title = `Sổ Tang Điện Tử - ${profile.name}`;
+      const title = `Sổ Tang Điện Tử - ${profile.name}`;
+      const description = `Trang tưởng niệm của ${profile.name}`;
+      const currentUrl = window.location.href;
+      
+      updateMetaTags({
+        title,
+        description,
+        image: profile.avatarUrl,
+        url: currentUrl
+      });
     }
-  }, [profile?.name]);
+    
+    // Cleanup: Reset meta tags when component unmounts
+    return () => {
+      resetMetaTags();
+    };
+  }, [profile?.name, profile?.avatarUrl]);
 
   const handleSubmitTribute = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -53,7 +53,7 @@ const SlideshowProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "Trình Chiếu - Giao diện Profile";
+    document.title = "Trình Chiếu - Sổ Tang Điện Tử";
     document.body.classList.add('slideshow-mode');
 
     return () => {

@@ -1,4 +1,4 @@
-import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image } from "lucide-react";
+import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image, MapPin } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -1841,6 +1841,87 @@ export default function MemorialProfileWeb({
               fontSize: 'clamp(14px, 3.5vw, 18px)'
             }}
           />
+        </div>
+
+        {/* ============ 2.5. DIRECTIONS QR SECTION ============ */}
+        <div
+          className="card-hover transition-all duration-300 mb-6"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
+            borderRadius: 'clamp(16px, 3vw, 24px)',
+            padding: 'clamp(20px, 5vw, 40px)',
+            boxShadow: '0 clamp(8px, 2vw, 16px) clamp(24px, 6vw, 48px) rgba(0,0,0,0.07)',
+            border: `2px solid rgba(197, 160, 89, 0.3)`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 'clamp(18px, 4.5vw, 28px)',
+              fontWeight: 900,
+              color: NAVY_PRIMARY,
+              textAlign: 'center',
+              marginBottom: 'clamp(16px, 4vw, 24px)'
+            }}
+          >
+            <span style={{
+              borderBottom: `3px solid ${GOLD_ACCENT}`,
+              paddingBottom: '8px',
+              display: 'inline-block'
+            }}>
+              Vị trị An Nghỉ
+            </span>
+          </h2>
+
+          <div style={{
+            backgroundColor: '#ffffff',
+            padding: '16px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+            marginBottom: '16px',
+            border: `1px solid ${GOLD_ACCENT}40`
+          }}>
+            <QRCodeSVG
+              value="https://maps.app.goo.gl/fdndFTN9vcnbuDVQ6?g_st=iz"
+              size={160}
+              level="M"
+              fgColor={NAVY_PRIMARY}
+            />
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#64748b',
+            fontSize: 'clamp(14px, 3.5vw, 16px)',
+            fontWeight: 500
+          }}>
+            <MapPin size={20} color={GOLD_ACCENT} />
+            <span>Quét mã để xem chỉ đường</span>
+          </div>
+
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Hoa+Viên+Nghĩa+Trang+Bình+Dương"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              marginTop: '20px',
+              padding: '10px 24px',
+              borderRadius: '99px',
+              backgroundColor: `${GOLD_ACCENT}15`,
+              color: NAVY_PRIMARY,
+              fontWeight: 700,
+              fontSize: '14px',
+              textDecoration: 'none',
+              transition: 'background-color 0.2s',
+              border: `1px solid ${GOLD_ACCENT}40`
+            }}
+          >
+            Mở bản đồ
+          </a>
         </div>
 
         {/* ============ 3. RESPONSIVE CAREER SECTION ============ */}
