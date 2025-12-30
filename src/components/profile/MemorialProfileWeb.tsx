@@ -1871,7 +1871,7 @@ export default function MemorialProfileWeb({
               paddingBottom: '8px',
               display: 'inline-block'
             }}>
-              Vị trị An Nghỉ
+              Vị trí An Nghỉ
             </span>
           </h2>
 
