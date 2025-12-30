@@ -1768,7 +1768,7 @@ export default function MemorialProfileWeb({
               lineHeight: 1.4
             }}
           >
-            <strong>{toTitleCase(profile.name)}</strong> sẽ được an nghỉ tại <strong>Đường Nghệ sĩ - Hoa Viên Bình Dương</strong>
+            <strong>{toTitleCase(profile.name)}</strong> sẽ được an nghỉ tại <strong>Hoa Viên Bình Dương</strong>
           </div>
         </div>
 
