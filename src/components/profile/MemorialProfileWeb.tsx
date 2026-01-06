@@ -1894,20 +1894,6 @@ export default function MemorialProfileWeb({
               />
             </div>
 
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: '#64748b',
-              fontSize: 'clamp(14px, 3.5vw, 16px)',
-              fontWeight: 500,
-              textAlign: 'center',
-              fontStyle: 'italic'
-            }}>
-              <MapPin size={20} color={GOLD_ACCENT} />
-              <span>{profile.name} {profile.isBuried ? 'được' : 'sẽ được'} an nghỉ tại đây</span>
-            </div>
-
             <a
               href={profile.mapsUrl}
               target="_blank"
