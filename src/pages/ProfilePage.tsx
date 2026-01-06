@@ -68,8 +68,8 @@ export default function ProfilePage() {
 
   const handleSubmitTribute = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.message) {
-      toast.error("Vui lòng điền đầy đủ thông tin");
+    if (!formData.name || !formData.message) {
+      toast.error("Vui lòng điền tên và lời chia buồn");
       return;
     }
 

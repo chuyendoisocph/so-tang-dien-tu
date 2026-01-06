@@ -11,6 +11,8 @@ export interface Profile {
   biography: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  maps_url: string | null;
+  is_buried: boolean | null;
   is_published: boolean | null;
   created_at: string | null;
   updated_at: string | null;
@@ -24,6 +26,8 @@ export interface ProfileFormData {
   biography?: string;
   avatar_url?: string;
   cover_url?: string;
+  maps_url?: string;
+  is_buried?: boolean;
   is_published?: boolean;
 }
 
@@ -81,6 +85,8 @@ export function useCreateProfile() {
           biography: formData.biography || null,
           avatar_url: formData.avatar_url || null,
           cover_url: formData.cover_url || null,
+          maps_url: formData.maps_url || null,
+          is_buried: formData.is_buried ?? false,
           is_published: formData.is_published ?? false,
         })
         .select()
@@ -116,6 +122,8 @@ export function useUpdateProfile() {
           biography: formData.biography || null,
           avatar_url: formData.avatar_url || null,
           cover_url: formData.cover_url || null,
+          maps_url: formData.maps_url || null,
+          is_buried: formData.is_buried,
           is_published: formData.is_published,
         })
         .eq('id', id)

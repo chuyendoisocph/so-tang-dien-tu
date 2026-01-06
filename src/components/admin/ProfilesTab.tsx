@@ -553,7 +553,9 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                 avatarUrl: standeeProfile.avatar_url,
                 biography: standeeProfile.biography || '',
                 roles: [], // You might need to fetch roles if they aren't in the basic profile object, or pass empty if acceptable
-                coverUrl: standeeProfile.cover_url
+                coverUrl: standeeProfile.cover_url,
+                mapsUrl: standeeProfile.maps_url,
+                isBuried: standeeProfile.is_buried
               }}
               tributes={[]} // No tributes for standee
               photos={[]}

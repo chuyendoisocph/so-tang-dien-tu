@@ -43,7 +43,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   const [deathYear, setDeathYear] = useState("");
   const [biography, setBiography] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [coverUrl, setCoverUrl] = useState("");
+  const [mapsUrl, setMapsUrl] = useState("");
+  const [isBuried, setIsBuried] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [roles, setRoles] = useState<string[]>([""]);
   const [locations, setLocations] = useState<string[]>([""]);
@@ -97,7 +98,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       setDeathYear(existingProfile.death_date ? new Date(existingProfile.death_date).getFullYear().toString() : "");
       setBiography(existingProfile.biography || "");
       setAvatarUrl(existingProfile.avatar_url || "");
-      setCoverUrl(existingProfile.cover_url || "");
+      setMapsUrl(existingProfile.maps_url || "");
+      setIsBuried(existingProfile.is_buried || false);
       setIsPublished(existingProfile.is_published || false);
     }
   }, [existingProfile]);
@@ -116,7 +118,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       death_date: deathDate,
       biography,
       avatar_url: avatarUrl || undefined,
-      cover_url: coverUrl || undefined,
+      maps_url: mapsUrl || undefined,
+      is_buried: isBuried,
       is_published: isPublished,
     };
 
@@ -261,7 +264,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Hình ảnh</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="max-w-sm mx-auto">
                 <div className="space-y-3">
                   <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Ảnh chân dung (Avatar)
@@ -273,21 +276,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                     aspectRatio="square"
                     placeholder="Nhấn hoặc kéo thả ảnh vào đây"
                   />
-                  <p className="text-xs text-slate-500">Khuyến nghị: 400x400px, định dạng JPG/PNG</p>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Ảnh bìa (Cover)
-                  </Label>
-                  <ImageUpload
-                    value={coverUrl}
-                    onChange={setCoverUrl}
-                    onRemove={() => setCoverUrl("")}
-                    aspectRatio="square"
-                    placeholder="Nhấn hoặc kéo thả ảnh vào đây"
-                  />
-                  <p className="text-xs text-slate-500">Khuyến nghị: 1200x800px, định dạng JPG/PNG</p>
+                  <p className="text-xs text-slate-500 text-center">Khuyến nghị: 400x400px, định dạng JPG/PNG</p>
                 </div>
               </div>
             </div>
@@ -315,74 +304,35 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 <p className="text-xs text-slate-500">Mô tả cuộc đời, sự nghiệp và những kỷ niệm đáng nhớ</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Roles */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Danh sách Chức vụ (TV)
-                    </Label>
-                    <Button type="button" variant="outline" size="sm" onClick={addRole} className="shadow-sm">
-                      <Plus className="h-4 w-4 mr-1" />
-                      Thêm
-                    </Button>
-                  </div>
-                  <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50 space-y-3 max-h-64 overflow-y-auto">
-                    {roles.map((role, index) => (
-                      <div key={index} className="flex items-center gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <Input
-                          placeholder={`Chức vụ ${index + 1}`}
-                          className="flex-1 border-slate-300 focus:border-primary"
-                          value={role}
-                          onChange={(e) => updateRole(index, e.target.value)}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeRole(index)}
-                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="space-y-3">
+                <Label htmlFor="mapsUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Link Google Maps (Vị trí An Nghỉ)
+                </Label>
+                <Input
+                  id="mapsUrl"
+                  type="url"
+                  className="border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  placeholder="https://maps.app.goo.gl/..."
+                  value={mapsUrl}
+                  onChange={(e) => setMapsUrl(e.target.value)}
+                />
+                <p className="text-xs text-slate-500">Link Google Maps để hiển thị QR code chỉ đường (không bắt buộc)</p>
+              </div>
 
-                {/* Locations */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Địa điểm tổ chức (TV)
-                    </Label>
-                    <Button type="button" variant="outline" size="sm" onClick={addLocation} className="shadow-sm">
-                      <Plus className="h-4 w-4 mr-1" />
-                      Thêm
-                    </Button>
-                  </div>
-                  <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50 space-y-3 max-h-64 overflow-y-auto">
-                    {locations.map((location, index) => (
-                      <div key={index} className="flex items-center gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <Input
-                          placeholder={`Địa điểm ${index + 1}`}
-                          className="flex-1 border-slate-300 focus:border-primary"
-                          value={location}
-                          onChange={(e) => updateLocation(index, e.target.value)}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeLocation(index)}
-                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+              <div className="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="flex-1">
+                  <Label htmlFor="isBuried" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    Đã an táng
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Bật nếu người đã được an táng (hiển thị "được an nghỉ tại"), tắt nếu chưa (hiển thị "sẽ được an nghỉ tại")
+                  </p>
                 </div>
+                <Switch
+                  id="isBuried"
+                  checked={isBuried}
+                  onCheckedChange={setIsBuried}
+                />
               </div>
             </div>
 

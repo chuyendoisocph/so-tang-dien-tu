@@ -9,6 +9,8 @@ export type ProfileData = {
   biography: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  maps_url: string | null;
+  is_buried: boolean | null;
   slug: string | null;
   is_published: boolean | null;
 };
@@ -127,6 +129,8 @@ export function useProfileData(profileIdOrSlug: string | undefined) {
         coverUrl: profileQuery.data.cover_url,
         biography: profileQuery.data.biography || "",
         roles: timelineQuery.data?.map((event) => event.title) || [],
+        mapsUrl: profileQuery.data.maps_url,
+        isBuried: profileQuery.data.is_buried,
       }
     : null;
 
