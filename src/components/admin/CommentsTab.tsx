@@ -28,6 +28,7 @@ import {
   useProfileNames,
   Comment 
 } from "@/hooks/useComments";
+import * as XLSX from 'xlsx';
 
 export const CommentsTab = () => {
   const { data: comments = [], isLoading, error } = useAllComments();
@@ -50,17 +51,40 @@ export const CommentsTab = () => {
   };
 
   const handleExportData = () => {
-    // Export comments data to CSV
-    const csvData = comments.map(comment => ({
-      'Tên': comment.author_name,
+    if (!comments || comments.length === 0) {
+      alert("Không có dữ liệu để xuất");
+      return;
+    }
+
+    // Prepare data for Excel export
+    const excelData = commentsWithProfiles.map((comment, index) => ({
+      'STT': index + 1,
+      'Tên người gửi': comment.author_name || '',
       'Email': comment.author_email || '',
-      'Nội dung': comment.content,
-      'Trang tưởng niệm': comment.profile_name,
-      'Ngày tạo': formatDate(comment.created_at),
+      'Nội dung': comment.content || '',
+      'Trang tưởng niệm': comment.profile_name || 'Unknown',
+      'Ngày tạo': formatDate(comment.created_at)
     }));
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(excelData);
     
-    console.log("Export data:", csvData);
-    // Implement CSV export logic
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 5 },   // STT
+      { wch: 25 },  // Tên người gửi
+      { wch: 30 },  // Email
+      { wch: 50 },  // Nội dung
+      { wch: 25 },  // Trang tưởng niệm
+      { wch: 20 }   // Ngày tạo
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bình luận');
+
+    // Generate Excel file and download
+    const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
+    XLSX.writeFile(wb, `binh-luan_${timestamp}.xlsx`);
   };
 
   const formatDate = (dateString: string) => {

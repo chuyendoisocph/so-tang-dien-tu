@@ -1869,14 +1869,15 @@ export default function MemorialProfileWeb({
           {/* Brand Header */}
           <div
             style={{
-              fontSize: 'clamp(24px, 5vw, 42px)',
+              fontSize: 'clamp(18px, 5vw, 42px)',
               fontWeight: 900,
-              letterSpacing: 'clamp(2px, 0.5vw, 6px)',
+              letterSpacing: 'clamp(1px, 0.3vw, 6px)',
               textTransform: 'uppercase',
               color: GOLD_ACCENT,
               textShadow: '0 2px 4px rgba(0,0,0,0.15)',
               marginBottom: 'clamp(20px, 4vw, 32px)',
-              fontFamily: "'Playfair Display', Georgia, serif"
+              fontFamily: "'Playfair Display', Georgia, serif",
+              whiteSpace: 'nowrap'
             }}
           >
             HOA VIÊN BÌNH DƯƠNG

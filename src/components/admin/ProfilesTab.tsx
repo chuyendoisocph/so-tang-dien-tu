@@ -271,10 +271,11 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
         </CardContent>
       </Card>
 
-      {/* Table Card */}
+      {/* Table Card - Desktop & Mobile Responsive */}
       <Card className="shadow-lg border-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View - Hidden on mobile */}
+          <div className="hidden md:block overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border-b-2">
@@ -414,6 +415,140 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Mobile Card View - Visible only on mobile */}
+          <div className="md:hidden divide-y divide-slate-200 dark:divide-slate-700">
+            {paginatedProfiles.map((profile, index) => (
+              <div key={profile.id} className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                <div className="flex items-start gap-3">
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    {profile.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt={profile.name}
+                        className="w-14 h-14 rounded-xl object-cover border-2 border-white shadow-md"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold text-lg border-2 border-white shadow-md">
+                        {profile.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base truncate">
+                          {profile.name}
+                        </h3>
+                        {profile.birth_date && profile.death_date && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            {new Date(profile.birth_date).getFullYear()} - {new Date(profile.death_date).getFullYear()}
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Status Badge */}
+                      {profile.is_published ? (
+                        <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-sm text-xs shrink-0">
+                          Xuất bản
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-slate-200 text-slate-700 border-0 text-xs shrink-0">
+                          Nháp
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Profile Code */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs text-slate-500">Mã:</span>
+                      <span className="px-2 py-0.5 bg-primary/10 text-primary rounded font-mono text-xs font-medium">
+                        {profile.slug || profile.id.slice(0, 8)}
+                      </span>
+                    </div>
+
+                    {/* Created Date */}
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                      Tạo: {formatDate(profile.created_at)}
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 h-8 text-xs"
+                        onClick={() => navigate(`/profile/${profile.slug || profile.id}`)}
+                      >
+                        <Eye className="h-3.5 w-3.5 mr-1.5" />
+                        Xem
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 h-8 text-xs"
+                        onClick={() => onEdit({ id: profile.id, jobId: profile.slug || profile.id, name: profile.name })}
+                      >
+                        <Edit className="h-3.5 w-3.5 mr-1.5" />
+                        Sửa
+                      </Button>
+                      
+                      {/* More Actions Dropdown */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 px-2">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onSelect={() => handleDownloadStandee(profile)}
+                          >
+                            <Image className="h-4 w-4 mr-2" />
+                            Tải ảnh in (A4)
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                className="cursor-pointer text-destructive focus:text-destructive"
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Xóa hồ sơ
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Xác nhận xóa hồ sơ</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Bạn có chắc muốn xóa hồ sơ "<strong>{profile.name}</strong>"?
+                                  Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Hủy bỏ</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(profile.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Xóa vĩnh viễn
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {(!profiles || profiles.length === 0) && (
