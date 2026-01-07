@@ -162,13 +162,13 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       <Card className="shadow-xl border-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Info Section */}
+            {/* Section 1: Profile Overview (Basic Info + Image) */}
             <div className="space-y-4">
               <div className="flex items-center gap-3 pb-3 border-b border-slate-200 dark:border-slate-700">
                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                   <span className="text-primary font-bold text-xs">1</span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">Thông tin cơ bản</h3>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">Thông tin hồ sơ</h3>
               </div>
 
               {/* Row 1: Name and Slug */}
@@ -204,8 +204,8 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 </div>
               </div>
 
-              {/* Row 2: Years and Publish */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {/* Row 2: Years */}
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="birth_year" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Năm sinh
@@ -237,57 +237,35 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                     className="text-center border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
                   />
                 </div>
+              </div>
 
-                <div className="col-span-2 flex items-end">
-                  <div className="flex items-center justify-between w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950">
-                    <div>
-                      <Label className="font-semibold text-green-700 dark:text-green-300 text-sm">Xuất bản</Label>
-                      <p className="text-xs text-green-600 dark:text-green-400">
-                        Hiển thị công khai trên web
-                      </p>
-                    </div>
-                    <Switch
-                      checked={isPublished}
-                      onCheckedChange={setIsPublished}
+              {/* Avatar Image */}
+              <div className="pt-2">
+                <div className="max-w-sm mx-auto">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      Ảnh chân dung (Avatar)
+                    </Label>
+                    <ImageUpload
+                      value={avatarUrl}
+                      onChange={setAvatarUrl}
+                      onRemove={() => setAvatarUrl("")}
+                      aspectRatio="square"
+                      placeholder="Nhấn hoặc kéo thả ảnh vào đây"
                     />
+                    <p className="text-xs text-slate-500 text-center">Khuyến nghị: 400x400px, định dạng JPG/PNG</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Image Upload Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center">
-                  <span className="text-blue-600 font-bold text-sm">2</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Hình ảnh</h3>
-              </div>
-
-              <div className="max-w-sm mx-auto">
-                <div className="space-y-3">
-                  <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Ảnh chân dung (Avatar)
-                  </Label>
-                  <ImageUpload
-                    value={avatarUrl}
-                    onChange={setAvatarUrl}
-                    onRemove={() => setAvatarUrl("")}
-                    aspectRatio="square"
-                    placeholder="Nhấn hoặc kéo thả ảnh vào đây"
-                  />
-                  <p className="text-xs text-slate-500 text-center">Khuyến nghị: 400x400px, định dạng JPG/PNG</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Detail Section */}
+            {/* Section 2: Memorial Content & Location */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center">
-                  <span className="text-purple-600 font-bold text-sm">3</span>
+                  <span className="text-purple-600 font-bold text-sm">2</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Nội dung chi tiết</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Nội dung tưởng niệm</h3>
               </div>
 
               <div className="space-y-3">
@@ -332,6 +310,26 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                   id="isBuried"
                   checked={isBuried}
                   onCheckedChange={setIsBuried}
+                />
+              </div>
+            </div>
+
+            {/* Publish Section - At the end before actions */}
+            <div className="pt-4">
+              <div className="flex items-center justify-between p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 shadow-sm">
+                <div className="flex-1">
+                  <Label htmlFor="isPublished" className="text-base font-semibold text-green-700 dark:text-green-300 cursor-pointer">
+                    Xuất bản hồ sơ
+                  </Label>
+                  <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                    Bật để hiển thị hồ sơ công khai trên web. Tắt để lưu nháp.
+                  </p>
+                </div>
+                <Switch
+                  id="isPublished"
+                  checked={isPublished}
+                  onCheckedChange={setIsPublished}
+                  className="data-[state=checked]:bg-green-600"
                 />
               </div>
             </div>

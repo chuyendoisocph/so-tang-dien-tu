@@ -59,7 +59,7 @@ export const useSlideshow = () => {
         id: p.slug || p.id,
         name: p.name,
         dateRange: `${p.birth_date ? new Date(p.birth_date).getFullYear() : '?'} - ${p.death_date ? new Date(p.death_date).getFullYear() : '?'}`,
-        avatarUrl: p.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=820&fit=crop&crop=face",
+        avatarUrl: p.avatar_url || "",
       }));
   }, [allProfiles, playlistSettings.profileIds]);
 

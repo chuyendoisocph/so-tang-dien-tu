@@ -1,10 +1,11 @@
-import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image, MapPin } from "lucide-react";
+import { Share2, PenLine, Calendar, QrCode, Briefcase, Star, Image, MapPin, User, Flower2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { BiographyScroll } from "@/components/BiographyScroll";
 import { ExpandableText } from "@/components/ui/ExpandableText";
+import lotusImage from "@/assets/Hoa sen vang.png";
 
 type MemorialProfile = {
   id: string;
@@ -49,6 +50,177 @@ function toTitleCase(str: string): string {
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+// Helper function to get initials from name
+function getInitials(name: string): string {
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+  // Get first letter of first word and last word
+  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+}
+
+// Lotus/Sen flower image component
+function LotusIcon({ size = '100px' }: { size?: string; color?: string; opacity?: number }) {
+  return (
+    <img 
+      src={lotusImage} 
+      alt="Lotus flower"
+      style={{
+        width: size,
+        height: 'auto',
+        objectFit: 'contain',
+        opacity: 0.85
+      }}
+    />
+  );
+}
+
+// Component for avatar with fallback
+function AvatarImage({
+  src,
+  alt,
+  style,
+  className,
+  onError
+}: {
+  src?: string;
+  alt: string;
+  style?: React.CSSProperties;
+  className?: string;
+  onError?: () => void;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  const initials = getInitials(alt);
+  const shouldShowFallback = !src || hasError || src.trim() === '';
+
+  const handleError = () => {
+    setHasError(true);
+    onError?.();
+  };
+
+  if (shouldShowFallback) {
+    return (
+      <div
+        style={{
+          ...style,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #FFFEF9 0%, #FFF9ED 50%, #FFF5E6 100%)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+        className={className}
+      >
+        {/* Background lotus image - fitted and faded */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 0.25
+          }}
+        >
+          <img 
+            src={lotusImage} 
+            alt="Lotus"
+            style={{
+              width: '85%',
+              height: '85%',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+        
+        {/* Subtle radial gradient overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '80%',
+            height: '80%',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(197,160,89,0.08) 0%, transparent 70%)',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          ...style,
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out'
+        }}
+        className={className}
+        onError={handleError}
+        onLoad={() => setIsLoaded(true)}
+      />
+      {!isLoaded && (
+        <div
+          style={{
+            ...style,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #FFFEF9 0%, #FFF9ED 50%, #FFF5E6 100%)',
+            overflow: 'hidden'
+          }}
+          className={className}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0.25
+            }}
+          >
+            <img 
+              src={lotusImage} 
+              alt="Lotus"
+              style={{
+                width: '85%',
+                height: '85%',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              width: '80%',
+              height: '80%',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(197,160,89,0.08) 0%, transparent 70%)',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1
+            }}
+          />
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function MemorialProfileWeb({
@@ -145,20 +317,21 @@ export default function MemorialProfileWeb({
 
           {/* Profile Header */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px', flexShrink: 0 }}>
-            <img
-              src={profile.avatarUrl}
-              alt={profile.name}
-              style={{
-                width: '240px',
-                height: '300px',
-                objectFit: 'cover',
-                borderRadius: '16px',
-                border: `4px solid #C5A059`,
-                boxShadow: '0 12px 30px rgba(0,0,0,0.1)',
-                marginBottom: '20px',
-                backgroundColor: '#ffffff'
-              }}
-            />
+            <div style={{ position: 'relative', width: '240px', height: '300px', marginBottom: '20px' }}>
+              <AvatarImage
+                src={profile.avatarUrl}
+                alt={profile.name}
+                style={{
+                  width: '240px',
+                  height: '300px',
+                  objectFit: 'cover',
+                  borderRadius: '16px',
+                  border: `4px solid #C5A059`,
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.1)',
+                  backgroundColor: '#ffffff'
+                }}
+              />
+            </div>
             <h1 style={{
               fontSize: '44px',
               fontWeight: 900,
@@ -391,8 +564,8 @@ export default function MemorialProfileWeb({
             }}
           >
             {/* Profile Picture */}
-            <div className="float-kiosk" style={{ marginBottom: '24px' }}>
-              <img
+            <div className="float-kiosk" style={{ marginBottom: '24px', position: 'relative' }}>
+              <AvatarImage
                 src={profile.avatarUrl}
                 alt={profile.name}
                 style={{
@@ -952,17 +1125,19 @@ export default function MemorialProfileWeb({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-              <img
-                src={profile.avatarUrl}
-                alt={profile.name}
-                style={{
-                  width: '80px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  border: `3px solid ${GOLD_ACCENT}`
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <AvatarImage
+                  src={profile.avatarUrl}
+                  alt={profile.name}
+                  style={{
+                    width: '80px',
+                    height: '100px',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                    border: `3px solid ${GOLD_ACCENT}`
+                  }}
+                />
+              </div>
               <div style={{ flex: 1 }}>
                 <h2 style={{ fontSize: '28px', fontWeight: 900, color: NAVY_PRIMARY, margin: '0 0 8px 0' }}>
                   {profile.name}
@@ -1211,8 +1386,8 @@ export default function MemorialProfileWeb({
           </div>
 
           {/* Profile Picture - LARGE FOCAL POINT */}
-          <div className="float-slide" style={{ marginBottom: '24px' }}>
-            <img
+          <div className="float-slide" style={{ marginBottom: '24px', position: 'relative' }}>
+            <AvatarImage
               src={profile.avatarUrl}
               alt={profile.name}
               style={{
@@ -1710,9 +1885,10 @@ export default function MemorialProfileWeb({
           {/* Profile Picture - Responsive Sizes */}
           <div
             className="float-normal cursor-pointer mb-4 sm:mb-6"
-            onClick={() => setSelectedPhoto({ id: 'avatar', url: profile.avatarUrl, caption: profile.name, display_order: null })}
+            onClick={() => setSelectedPhoto({ id: 'avatar', url: profile.avatarUrl || '', caption: profile.name, display_order: null })}
+            style={{ position: 'relative' }}
           >
-            <img
+            <AvatarImage
               src={profile.avatarUrl}
               alt={profile.name}
               style={{

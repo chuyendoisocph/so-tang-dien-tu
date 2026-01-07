@@ -123,9 +123,7 @@ export function useProfileData(profileIdOrSlug: string | undefined) {
           profileQuery.data.birth_date,
           profileQuery.data.death_date
         ),
-        avatarUrl:
-          profileQuery.data.avatar_url ||
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&crop=face",
+        avatarUrl: profileQuery.data.avatar_url || "",
         coverUrl: profileQuery.data.cover_url,
         biography: profileQuery.data.biography || "",
         roles: timelineQuery.data?.map((event) => event.title) || [],
