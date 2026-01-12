@@ -368,16 +368,17 @@ export default function MemorialProfileWeb({
 
           {/* Biography Card - Scaled to content */}
           <div style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
             borderRadius: '24px',
-            padding: '20px 24px', // Reduced padding
+            padding: '24px 24px', // Increased top padding
             boxShadow: '0 4px 20px rgba(0,0,0,0.01)',
             flex: 'initial', // Ensure no growing
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             marginBottom: '16px',
-            maxHeight: '240px' // Added maxHeight
+            maxHeight: '240px', // Added maxHeight
+            position: 'relative'
           }}>
             <h2 style={{
               fontSize: '22px',
@@ -387,8 +388,13 @@ export default function MemorialProfileWeb({
               borderBottom: `2px solid #C5A059`,
               paddingBottom: '8px',
               marginBottom: '16px',
-              display: 'table',
-              margin: '0 auto 16px auto'
+              display: 'inline-block',
+              margin: '0 auto 16px auto',
+              position: 'relative',
+              zIndex: 2,
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              paddingLeft: '12px',
+              paddingRight: '12px'
             }}>
               Tiểu sử & Cuộc đời
             </h2>
@@ -400,8 +406,9 @@ export default function MemorialProfileWeb({
                 lineHeight: 1.6,
                 color: '#334155',
                 textAlign: 'justify',
-                // flex: 1, // Removed
-                overflow: 'hidden'
+                overflow: 'hidden',
+                position: 'relative',
+                zIndex: 1
               }}
             >
               <div
