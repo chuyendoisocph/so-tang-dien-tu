@@ -49,8 +49,20 @@ export function useAuth() {
         }
       } else if (result?.data) {
         const roles = result.data.map((r: any) => r.role) || [];
-        setIsAdmin(roles.includes('admin'));
-        setIsEmployee(roles.includes('employee'));
+        const hasAdmin = roles.includes('admin');
+        const hasEmployee = roles.includes('employee');
+        
+        setIsAdmin(hasAdmin);
+        setIsEmployee(hasEmployee);
+        
+        // Update cache for next time
+        if (hasAdmin) {
+          localStorage.setItem('user_role', 'admin');
+        } else if (hasEmployee) {
+          localStorage.setItem('user_role', 'employee');
+        } else {
+          localStorage.removeItem('user_role');
+        }
       }
     } catch (error: any) {
       // On timeout, keep using cached role (already set above)
@@ -94,7 +106,7 @@ export function useAuth() {
       async (event, session) => {
         if (!mounted) return;
         
-        // Skip events that initAuth handles
+        // Skip initial session as initAuth handles it
         if (event === 'INITIAL_SESSION') return;
         
         setSession(session);
@@ -105,8 +117,11 @@ export function useAuth() {
           setIsEmployee(false);
           setRolesLoaded(true);
           localStorage.removeItem('user_role');
+        } else if (event === 'SIGNED_IN' && session?.user) {
+          // Reset checking flag to allow new check after login
+          checkingRoles.current = false;
+          await checkUserRoles(session.user.id);
         }
-        // For SIGNED_IN, roles will be checked by the component that triggered sign in
       }
     );
 
