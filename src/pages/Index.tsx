@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Sidebar, MobileHeader } from "@/components/layout/Sidebar";
 import { ProfilesTab } from "@/components/admin/ProfilesTab";
+import { CelebritiesTab } from "@/components/admin/CelebritiesTab";
 import { CreateEditTab } from "@/components/admin/CreateEditTab";
 import { SlideshowTab } from "@/components/admin/SlideshowTab";
 import { CommentsTab } from "@/components/admin/CommentsTab";
@@ -9,6 +10,7 @@ interface EditingProfile {
   id: string;
   jobId: string;
   name: string;
+  isCelebrity?: boolean;
 }
 
 const Index = () => {
@@ -23,8 +25,8 @@ const Index = () => {
     }
   };
 
-  const handleCreateNew = () => {
-    setEditingProfile(null);
+  const handleCreateNew = (isCelebrity: boolean = false) => {
+    setEditingProfile(isCelebrity ? { id: '', jobId: '', name: '', isCelebrity: true } : null);
     setActiveTab("create");
   };
 
@@ -34,8 +36,9 @@ const Index = () => {
   };
 
   const handleBackToProfiles = () => {
+    const wasEditingCelebrity = editingProfile?.isCelebrity;
     setEditingProfile(null);
-    setActiveTab("profiles");
+    setActiveTab(wasEditingCelebrity ? "celebrities" : "profiles");
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -58,7 +61,10 @@ const Index = () => {
       <main className="lg:ml-64 pt-20 lg:pt-6 px-3 pb-6 sm:px-4 lg:px-6 min-h-screen flex items-start justify-center">
         <div className="w-full max-w-6xl">
           {activeTab === "profiles" && (
-            <ProfilesTab onCreateNew={handleCreateNew} onEdit={handleEdit} />
+            <ProfilesTab onCreateNew={() => handleCreateNew(false)} onEdit={handleEdit} />
+          )}
+          {activeTab === "celebrities" && (
+            <CelebritiesTab onCreateNew={() => handleCreateNew(true)} onEdit={(profile) => handleEdit({ ...profile, isCelebrity: true })} />
           )}
           {activeTab === "create" && (
             <CreateEditTab onBack={handleBackToProfiles} editingProfile={editingProfile} />

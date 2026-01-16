@@ -14,6 +14,7 @@ export interface Profile {
   maps_url: string | null;
   is_buried: boolean | null;
   is_published: boolean | null;
+  is_celebrity: boolean | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -29,16 +30,35 @@ export interface ProfileFormData {
   maps_url?: string;
   is_buried?: boolean;
   is_published?: boolean;
+  is_celebrity?: boolean;
 }
 
-// Fetch all profiles (for admin)
+// Fetch all profiles (for admin) - only regular profiles (not celebrities)
 export function useAllProfiles() {
   return useQuery({
-    queryKey: ['profiles', 'all'],
+    queryKey: ['profiles', 'regular'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
+        .or('is_celebrity.is.null,is_celebrity.eq.false')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as Profile[];
+    },
+  });
+}
+
+// Fetch all celebrity profiles
+export function useCelebrityProfiles() {
+  return useQuery({
+    queryKey: ['profiles', 'celebrities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('is_celebrity', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -88,6 +108,7 @@ export function useCreateProfile() {
           maps_url: formData.maps_url || null,
           is_buried: formData.is_buried ?? false,
           is_published: formData.is_published ?? false,
+          is_celebrity: formData.is_celebrity ?? false,
         })
         .select()
         .single();
@@ -125,6 +146,7 @@ export function useUpdateProfile() {
           maps_url: formData.maps_url || null,
           is_buried: formData.is_buried,
           is_published: formData.is_published,
+          is_celebrity: formData.is_celebrity,
         })
         .eq('id', id)
         .select()

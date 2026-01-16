@@ -1,4 +1,4 @@
-import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ interface CreateEditTabProps {
     id: string;
     jobId: string;
     name: string;
+    isCelebrity?: boolean;
   } | null;
 }
 
@@ -46,6 +47,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   const [mapsUrl, setMapsUrl] = useState("");
   const [isBuried, setIsBuried] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [isCelebrity, setIsCelebrity] = useState(editingProfile?.isCelebrity || false);
   const [roles, setRoles] = useState<string[]>([""]);
   const [locations, setLocations] = useState<string[]>([""]);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -101,6 +103,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       setMapsUrl(existingProfile.maps_url || "");
       setIsBuried(existingProfile.is_buried || false);
       setIsPublished(existingProfile.is_published || false);
+      setIsCelebrity(existingProfile.is_celebrity || false);
     }
   }, [existingProfile]);
 
@@ -121,6 +124,7 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       maps_url: mapsUrl || undefined,
       is_buried: isBuried,
       is_published: isPublished,
+      is_celebrity: isCelebrity,
     };
 
     if (editingProfile?.id) {
@@ -145,14 +149,22 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            {editingProfile ? "Chỉnh sửa Hồ Sơ" : "Tạo Hồ Sơ Mới"}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              {editingProfile ? "Chỉnh sửa Hồ Sơ" : "Tạo Hồ Sơ Mới"}
+            </h1>
+            {isCelebrity && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                <Star className="h-3 w-3 fill-amber-500" />
+                Người nổi tiếng
+              </span>
+            )}
+          </div>
           <p className="text-muted-foreground text-sm">
             {editingProfile ? `Cập nhật thông tin cho ${editingProfile.name}` : "Nhập thông tin chi tiết để tạo trang tưởng niệm"}
           </p>
         </div>
-        <Button variant="outline" onClick={onBack} className="bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all">
+        <Button variant="outline" onClick={onBack} className="bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all cursor-pointer">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Quay lại danh sách
         </Button>
@@ -259,63 +271,94 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
               </div>
             </div>
 
-            {/* Section 2: Memorial Content & Location */}
+            {/* Section 2: Content - Different for Celebrity vs Regular */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center">
-                  <span className="text-purple-600 font-bold text-sm">2</span>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isCelebrity ? 'bg-gradient-to-br from-amber-500/20 to-amber-600/10' : 'bg-gradient-to-br from-purple-500/20 to-purple-600/10'}`}>
+                  <span className={`font-bold text-sm ${isCelebrity ? 'text-amber-600' : 'text-purple-600'}`}>2</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Nội dung tưởng niệm</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">Nội dung</h3>
               </div>
 
               <div className="space-y-3">
                 <Label htmlFor="biography" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                  Tiểu sử (Hiển thị trên web)
+                  {isCelebrity ? 'Tiểu sử & Thành tựu' : 'Tiểu sử / Thông tin an táng'}
                 </Label>
                 <Textarea
                   id="biography"
                   className="min-h-[200px] border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
-                  placeholder="Nhập tiểu sử, thành tích, kỷ niệm đáng nhớ..."
+                  placeholder={isCelebrity 
+                    ? "Nhập tiểu sử, sự nghiệp, thành tựu nổi bật của nhân vật..." 
+                    : "Nhập tiểu sử, thông tin an táng, kỷ niệm đáng nhớ..."}
                   value={biography}
                   onChange={(e) => setBiography(e.target.value)}
                 />
-                <p className="text-xs text-slate-500">Mô tả cuộc đời, sự nghiệp và những kỷ niệm đáng nhớ</p>
+                <p className="text-xs text-slate-500">
+                  {isCelebrity 
+                    ? 'Mô tả cuộc đời, sự nghiệp và những đóng góp nổi bật' 
+                    : 'Mô tả cuộc đời, thông tin an táng và những kỷ niệm đáng nhớ'}
+                </p>
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="mapsUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                  Link Google Maps (Vị trí An Nghỉ)
-                </Label>
-                <Input
-                  id="mapsUrl"
-                  type="url"
-                  className="border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
-                  placeholder="https://maps.app.goo.gl/..."
-                  value={mapsUrl}
-                  onChange={(e) => setMapsUrl(e.target.value)}
-                />
-                <p className="text-xs text-slate-500">Link Google Maps để hiển thị QR code chỉ đường (không bắt buộc)</p>
-              </div>
+              {/* Only show location fields for regular profiles (not celebrities) */}
+              {!isCelebrity && (
+                <>
+                  <div className="space-y-3">
+                    <Label htmlFor="mapsUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      Link Google Maps (Vị trí An Nghỉ)
+                    </Label>
+                    <Input
+                      id="mapsUrl"
+                      type="url"
+                      className="border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                      placeholder="https://maps.app.goo.gl/..."
+                      value={mapsUrl}
+                      onChange={(e) => setMapsUrl(e.target.value)}
+                    />
+                    <p className="text-xs text-slate-500">Link Google Maps để hiển thị QR code chỉ đường (không bắt buộc)</p>
+                  </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="flex-1">
-                  <Label htmlFor="isBuried" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
-                    Đã an táng
-                  </Label>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Bật nếu người đã được an táng (hiển thị "được an nghỉ tại"), tắt nếu chưa (hiển thị "sẽ được an nghỉ tại")
-                  </p>
-                </div>
-                <Switch
-                  id="isBuried"
-                  checked={isBuried}
-                  onCheckedChange={setIsBuried}
-                />
-              </div>
+                  <div className="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div className="flex-1">
+                      <Label htmlFor="isBuried" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                        Đã an táng
+                      </Label>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Bật nếu người đã được an táng (hiển thị "được an nghỉ tại"), tắt nếu chưa (hiển thị "sẽ được an nghỉ tại")
+                      </p>
+                    </div>
+                    <Switch
+                      id="isBuried"
+                      checked={isBuried}
+                      onCheckedChange={setIsBuried}
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Publish Section - At the end before actions */}
-            <div className="pt-4">
+            <div className="pt-4 space-y-4">
+              {/* Celebrity Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border-2 border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 shadow-sm">
+                <div className="flex-1">
+                  <Label htmlFor="isCelebrity" className="text-base font-semibold text-amber-700 dark:text-amber-300 cursor-pointer flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Người nổi tiếng
+                  </Label>
+                  <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">
+                    Bật nếu đây là nhân vật nổi tiếng, lịch sử hoặc VIP
+                  </p>
+                </div>
+                <Switch
+                  id="isCelebrity"
+                  checked={isCelebrity}
+                  onCheckedChange={setIsCelebrity}
+                  className="data-[state=checked]:bg-amber-500"
+                />
+              </div>
+
+              {/* Publish Toggle */}
               <div className="flex items-center justify-between p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 shadow-sm">
                 <div className="flex-1">
                   <Label htmlFor="isPublished" className="text-base font-semibold text-green-700 dark:text-green-300 cursor-pointer">
