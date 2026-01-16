@@ -200,6 +200,45 @@ export type Database = {
         }
         Relationships: []
       }
+      employees: {
+        Row: {
+          id: string
+          user_id: string | null
+          email: string
+          full_name: string
+          phone: string | null
+          position: string | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          email: string
+          full_name: string
+          phone?: string | null
+          position?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          email?: string
+          full_name?: string
+          phone?: string | null
+          position?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -213,9 +252,11 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      is_employee: { Args: never; Returns: boolean }
+      has_valid_role: { Args: never; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "employee"
     }
     CompositeTypes: {
       [_ in never]: never

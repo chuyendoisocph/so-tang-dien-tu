@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Loader2, Shield } from 'lucide-react';
+import { Loader2, Shield, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
 
 // Email and password validation schema
@@ -18,20 +17,20 @@ const authSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading, signIn, signUp, isAdmin } = useAuth();
+  const { user, loading: authLoading, signIn, isAdmin, isEmployee } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('login');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) {
-      // User is logged in, check if admin and redirect
-      if (isAdmin) {
+      // User is logged in, check role and redirect
+      if (isAdmin || isEmployee) {
         navigate('/');
       }
     }
-  }, [user, authLoading, isAdmin, navigate]);
+  }, [user, authLoading, isAdmin, isEmployee, navigate]);
 
   const validateInputs = () => {
     try {
@@ -52,9 +51,9 @@ const Auth = () => {
     
     setLoading(true);
     const { error } = await signIn(email, password);
-    setLoading(false);
 
     if (error) {
+      setLoading(false);
       if (error.message.includes('Invalid login credentials')) {
         toast.error('Email hoặc mật khẩu không đúng');
       } else {
@@ -62,26 +61,7 @@ const Auth = () => {
       }
     } else {
       toast.success('Đăng nhập thành công!');
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateInputs()) return;
-    
-    setLoading(true);
-    const { error } = await signUp(email, password);
-    setLoading(false);
-
-    if (error) {
-      if (error.message.includes('User already registered')) {
-        toast.error('Email này đã được đăng ký');
-      } else {
-        toast.error('Đăng ký thất bại: ' + error.message);
-      }
-    } else {
-      toast.success('Đăng ký thành công! Vui lòng liên hệ quản trị viên để được cấp quyền admin.');
+      // Redirect will happen via useEffect when auth state updates
     }
   };
 
@@ -93,24 +73,25 @@ const Auth = () => {
     );
   }
 
-  // If user is logged in but not admin, show message
-  if (user && !isAdmin) {
+  // If user is logged in but has no role, show message
+  if (user && !isAdmin && !isEmployee) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <Shield className="h-12 w-12 mx-auto text-yellow-500 mb-4" />
-            <CardTitle>Không có quyền truy cập</CardTitle>
-            <CardDescription>
-              Tài khoản của bạn chưa được cấp quyền admin. Vui lòng liên hệ quản trị viên.
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
+        <Card className="w-full max-w-md shadow-xl border-0">
+          <CardHeader className="text-center pb-2">
+            <div className="h-16 w-16 mx-auto bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
+              <Shield className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+            </div>
+            <CardTitle className="text-xl">Không có quyền truy cập</CardTitle>
+            <CardDescription className="text-base">
+              Tài khoản của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button 
-              className="w-full" 
+              className="w-full cursor-pointer" 
               variant="outline"
               onClick={async () => {
-                const { signOut } = await import('@/hooks/useAuth').then(m => ({ signOut: m.useAuth }));
                 const auth = useAuth();
                 await auth.signOut();
                 window.location.reload();
@@ -125,105 +106,82 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="h-16 w-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Shield className="h-8 w-8 text-primary" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
+      <Card className="w-full max-w-md shadow-xl border-0">
+        <CardHeader className="text-center pb-2">
+          <div className="h-20 w-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+            <Shield className="h-10 w-10 text-primary" />
           </div>
-          <CardTitle className="text-2xl">CPHACO Admin</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-bold">CPHACO Admin</CardTitle>
+          <CardDescription className="text-base">
             Đăng nhập để quản lý Sổ Tang điện tử
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Đăng nhập</TabsTrigger>
-              <TabsTrigger value="signup">Đăng ký</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="login">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email-login">Email</Label>
-                  <Input
-                    id="email-login"
-                    type="email"
-                    placeholder="admin@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password-login">Mật khẩu</Label>
-                  <Input
-                    id="password-login"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang xử lý...
-                    </>
+        <CardContent className="pt-4">
+          <form onSubmit={handleSignIn} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="email-login" className="text-sm font-medium">
+                Email
+              </Label>
+              <Input
+                id="email-login"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password-login" className="text-sm font-medium">
+                Mật khẩu
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password-login"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="h-11 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    'Đăng nhập'
+                    <Eye className="h-4 w-4" />
                   )}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email-signup">Email</Label>
-                  <Input
-                    id="email-signup"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password-signup">Mật khẩu</Label>
-                  <Input
-                    id="password-signup"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="new-password"
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang xử lý...
-                    </>
-                  ) : (
-                    'Đăng ký'
-                  )}
-                </Button>
-                <p className="text-sm text-muted-foreground text-center">
-                  Sau khi đăng ký, vui lòng liên hệ quản trị viên để được cấp quyền admin.
-                </p>
-              </form>
-            </TabsContent>
-          </Tabs>
+                </button>
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full h-11 font-medium cursor-pointer" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xử lý...
+                </>
+              ) : (
+                'Đăng nhập'
+              )}
+            </Button>
+          </form>
+          
+          <p className="text-sm text-muted-foreground text-center mt-6">
+            Liên hệ quản trị viên nếu bạn cần tài khoản
+          </p>
         </CardContent>
       </Card>
     </div>

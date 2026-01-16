@@ -1,13 +1,17 @@
 import { cn } from "@/lib/utils";
-import { Users, UserPlus, PlayCircle, X, Menu, MessageSquare, Star } from "lucide-react";
+import { Users, UserPlus, PlayCircle, X, Menu, MessageSquare, Star, UserCog, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   isOpen: boolean;
   onToggle: () => void;
+  isAdmin?: boolean;
 }
 
 const navItems = [
@@ -18,7 +22,25 @@ const navItems = [
   { id: "slideshow", label: "Cấu hình Trình chiếu", icon: PlayCircle },
 ];
 
-export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarProps) => {
+const adminOnlyItems = [
+  { id: "employees", label: "Quản lý Nhân viên", icon: UserCog },
+];
+
+export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle, isAdmin = false }: SidebarProps) => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const allItems = isAdmin ? [...navItems, ...adminOnlyItems] : navItems;
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error('Đăng xuất thất bại');
+    } else {
+      toast.success('Đã đăng xuất');
+      navigate('/auth');
+    }
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -41,7 +63,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
         {/* Mobile close button */}
         <div className="flex items-center justify-between p-4 lg:hidden border-b border-sidebar-border">
           <span className="text-muted-foreground font-semibold">MENU</span>
-          <Button variant="ghost" size="icon" onClick={onToggle}>
+          <Button variant="ghost" size="icon" onClick={onToggle} className="cursor-pointer">
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -61,7 +83,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
-          {navItems.map((item) => {
+          {allItems.map((item) => {
             const Icon = item.icon;
             return (
               <button
@@ -71,7 +93,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
                   if (window.innerWidth < 1024) onToggle();
                 }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 rounded-lg",
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer",
                   "text-sidebar-foreground font-medium transition-all duration-200",
                   "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   activeTab === item.id && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
@@ -84,8 +106,26 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
           })}
         </nav>
 
+        {/* User & Logout */}
+        <div className="p-4 border-t border-sidebar-border space-y-3">
+          {user && (
+            <div className="px-2 py-1">
+              <p className="text-xs text-muted-foreground">Đăng nhập với</p>
+              <p className="text-sm font-medium text-foreground truncate">{user.email}</p>
+            </div>
+          )}
+          <Button 
+            variant="outline" 
+            className="w-full justify-start gap-2 cursor-pointer hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-4 w-4" />
+            Đăng xuất
+          </Button>
+        </div>
+
         {/* Footer */}
-        <div className="p-4 border-t border-sidebar-border text-center text-xs text-muted-foreground">
+        <div className="px-4 pb-4 text-center text-xs text-muted-foreground">
           © 2025 CPHACO
         </div>
       </aside>

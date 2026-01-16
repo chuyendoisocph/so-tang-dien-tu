@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -7,61 +7,125 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isEmployee, setIsEmployee] = useState(false);
+  const [rolesLoaded, setRolesLoaded] = useState(false);
+  const checkingRoles = useRef(false);
+
+  const checkUserRoles = useCallback(async (userId: string) => {
+    // Prevent duplicate calls
+    if (checkingRoles.current) return;
+    checkingRoles.current = true;
+
+    // Use cached role immediately for faster UX
+    const cachedRole = localStorage.getItem('user_role');
+    if (cachedRole === 'admin') {
+      setIsAdmin(true);
+      setRolesLoaded(true);
+    } else if (cachedRole === 'employee') {
+      setIsEmployee(true);
+      setRolesLoaded(true);
+    }
+
+    try {
+      // Create a promise that rejects after 8 seconds (increased timeout)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout')), 8000);
+      });
+
+      // Race between the query and timeout
+      const queryPromise = supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+
+      const result = await Promise.race([queryPromise, timeoutPromise]) as any;
+
+      if (result?.error) {
+        console.error('Error checking user roles:', result.error);
+        // Keep cached values if query fails
+        if (!cachedRole) {
+          setIsAdmin(false);
+          setIsEmployee(false);
+        }
+      } else if (result?.data) {
+        const roles = result.data.map((r: any) => r.role) || [];
+        setIsAdmin(roles.includes('admin'));
+        setIsEmployee(roles.includes('employee'));
+      }
+    } catch (error: any) {
+      // On timeout, keep using cached role (already set above)
+      if (!cachedRole) {
+        console.warn('Role check timed out, no cache available');
+      }
+    } finally {
+      setRolesLoaded(true);
+      checkingRoles.current = false;
+    }
+  }, []);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+    let mounted = true;
+
+    const initAuth = async () => {
+      try {
+        // Get initial session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
 
-        // Defer admin check with setTimeout to avoid deadlock
         if (session?.user) {
-          setTimeout(() => {
-            checkAdminRole(session.user.id);
-          }, 0);
+          await checkUserRoles(session.user.id);
         } else {
-          setIsAdmin(false);
+          setRolesLoaded(true);
         }
+        setLoading(false);
+      } catch (error) {
+        console.error('Init auth error:', error);
+        setLoading(false);
+        setRolesLoaded(true);
+      }
+    };
+
+    // Set up auth state listener - only handle changes after init
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+        
+        // Skip events that initAuth handles
+        if (event === 'INITIAL_SESSION') return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (event === 'SIGNED_OUT') {
+          setIsAdmin(false);
+          setIsEmployee(false);
+          setRolesLoaded(true);
+          localStorage.removeItem('user_role');
+        }
+        // For SIGNED_IN, roles will be checked by the component that triggered sign in
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    initAuth();
 
-      if (session?.user) {
-        checkAdminRole(session.user.id);
-      }
-    });
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [checkUserRoles]);
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const checkAdminRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('role', 'admin')
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error checking admin role:', error);
-        setIsAdmin(false);
-        return;
-      }
-
-      setIsAdmin(!!data);
-    } catch (error) {
-      console.error('Error checking admin role:', error);
-      setIsAdmin(false);
+  // Cache role when it changes
+  useEffect(() => {
+    if (isAdmin) {
+      localStorage.setItem('user_role', 'admin');
+    } else if (isEmployee) {
+      localStorage.setItem('user_role', 'employee');
     }
-  };
+  }, [isAdmin, isEmployee]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -90,17 +154,23 @@ export function useAuth() {
       setUser(null);
       setSession(null);
       setIsAdmin(false);
+      setIsEmployee(false);
+      setRolesLoaded(false);
     }
     return { error };
   };
 
+  // Loading is true until both auth and roles are loaded
+  const isLoading = loading || (user !== null && !rolesLoaded);
+
   return {
     user,
     session,
-    loading,
+    loading: isLoading,
     isAdmin,
+    isEmployee,
+    rolesLoaded,
     signIn,
-    signUp,
     signOut,
   };
 }
