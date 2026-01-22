@@ -235,6 +235,7 @@ export default function MemorialProfileWeb({
   kioskMode = false,
   adminMode = false,
   standeeMode = false,
+  staticMode = false,
 }: {
   profile: MemorialProfile;
   tributes: Tribute[];
@@ -247,6 +248,7 @@ export default function MemorialProfileWeb({
   kioskMode?: boolean;
   adminMode?: boolean;
   standeeMode?: boolean;
+  staticMode?: boolean;
 }) {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const publicUrl = buildPublicProfileUrl(profile.id);
@@ -1467,14 +1469,14 @@ export default function MemorialProfileWeb({
           }}
         />
 
-        {/* ============ SECTION 2: BIOGRAPHY - 25% (480px) ============ */}
+        {/* ============ SECTION 2: BIOGRAPHY - 567px ============ */}
         <div
           style={{
             position: 'absolute',
             top: '672px', // Starts after header
             left: 0,
             right: 0,
-            height: '480px', // FIXED 25% of 1920px
+            height: '567px',
             padding: '20px 40px 16px',
             overflow: 'hidden',
             zIndex: 10
@@ -1483,7 +1485,7 @@ export default function MemorialProfileWeb({
           <div
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.96)',
-              borderRadius: '20px',
+              borderRadius: '28px',
               padding: '20px 36px 16px',
               boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
               border: `2px solid rgba(197, 160, 89, 0.3)`,
@@ -1494,26 +1496,6 @@ export default function MemorialProfileWeb({
               position: 'relative'
             }}
           >
-            {/* Decorative accents */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '80px',
-              height: '80px',
-              background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
-              borderTopLeftRadius: '20px'
-            }} />
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              width: '80px',
-              height: '80px',
-              background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
-              borderBottomRightRadius: '20px'
-            }} />
-
             <h2
               style={{
                 fontSize: '26px',
@@ -1522,7 +1504,6 @@ export default function MemorialProfileWeb({
                 marginBottom: '12px',
                 textAlign: 'center',
                 letterSpacing: '-0.5px',
-                position: 'relative',
                 flexShrink: 0
               }}
             >
@@ -1535,15 +1516,40 @@ export default function MemorialProfileWeb({
               </span>
             </h2>
 
-            {/* Auto-scrolling Biography with strong gradient mask */}
-            <div className="bio-scroll-mask" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-              <BiographyScroll
-                biography={profile.biography}
-                className="h-full"
-                seamlessLoop={true}
-                pauseOnHover={false}
-              />
-            </div>
+            {/* Auto-scrolling Biography with strong gradient mask OR Static content for screenshot */}
+            {staticMode ? (
+              <div 
+                className="prose prose-lg max-w-none"
+                style={{ 
+                  flex: 1, 
+                  overflow: 'hidden', 
+                  fontSize: '20px',
+                  lineHeight: 1.7,
+                  color: '#334155',
+                  paddingTop: '8px'
+                }}
+              >
+                <div
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(profile.biography) }}
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 14,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="bio-scroll-mask" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                <BiographyScroll
+                  biography={profile.biography}
+                  className="h-full"
+                  seamlessLoop={true}
+                  pauseOnHover={false}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -1551,7 +1557,7 @@ export default function MemorialProfileWeb({
         <div
           style={{
             position: 'absolute',
-            top: '1152px', // 672 + 480
+            top: '1219px',
             left: '80px',
             right: '80px',
             height: '2px',
@@ -1560,14 +1566,14 @@ export default function MemorialProfileWeb({
           }}
         />
 
-        {/* ============ SECTION 3: FOOTER - 40% (768px) ============ */}
+        {/* ============ SECTION 3: FOOTER - 701px ============ */}
         <div
           style={{
             position: 'absolute',
-            top: '1152px', // Starts after header + bio (672 + 480)
+            top: '1219px',
             left: 0,
             right: 0,
-            height: '768px', // FIXED 40% of 1920px
+            height: '701px',
             padding: '20px 40px 24px',
             overflow: 'hidden',
             zIndex: 10
@@ -1576,37 +1582,16 @@ export default function MemorialProfileWeb({
           <div
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.96)',
-              borderRadius: '20px',
+              borderRadius: '28px',
               padding: '24px 36px 20px',
               boxShadow: '0 12px 48px rgba(0,0,0,0.07)',
               border: `2px solid rgba(197, 160, 89, 0.3)`,
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
-              overflow: 'hidden',
-              position: 'relative'
+              overflow: 'hidden'
             }}
           >
-            {/* Decorative accents */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '80px',
-              height: '80px',
-              background: `linear-gradient(135deg, ${GOLD_ACCENT}20, transparent)`,
-              borderTopLeftRadius: '20px'
-            }} />
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              width: '80px',
-              height: '80px',
-              background: `linear-gradient(315deg, ${GOLD_ACCENT}20, transparent)`,
-              borderBottomRightRadius: '20px'
-            }} />
-
             {/* Header */}
             <h2
               style={{
@@ -1615,8 +1600,6 @@ export default function MemorialProfileWeb({
                 color: NAVY_PRIMARY,
                 marginBottom: '20px',
                 textAlign: 'center',
-                letterSpacing: '-0.5px',
-                position: 'relative',
                 flexShrink: 0
               }}
             >
@@ -1633,7 +1616,7 @@ export default function MemorialProfileWeb({
             <div
               style={{
                 padding: '20px 28px',
-                borderRadius: '18px',
+                borderRadius: '28px',
                 background: 'linear-gradient(135deg, #F5E6D3 0%, #F8EED8 50%, #FFFBF0 100%)',
                 border: `2px solid ${GOLD_ACCENT}`,
                 boxShadow: `0 8px 24px rgba(197, 160, 89, 0.2)`,
@@ -1655,7 +1638,7 @@ export default function MemorialProfileWeb({
                     Quét để gửi lời chia buồn
                   </p>
                 </div>
-                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
+                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '20px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
                   <QRCodeSVG value={publicUrl} size={120} level="H" fgColor={NAVY_PRIMARY} />
                 </div>
               </div>
@@ -1673,7 +1656,7 @@ export default function MemorialProfileWeb({
                     Quét mã QR để nhận khuyến mãi
                   </p>
                 </div>
-                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '12px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
+                <div style={{ backgroundColor: '#ffffff', padding: '10px', borderRadius: '20px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>
                   <QRCodeSVG value="https://cphaco.vn" size={120} level="H" fgColor={NAVY_PRIMARY} />
                 </div>
               </div>
@@ -1706,45 +1689,43 @@ export default function MemorialProfileWeb({
               </span>
             </h3>
 
-            {/* 4 Messages - 2x2 Grid - COMPACT & ELEGANT */}
+            {/* Messages Grid - 2 messages for static image export */}
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gridTemplateRows: '1fr 1fr',
-                gap: '12px',
+                gap: '24px',
                 flex: 1
               }}
             >
-              {tributes.slice(0, 4).map((t) => (
+              {tributes.slice(0, 2).map((t) => (
                 <div
                   key={t.id}
                   style={{
-                    padding: '12px 14px',
-                    borderRadius: '14px',
+                    padding: '24px 28px',
+                    borderRadius: '32px',
                     backgroundColor: '#ffffff',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
-                    border: `1px solid rgba(226, 232, 240, 0.8)`,
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-start'
                   }}
                 >
                   {/* Header: Avatar + Name/Date */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
                     <div
                       style={{
-                        width: '36px',
-                        height: '36px',
+                        width: '48px',
+                        height: '48px',
                         borderRadius: '50%',
                         background: `linear-gradient(135deg, ${GOLD_ACCENT}, #D4AF37)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: '#ffffff',
-                        fontSize: '15px',
+                        fontSize: '20px',
                         fontWeight: 700,
-                        boxShadow: '0 3px 10px rgba(197, 160, 89, 0.25)',
+                        boxShadow: '0 4px 12px rgba(197, 160, 89, 0.3)',
                         flexShrink: 0
                       }}
                     >
@@ -1752,32 +1733,26 @@ export default function MemorialProfileWeb({
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{
-                        fontSize: '15px',
+                        fontSize: '20px',
                         fontWeight: 700,
                         color: NAVY_PRIMARY,
                         margin: 0,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        lineHeight: 1.2,
+                        wordBreak: 'break-word'
                       }}>
                         {t.name}
                       </p>
-                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>
+                      <p style={{ fontSize: '15px', color: GOLD_ACCENT, margin: '4px 0 0 0', fontWeight: 500 }}>
                         {t.date}
                       </p>
                     </div>
                   </div>
-                  {/* Message Body - 2 lines with ellipsis */}
+                  {/* Message Body - full content, no truncation */}
                   <p style={{
-                    fontSize: '13px',
+                    fontSize: '18px',
                     color: '#475569',
-                    lineHeight: 1.4,
+                    lineHeight: 1.6,
                     margin: 0,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
                     wordBreak: 'break-word'
                   }}>
                     {t.message}

@@ -50,6 +50,22 @@ export function useAllProfiles() {
   });
 }
 
+// Fetch ALL profiles (both regular and celebrities) - for slideshow
+export function useAllProfilesIncludingCelebrities() {
+  return useQuery({
+    queryKey: ['profiles', 'all'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as Profile[];
+    },
+  });
+}
+
 // Fetch all celebrity profiles
 export function useCelebrityProfiles() {
   return useQuery({

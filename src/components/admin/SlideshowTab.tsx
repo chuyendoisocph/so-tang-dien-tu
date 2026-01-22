@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useAllProfiles } from "@/hooks/useProfiles";
+import { useAllProfilesIncludingCelebrities } from "@/hooks/useProfiles";
 import { PlaylistManager } from "./PlaylistManager";
 
 export const SlideshowTab = () => {
@@ -15,7 +15,7 @@ export const SlideshowTab = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-  const { data: profiles, isLoading } = useAllProfiles();
+  const { data: profiles, isLoading } = useAllProfilesIncludingCelebrities();
 
   const publishedProfiles = profiles?.filter(p => p.is_published) || [];
 

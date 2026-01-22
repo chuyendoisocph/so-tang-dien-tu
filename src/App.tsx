@@ -11,6 +11,7 @@ const Index = lazy(() => import("./pages/Index"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const SlideshowPage = lazy(() => import("./pages/SlideshowPage"));
 const SlideshowProfilePage = lazy(() => import("./pages/SlideshowProfilePage"));
+const ScreenshotPreview = lazy(() => import("./pages/ScreenshotPreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/profile/:profileId" element={<ProfilePage />} />
             <Route path="/slideshow" element={<SlideshowPage />} />
             <Route path="/slideshow-profile" element={<SlideshowProfilePage />} />
+            <Route path="/screenshot-preview" element={<ScreenshotPreview />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,10 +1,12 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { Facebook, Link2, MessageCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { toPng } from "html-to-image";
 
 import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
+import { StandeeExport1080x1920 } from "@/components/admin/StandeeExport";
 import { useProfileData } from "@/hooks/useProfileData";
 import { useComments } from "@/hooks/useComments";
 import { updateMetaTags, resetMetaTags } from "@/utils/metaTags";
@@ -14,10 +16,12 @@ export default function ProfilePage() {
   const { profileId } = useParams();
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // Parse URL parameters
   const isSlideshow = searchParams.get("slideshow") === "1";
   const isKiosk = searchParams.get("kiosk") === "1";
+  const screenshotMode = searchParams.get("screenshot"); // 'a4' or '1080x1920'
 
   const { profile, photos, isLoading, error, actualProfileId } = useProfileData(profileId);
   const { comments, loading: commentsLoading, addComment, error: commentsError } = useComments(actualProfileId || '');
@@ -44,6 +48,47 @@ export default function ProfilePage() {
       tributesLength: comments.length
     });
   }, [actualProfileId, comments, commentsLoading, commentsError]);
+
+  // Screenshot capture effect
+  useEffect(() => {
+    if (!screenshotMode || !profile || !profileRef.current) return;
+
+    const captureScreenshot = async () => {
+      // Wait for images to load
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      const element = profileRef.current;
+      if (!element) return;
+
+      try {
+        const dataUrl = await toPng(element, {
+          quality: 1.0,
+          pixelRatio: screenshotMode === 'a4' ? 2 : 1,
+          backgroundColor: '#FDFCF8',
+          width: screenshotMode === 'a4' ? 794 : 1080,
+          height: screenshotMode === 'a4' ? 1123 : 1920,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left',
+          }
+        });
+
+        // Download the image
+        const link = document.createElement('a');
+        link.download = `${profile.name.replace(/\s+/g, '_')}_${screenshotMode}.png`;
+        link.href = dataUrl;
+        link.click();
+
+        // Close the tab after download
+        setTimeout(() => window.close(), 500);
+      } catch (error) {
+        console.error('Screenshot capture failed:', error);
+        toast.error('Không thể tạo ảnh. Vui lòng thử lại.');
+      }
+    };
+
+    captureScreenshot();
+  }, [screenshotMode, profile]);
 
   // Set document title and meta tags
   useEffect(() => {
@@ -131,17 +176,40 @@ export default function ProfilePage() {
 
   return (
     <>
-      <MemorialProfileWeb
-        profile={profile}
-        tributes={tributes}
-        photos={photos}
-        formData={formData}
-        onChangeForm={(patch) => setFormData((p) => ({ ...p, ...patch }))}
-        onSubmitTribute={handleSubmitTribute}
-        onOpenShare={() => setShareModalOpen(true)}
-        slideshowMode={isSlideshow}
-        kioskMode={isKiosk}
-      />
+      <div ref={profileRef}>
+        {screenshotMode === '1080x1920' ? (
+          <StandeeExport1080x1920
+            profile={{
+              id: actualProfileId || '',
+              name: profile.name,
+              avatar_url: profile.avatarUrl,
+              biography: profile.biography,
+              birth_date: profile.dateRange?.split(' - ')[0],
+              death_date: profile.dateRange?.split(' - ')[1],
+            }}
+            tributes={tributes.map(t => ({
+              id: t.id,
+              name: t.name,
+              message: t.message,
+              date: t.date
+            }))}
+          />
+        ) : (
+          <MemorialProfileWeb
+            profile={profile}
+            tributes={tributes}
+            photos={photos}
+            formData={formData}
+            onChangeForm={(patch) => setFormData((p) => ({ ...p, ...patch }))}
+            onSubmitTribute={handleSubmitTribute}
+            onOpenShare={() => setShareModalOpen(true)}
+            slideshowMode={isSlideshow}
+            kioskMode={isKiosk}
+            standeeMode={screenshotMode === 'a4'}
+            staticMode={screenshotMode === 'a4'}
+          />
+        )}
+      </div>
 
       {/* Share Modal */}
       <Dialog open={shareModalOpen} onOpenChange={setShareModalOpen}>

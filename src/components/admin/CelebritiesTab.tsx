@@ -1,9 +1,10 @@
-import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Star, Search, Filter, ChevronLeft, ChevronRight, Image } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, MoreHorizontal, Loader2, Star, Search, Filter, ChevronLeft, ChevronRight, Download, CheckSquare, Square, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -39,7 +40,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useCelebrityProfiles, useDeleteProfile } from "@/hooks/useProfiles";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
+import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
+import { StandeeExport1080x1920 } from "@/components/admin/StandeeExport";
 
 interface CelebritiesTabProps {
   onCreateNew: () => void;
@@ -55,6 +61,20 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Standee Generation Logic
+  const standeeRef = useRef<HTMLDivElement>(null);
+  const standee1080Ref = useRef<HTMLDivElement>(null);
+  const [standeeProfile, setStandeeProfile] = useState<any>(null);
+  const [standee1080Profile, setStandee1080Profile] = useState<any>(null);
+  const [standeeTributes, setStandeeTributes] = useState<any[]>([]);
+  const [standee1080Tributes, setStandee1080Tributes] = useState<any[]>([]);
+  
+  // Queue system for multiple downloads
+  const downloadQueueRef = useRef<any[]>([]);
+  const isProcessingRef = useRef(false);
 
   const filteredProfiles = useMemo(() => {
     if (!profiles) return [];
@@ -91,6 +111,230 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
       return dateString;
     }
   };
+
+  const handleDownloadImage = async (profile: any, size: 'a4' | '1080x1920') => {
+    // Add to queue
+    downloadQueueRef.current.push({ profile, type: size });
+    toast.info(`Đã thêm ${profile.name} vào hàng đợi tải ảnh`);
+    
+    // Start processing if not already
+    processDownloadQueue();
+  };
+
+  // Process the download queue sequentially
+  const processDownloadQueue = async () => {
+    if (isProcessingRef.current || downloadQueueRef.current.length === 0) {
+      return;
+    }
+    
+    isProcessingRef.current = true;
+    setIsDownloading(true);
+    const { profile, type } = downloadQueueRef.current.shift()!;
+    
+    if (type === '1080x1920') {
+      await processStandee1080Download(profile);
+    } else if (type === 'a4') {
+      await processStandeeA4Download(profile);
+    }
+    
+    isProcessingRef.current = false;
+    
+    // Process next item in queue
+    if (downloadQueueRef.current.length > 0) {
+      processDownloadQueue();
+    } else {
+      setIsDownloading(false);
+    }
+  };
+
+  const processStandee1080Download = async (profile: any) => {
+    // Fetch tributes for this profile
+    let tributes: any[] = [];
+    try {
+      const { data: comments } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+      
+      tributes = (comments || []).map((c: any) => ({
+        id: c.id,
+        name: c.author_name,
+        phone: c.author_email || '',
+        message: c.content,
+        date: format(new Date(c.created_at), 'dd/MM/yyyy')
+      }));
+    } catch (error) {
+      console.error('Error fetching tributes:', error);
+    }
+    
+    setStandee1080Profile(profile);
+    setStandee1080Tributes(tributes);
+
+    // Wait for component to render and ref to be available
+    let attempts = 0;
+    const maxAttempts = 30;
+    
+    while (!standee1080Ref.current && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+    
+    // Additional wait for images to load
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    if (standee1080Ref.current) {
+      try {
+        toast.info(`Đang tạo ảnh ${profile.name} (1080x1920)...`);
+
+        const dataUrl = await toPng(standee1080Ref.current, {
+          quality: 1.0,
+          pixelRatio: 1,
+          backgroundColor: '#FDFCF8',
+          width: 1080,
+          height: 1920,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left',
+          }
+        });
+
+        const link = document.createElement("a");
+        link.download = `${profile.name}-standee-1080x1920.png`;
+        link.href = dataUrl;
+        link.click();
+
+        toast.success(`Đã tải xuống ${profile.name}!`);
+      } catch (err) {
+        console.error("Error generating standee 1080x1920:", err);
+        toast.error(`Lỗi khi tạo ảnh ${profile.name}`);
+      }
+    } else {
+      toast.error(`Không thể tạo ảnh ${profile.name} - component không render`);
+    }
+    
+    setStandee1080Profile(null);
+    setStandee1080Tributes([]);
+  };
+
+  const processStandeeA4Download = async (profile: any) => {
+    // Fetch tributes for this profile
+    let tributes: any[] = [];
+    try {
+      const { data: comments } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+      
+      tributes = (comments || []).map((c: any) => ({
+        id: c.id,
+        name: c.author_name,
+        phone: c.author_email || '',
+        message: c.content,
+        date: format(new Date(c.created_at), 'dd/MM/yyyy')
+      }));
+    } catch (error) {
+      console.error('Error fetching tributes:', error);
+    }
+    
+    setStandeeProfile(profile);
+    setStandeeTributes(tributes);
+
+    // Wait for component to render and ref to be available
+    let attempts = 0;
+    const maxAttempts = 20;
+    
+    while (!standeeRef.current && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+    
+    // Additional wait for images to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    if (standeeRef.current) {
+      try {
+        toast.info(`Đang tạo ảnh ${profile.name} (A4)...`);
+
+        const dataUrl = await toPng(standeeRef.current, {
+          quality: 1.0,
+          pixelRatio: 3,
+          backgroundColor: '#FEF9E7',
+        });
+
+        const link = document.createElement("a");
+        link.download = `${profile.name}-standee-A4.png`;
+        link.href = dataUrl;
+        link.click();
+
+        toast.success(`Đã tải xuống ${profile.name}!`);
+      } catch (err) {
+        console.error("Error generating standee A4:", err);
+        toast.error(`Lỗi khi tạo ảnh ${profile.name}`);
+      }
+    } else {
+      toast.error(`Không thể tạo ảnh ${profile.name} - component không render`);
+    }
+    
+    setStandeeProfile(null);
+    setStandeeTributes([]);
+  };
+
+  // Toggle selection for a single profile
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  // Select/deselect all profiles on current page
+  const toggleSelectAll = () => {
+    const currentPageIds = paginatedProfiles.map(p => p.id);
+    const allSelected = currentPageIds.every(id => selectedIds.has(id));
+    
+    setSelectedIds(prev => {
+      const newSet = new Set(prev);
+      if (allSelected) {
+        currentPageIds.forEach(id => newSet.delete(id));
+      } else {
+        currentPageIds.forEach(id => newSet.add(id));
+      }
+      return newSet;
+    });
+  };
+
+  // Download selected profiles
+  const handleBatchDownload = async (size: 'a4' | '1080x1920') => {
+    if (selectedIds.size === 0) return;
+    
+    const selectedProfiles = profiles?.filter(p => selectedIds.has(p.id)) || [];
+    
+    // Add all selected profiles to queue
+    selectedProfiles.forEach(profile => {
+      downloadQueueRef.current.push({ profile, type: size });
+    });
+    
+    toast.info(`Đã thêm ${selectedProfiles.length} hồ sơ vào hàng đợi tải ảnh`);
+    
+    // Start processing
+    processDownloadQueue();
+  };
+
+  // Check if all profiles on current page are selected
+  const allCurrentPageSelected = paginatedProfiles.length > 0 && 
+    paginatedProfiles.every(p => selectedIds.has(p.id));
+  const someCurrentPageSelected = paginatedProfiles.some(p => selectedIds.has(p.id));
 
   if (isLoading) {
     return (
@@ -211,6 +455,44 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
           <div className="mt-4 text-sm text-muted-foreground">
             Hiển thị {paginatedProfiles.length} trong tổng số {filteredProfiles.length} hồ sơ
           </div>
+
+          {/* Batch Download Actions */}
+          {selectedIds.size > 0 && (
+            <div className="mt-4 flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-950/50 rounded-lg border border-amber-200 dark:border-amber-800">
+              <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                Đã chọn {selectedIds.size} hồ sơ
+              </span>
+              <div className="flex-1" />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleBatchDownload('a4')}
+                disabled={isDownloading}
+                className="cursor-pointer"
+              >
+                {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+                Tải A4 ({selectedIds.size})
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleBatchDownload('1080x1920')}
+                disabled={isDownloading}
+                className="cursor-pointer"
+              >
+                {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+                Tải 1080x1920 ({selectedIds.size})
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedIds(new Set())}
+                className="cursor-pointer text-muted-foreground"
+              >
+                Bỏ chọn
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -222,6 +504,14 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
             <Table>
               <TableHeader>
                 <TableRow className="bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-b-2">
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={allCurrentPageSelected}
+                      onCheckedChange={toggleSelectAll}
+                      className="cursor-pointer"
+                      aria-label="Chọn tất cả"
+                    />
+                  </TableHead>
                   <TableHead className="font-bold text-amber-700 dark:text-amber-300 uppercase text-xs tracking-wide">#</TableHead>
                   <TableHead className="font-bold text-amber-700 dark:text-amber-300 uppercase text-xs tracking-wide">Mã Hồ Sơ</TableHead>
                   <TableHead className="font-bold text-amber-700 dark:text-amber-300 uppercase text-xs tracking-wide">Nhân vật</TableHead>
@@ -233,6 +523,14 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
               <TableBody>
                 {paginatedProfiles.map((profile, index) => (
                   <TableRow key={profile.id} className="hover:bg-amber-50/50 dark:hover:bg-amber-900/20 transition-colors border-b border-slate-100 dark:border-slate-800">
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.has(profile.id)}
+                        onCheckedChange={() => toggleSelection(profile.id)}
+                        className="cursor-pointer"
+                        aria-label={`Chọn ${profile.name}`}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium text-slate-600 dark:text-slate-400">
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </TableCell>
@@ -305,6 +603,22 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
                               <Edit className="h-4 w-4 mr-2" />
                               Chỉnh sửa
                             </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              className="cursor-pointer" 
+                              onSelect={() => handleDownloadImage(profile, 'a4')}
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Tải ảnh in (A4)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="cursor-pointer" 
+                              onSelect={() => handleDownloadImage(profile, '1080x1920')}
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Tải ảnh (1080x1920)
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onSelect={(e) => e.preventDefault()}>
@@ -335,7 +649,7 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
                 ))}
                 {paginatedProfiles.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                       <Star className="h-12 w-12 mx-auto mb-4 text-amber-300" />
                       <p>Chưa có hồ sơ người nổi tiếng nào</p>
                     </TableCell>
@@ -414,6 +728,45 @@ export const CelebritiesTab = ({ onCreateNew, onEdit }: CelebritiesTabProps) => 
           <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="cursor-pointer">
             <ChevronRight className="h-4 w-4" />
           </Button>
+        </div>
+      )}
+
+      {/* Hidden Container for Standee Generation (A4) */}
+      {standeeProfile && (
+        <div style={{ position: "fixed", top: "-9999px", left: "-9999px", zIndex: -1 }}>
+          <div ref={standeeRef}>
+            <MemorialProfileWeb
+              profile={{
+                id: standeeProfile.id,
+                name: standeeProfile.name,
+                dateRange: `${new Date(standeeProfile.birth_date || '').getFullYear()} - ${new Date(standeeProfile.death_date || '').getFullYear()}`,
+                avatarUrl: standeeProfile.avatar_url,
+                biography: standeeProfile.biography || '',
+                roles: [],
+                coverUrl: standeeProfile.cover_url,
+                mapsUrl: standeeProfile.maps_url,
+                isBuried: standeeProfile.is_buried
+              }}
+              tributes={standeeTributes}
+              photos={[]}
+              formData={{ name: '', phone: '', message: '' }}
+              onChangeForm={() => { }}
+              onSubmitTribute={() => { }}
+              onOpenShare={() => { }}
+              standeeMode={true}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Hidden Container for Standee 1080x1920 Generation */}
+      {standee1080Profile && (
+        <div style={{ position: "fixed", top: "-9999px", left: "-9999px", zIndex: -1 }}>
+          <StandeeExport1080x1920
+            ref={standee1080Ref}
+            profile={standee1080Profile}
+            tributes={standee1080Tributes}
+          />
         </div>
       )}
     </div>

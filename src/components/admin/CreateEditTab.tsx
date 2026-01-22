@@ -300,41 +300,38 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 </p>
               </div>
 
-              {/* Only show location fields for regular profiles (not celebrities) */}
-              {!isCelebrity && (
-                <>
-                  <div className="space-y-3">
-                    <Label htmlFor="mapsUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Link Google Maps (Vị trí An Nghỉ)
-                    </Label>
-                    <Input
-                      id="mapsUrl"
-                      type="url"
-                      className="border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
-                      placeholder="https://maps.app.goo.gl/..."
-                      value={mapsUrl}
-                      onChange={(e) => setMapsUrl(e.target.value)}
-                    />
-                    <p className="text-xs text-slate-500">Link Google Maps để hiển thị QR code chỉ đường (không bắt buộc)</p>
-                  </div>
+              {/* Show Google Maps link for all profiles */}
+              <div className="space-y-3">
+                <Label htmlFor="mapsUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Link Google Maps (Vị trí An Nghỉ)
+                </Label>
+                <Input
+                  id="mapsUrl"
+                  type="url"
+                  className="border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                  placeholder="https://maps.app.goo.gl/..."
+                  value={mapsUrl}
+                  onChange={(e) => setMapsUrl(e.target.value)}
+                />
+                <p className="text-xs text-slate-500">Link Google Maps để hiển thị QR code chỉ đường (không bắt buộc)</p>
+              </div>
 
-                  <div className="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex-1">
-                      <Label htmlFor="isBuried" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
-                        Đã an táng
-                      </Label>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Bật nếu người đã được an táng (hiển thị "được an nghỉ tại"), tắt nếu chưa (hiển thị "sẽ được an nghỉ tại")
-                      </p>
-                    </div>
-                    <Switch
-                      id="isBuried"
-                      checked={isBuried}
-                      onCheckedChange={setIsBuried}
-                    />
-                  </div>
-                </>
-              )}
+              {/* Show "Đã an táng" for all profiles */}
+              <div className="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="flex-1">
+                  <Label htmlFor="isBuried" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    Đã an táng
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Bật nếu người đã được an táng (hiển thị "được an nghỉ tại"), tắt nếu chưa (hiển thị "sẽ được an nghỉ tại")
+                  </p>
+                </div>
+                <Switch
+                  id="isBuried"
+                  checked={isBuried}
+                  onCheckedChange={setIsBuried}
+                />
+              </div>
             </div>
 
             {/* Publish Section - At the end before actions */}

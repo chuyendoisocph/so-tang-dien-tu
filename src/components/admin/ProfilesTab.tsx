@@ -45,6 +45,7 @@ import { format } from "date-fns";
 import { toPng } from "html-to-image";
 import { useRef } from "react";
 import MemorialProfileWeb from "@/components/profile/MemorialProfileWeb";
+import { StandeeExport1080x1920 } from "@/components/admin/StandeeExport";
 import { toast } from "sonner";
 
 interface ProfilesTabProps {
@@ -113,67 +114,46 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
   const [standee1080Profile, setStandee1080Profile] = useState<any>(null);
   const [standeeTributes, setStandeeTributes] = useState<any[]>([]);
   const [standee1080Tributes, setStandee1080Tributes] = useState<any[]>([]);
+  
+  // Queue system for multiple downloads
+  const downloadQueueRef = useRef<any[]>([]);
+  const isProcessingRef = useRef(false);
 
-  const handleDownloadStandee = async (profile: any) => {
-    setStandeeProfile(profile);
+  const handleDownloadStandee = (profile: any) => {
+    // Add to queue
+    downloadQueueRef.current.push({ profile, type: 'A4' });
+    toast.info(`Đã thêm ${profile.name} vào hàng đợi tải ảnh (${downloadQueueRef.current.length} ảnh)`);
     
-    // Fetch tributes for this profile
-    try {
-      const { data: comments } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('profile_id', profile.id)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false })
-        .limit(4);
-      
-      const tributes = (comments || []).map((c: any) => ({
-        id: c.id,
-        name: c.author_name,
-        phone: c.author_email || '',
-        message: c.content,
-        date: format(new Date(c.created_at), 'dd/MM/yyyy')
-      }));
-      
-      setStandeeTributes(tributes);
-    } catch (error) {
-      console.error('Error fetching tributes:', error);
-      setStandeeTributes([]);
-    }
-
-    // Give time for the component to render in the hidden container
-    setTimeout(async () => {
-      if (standeeRef.current) {
-        try {
-          toast.info("Đang tạo ảnh standee (A4)...");
-
-          // Force some styles to ensure print quality
-          const dataUrl = await toPng(standeeRef.current, {
-            quality: 1.0,
-            pixelRatio: 3, // High resolution for print
-            backgroundColor: '#FEF9E7',
-          });
-
-          const link = document.createElement("a");
-          link.download = `${profile.name}-standee-A4.png`;
-          link.href = dataUrl;
-          link.click();
-
-          toast.success("Đã tải xuống ảnh standee!");
-        } catch (err) {
-          console.error("Error generating standee:", err);
-          toast.error("Lỗi khi tạo ảnh standee");
-        } finally {
-          setStandeeProfile(null);
-        }
-      }
-    }, 1000); // 1 sec delay for images/fonts to settle
+    // Start processing if not already
+    processDownloadQueue();
   };
 
-  const handleDownloadStandee1080x1920 = async (profile: any) => {
-    setStandee1080Profile(profile);
+  // Process the download queue sequentially
+  const processDownloadQueue = async () => {
+    if (isProcessingRef.current || downloadQueueRef.current.length === 0) {
+      return;
+    }
     
+    isProcessingRef.current = true;
+    const { profile, type } = downloadQueueRef.current.shift()!;
+    
+    if (type === '1080x1920') {
+      await processStandee1080Download(profile);
+    } else if (type === 'A4') {
+      await processStandeeA4Download(profile);
+    }
+    
+    isProcessingRef.current = false;
+    
+    // Process next item in queue
+    if (downloadQueueRef.current.length > 0) {
+      processDownloadQueue();
+    }
+  };
+
+  const processStandee1080Download = async (profile: any) => {
     // Fetch tributes for this profile
+    let tributes: any[] = [];
     try {
       const { data: comments } = await supabase
         .from('comments')
@@ -183,47 +163,141 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
         .order('created_at', { ascending: false })
         .limit(4);
       
-      const tributes = (comments || []).map((c: any) => ({
+      tributes = (comments || []).map((c: any) => ({
         id: c.id,
         name: c.author_name,
         phone: c.author_email || '',
         message: c.content,
         date: format(new Date(c.created_at), 'dd/MM/yyyy')
       }));
-      
-      setStandee1080Tributes(tributes);
     } catch (error) {
       console.error('Error fetching tributes:', error);
-      setStandee1080Tributes([]);
     }
+    
+    setStandee1080Profile(profile);
+    setStandee1080Tributes(tributes);
 
-    // Give time for the component to render in the hidden container
-    setTimeout(async () => {
-      if (standee1080Ref.current) {
-        try {
-          toast.info("Đang tạo ảnh standee (1080x1920)...");
+    // Wait for component to render and ref to be available
+    let attempts = 0;
+    const maxAttempts = 30; // 30 * 100ms = 3 seconds max wait
+    
+    while (!standee1080Ref.current && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+    
+    // Additional wait for images to load
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    if (standee1080Ref.current) {
+      try {
+        toast.info(`Đang tạo ảnh ${profile.name} (1080x1920)...`);
 
-          // Force some styles to ensure print quality
-          const dataUrl = await toPng(standee1080Ref.current, {
-            quality: 1.0,
-            pixelRatio: 2, // High resolution for digital display
-            backgroundColor: '#FDFCF8',
-          });
+        const dataUrl = await toPng(standee1080Ref.current, {
+          quality: 1.0,
+          pixelRatio: 1,
+          backgroundColor: '#FDFCF8',
+          width: 1080,
+          height: 1920,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left',
+          }
+        });
 
-          const link = document.createElement("a");
-          link.download = `${profile.name}-standee-1080x1920.png`;
-          link.href = dataUrl;
-          link.click();
+        const link = document.createElement("a");
+        link.download = `${profile.name}-standee-1080x1920.png`;
+        link.href = dataUrl;
+        link.click();
 
-          toast.success("Đã tải xuống ảnh standee 1080x1920!");
-        } catch (err) {
-          console.error("Error generating standee 1080x1920:", err);
-          toast.error("Lỗi khi tạo ảnh standee 1080x1920");
-        } finally {
-          setStandee1080Profile(null);
-        }
+        toast.success(`Đã tải xuống ${profile.name}!`);
+      } catch (err) {
+        console.error("Error generating standee 1080x1920:", err);
+        toast.error(`Lỗi khi tạo ảnh ${profile.name}`);
       }
-    }, 1500); // 1.5 sec delay for larger image to settle
+    } else {
+      toast.error(`Không thể tạo ảnh ${profile.name} - component không render`);
+    }
+    
+    // Clear profile after capture
+    setStandee1080Profile(null);
+    setStandee1080Tributes([]);
+  };
+
+  const processStandeeA4Download = async (profile: any) => {
+    // Fetch tributes for this profile
+    let tributes: any[] = [];
+    try {
+      const { data: comments } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+      
+      tributes = (comments || []).map((c: any) => ({
+        id: c.id,
+        name: c.author_name,
+        phone: c.author_email || '',
+        message: c.content,
+        date: format(new Date(c.created_at), 'dd/MM/yyyy')
+      }));
+    } catch (error) {
+      console.error('Error fetching tributes:', error);
+    }
+    
+    setStandeeProfile(profile);
+    setStandeeTributes(tributes);
+
+    // Wait for component to render and ref to be available
+    let attempts = 0;
+    const maxAttempts = 20; // 20 * 100ms = 2 seconds max wait
+    
+    while (!standeeRef.current && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+    
+    // Additional wait for images to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    if (standeeRef.current) {
+      try {
+        toast.info(`Đang tạo ảnh ${profile.name} (A4)...`);
+
+        const dataUrl = await toPng(standeeRef.current, {
+          quality: 1.0,
+          pixelRatio: 3,
+          backgroundColor: '#FEF9E7',
+        });
+
+        const link = document.createElement("a");
+        link.download = `${profile.name}-standee-A4.png`;
+        link.href = dataUrl;
+        link.click();
+
+        toast.success(`Đã tải xuống ${profile.name}!`);
+      } catch (err) {
+        console.error("Error generating standee A4:", err);
+        toast.error(`Lỗi khi tạo ảnh ${profile.name}`);
+      }
+    } else {
+      toast.error(`Không thể tạo ảnh ${profile.name} - component không render`);
+    }
+    
+    // Clear profile after capture
+    setStandeeProfile(null);
+    setStandeeTributes([]);
+  };
+
+  const handleDownloadStandee1080x1920 = (profile: any) => {
+    // Add to queue
+    downloadQueueRef.current.push({ profile, type: '1080x1920' });
+    toast.info(`Đã thêm ${profile.name} vào hàng đợi tải ảnh (${downloadQueueRef.current.length} ảnh)`);
+    
+    // Start processing if not already
+    processDownloadQueue();
   };
 
   if (isLoading) {
@@ -807,28 +881,11 @@ export const ProfilesTab = ({ onCreateNew, onEdit }: ProfilesTabProps) => {
       {/* Hidden Container for Standee 1080x1920 Generation */}
       {standee1080Profile && (
         <div style={{ position: "fixed", top: "-9999px", left: "-9999px", zIndex: -1 }}>
-          <div ref={standee1080Ref}>
-            <MemorialProfileWeb
-              profile={{
-                id: standee1080Profile.id,
-                name: standee1080Profile.name,
-                dateRange: `${new Date(standee1080Profile.birth_date || '').getFullYear()} - ${new Date(standee1080Profile.death_date || '').getFullYear()}`,
-                avatarUrl: standee1080Profile.avatar_url,
-                biography: standee1080Profile.biography || '',
-                roles: [], // You might need to fetch roles if they aren't in the basic profile object, or pass empty if acceptable
-                coverUrl: standee1080Profile.cover_url,
-                mapsUrl: standee1080Profile.maps_url,
-                isBuried: standee1080Profile.is_buried
-              }}
-              tributes={standee1080Tributes}
-              photos={[]}
-              formData={{ name: '', phone: '', message: '' }}
-              onChangeForm={() => { }}
-              onSubmitTribute={() => { }}
-              onOpenShare={() => { }}
-              slideshowMode={true}
-            />
-          </div>
+          <StandeeExport1080x1920
+            ref={standee1080Ref}
+            profile={standee1080Profile}
+            tributes={standee1080Tributes}
+          />
         </div>
       )}
     </div>
