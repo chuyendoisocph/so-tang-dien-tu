@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Play, Pause, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAllProfiles } from "@/hooks/useProfiles";
+import { useAllProfilesIncludingCelebrities } from "@/hooks/useProfiles";
 import "../styles/slideshow.css";
 
 const SlideshowProfilePage = () => {
@@ -20,7 +20,7 @@ const SlideshowProfilePage = () => {
   const intervalTime = parseInt(searchParams.get("time") || "30") * 1000;
   const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
 
-  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfiles();
+  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfilesIncludingCelebrities();
 
   // Filter to only published profiles, and optionally filter by selected IDs
   const profiles = (allProfiles || [])
