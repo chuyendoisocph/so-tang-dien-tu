@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useState, useEffect } from "react";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useProfile, useCreateProfile, useUpdateProfile } from "@/hooks/useProfiles";
 
 interface CreateEditTabProps {
@@ -284,14 +284,12 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
                 <Label htmlFor="biography" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                   {isCelebrity ? 'Tiểu sử & Thành tựu' : 'Tiểu sử / Thông tin an táng'}
                 </Label>
-                <Textarea
-                  id="biography"
-                  className="min-h-[200px] border-slate-300 focus:border-primary focus:ring-primary/20 bg-white/80 dark:bg-slate-800/80"
+                <RichTextEditor
+                  value={biography}
+                  onChange={setBiography}
                   placeholder={isCelebrity 
                     ? "Nhập tiểu sử, sự nghiệp, thành tựu nổi bật của nhân vật..." 
                     : "Nhập tiểu sử, thông tin an táng, kỷ niệm đáng nhớ..."}
-                  value={biography}
-                  onChange={(e) => setBiography(e.target.value)}
                 />
                 <p className="text-xs text-slate-500">
                   {isCelebrity 
