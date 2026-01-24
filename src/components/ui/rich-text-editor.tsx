@@ -4,6 +4,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Bold, Italic, List, ListOrdered, Undo, Redo } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
 
 interface RichTextEditorProps {
   value: string;
@@ -30,6 +31,13 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
       },
     },
   });
+
+  // Sync content when value changes from outside (e.g., loading from database)
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || '');
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;
