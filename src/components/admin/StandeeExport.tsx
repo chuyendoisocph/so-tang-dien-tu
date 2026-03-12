@@ -22,6 +22,8 @@ type Profile = {
   biography?: string;
   birth_date?: string;
   death_date?: string;
+  isBuried?: boolean;
+  is_buried?: boolean;
 };
 
 type Tribute = {
@@ -87,6 +89,7 @@ export const StandeeExport1080x1920 = forwardRef<HTMLDivElement, StandeeExportPr
     const birthYear = profile.birth_date ? new Date(profile.birth_date).getFullYear() : '';
     const deathYear = profile.death_date ? new Date(profile.death_date).getFullYear() : '';
     const years = `${birthYear} — ${deathYear}`;
+    const isBuried = profile.isBuried ?? profile.is_buried ?? false;
 
     return (
       <div
@@ -200,7 +203,7 @@ export const StandeeExport1080x1920 = forwardRef<HTMLDivElement, StandeeExportPr
               letterSpacing: '0.5px'
             }}
           >
-            <strong>{toTitleCase(profile.name)}</strong> sẽ được an nghỉ tại <strong>Hoa Viên Bình Dương</strong>
+            <strong>{toTitleCase(profile.name)}</strong> {isBuried ? 'đang' : 'sẽ được'} an nghỉ tại <strong>Hoa Viên Bình Dương</strong>
           </div>
         </div>
 

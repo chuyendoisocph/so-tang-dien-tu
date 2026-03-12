@@ -250,7 +250,7 @@ export default function ScreenshotPreview() {
                   letterSpacing: '0.5px'
                 }}
               >
-                <strong>{toTitleCase(mockProfile.name)}</strong> sẽ được an nghỉ tại <strong>Hoa Viên Bình Dương</strong>
+                <strong>{toTitleCase(mockProfile.name)}</strong> {mockProfile.isBuried ? 'đang' : 'sẽ được'} an nghỉ tại <strong>Hoa Viên Bình Dương</strong>
               </div>
             </div>
 
