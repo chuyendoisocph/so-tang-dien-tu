@@ -14,6 +14,8 @@ interface ExpandableTextProps extends React.HTMLAttributes<HTMLDivElement> {
   isHtml?: boolean;
 }
 
+const COLLAPSED_LINE_HEIGHT = 1.625;
+
 export const ExpandableText = forwardRef<HTMLDivElement, ExpandableTextProps>(
   (
     {
@@ -73,16 +75,12 @@ export const ExpandableText = forwardRef<HTMLDivElement, ExpandableTextProps>(
       <div className={cn("flex flex-col items-center", className)} style={style} {...props}>
         <div
           ref={textRef}
-          className={cn(
-            "relative transition-all duration-500 ease-in-out overflow-hidden w-full",
-            textClassName,
-            !isExpanded && "line-clamp-4" // Fallback if dynamic style fails, but we use style below
-          )}
+          className={cn("relative overflow-hidden w-full", textClassName)}
           style={{
-            display: "-webkit-box",
-            WebkitLineClamp: isExpanded ? "unset" : maxLines,
-            WebkitBoxOrient: "vertical",
-            lineClamp: isExpanded ? "unset" : maxLines, // Standard property
+            // Collapse by height, not -webkit-line-clamp: iOS Safari draws the
+            // clamped paragraphs on top of each other once the text is expanded.
+            lineHeight: COLLAPSED_LINE_HEIGHT,
+            maxHeight: isExpanded ? "none" : `${maxLines * COLLAPSED_LINE_HEIGHT}em`,
             ...style
           }}
         >
