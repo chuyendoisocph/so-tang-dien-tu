@@ -15,15 +15,14 @@ export function useCloudinaryUpload(options?: UseCloudinaryUploadOptions) {
     setIsUploading(true);
     setProgress(0);
 
-    try {
-      // Simulate progress since Cloudinary doesn't provide upload progress in basic fetch
-      const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 10, 90));
-      }, 200);
+    // Simulate progress since Cloudinary doesn't provide upload progress in basic fetch
+    const progressInterval = setInterval(() => {
+      setProgress(prev => Math.min(prev + 10, 90));
+    }, 200);
 
+    try {
       const result = await uploadToCloudinary(file);
-      
-      clearInterval(progressInterval);
+
       setProgress(100);
       
       toast.success('Image uploaded successfully');
@@ -36,6 +35,7 @@ export function useCloudinaryUpload(options?: UseCloudinaryUploadOptions) {
       options?.onError?.(err);
       return null;
     } finally {
+      clearInterval(progressInterval);
       setIsUploading(false);
       setTimeout(() => setProgress(0), 500);
     }

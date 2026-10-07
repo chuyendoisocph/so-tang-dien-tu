@@ -1,4 +1,4 @@
-import { ArrowLeft, Loader2, Plus, X, Star } from "lucide-react";
+import { ArrowLeft, Loader2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,8 +48,6 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   const [isBuried, setIsBuried] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [isCelebrity, setIsCelebrity] = useState(editingProfile?.isCelebrity || false);
-  const [roles, setRoles] = useState<string[]>([""]);
-  const [locations, setLocations] = useState<string[]>([""]);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const { data: existingProfile, isLoading: isLoadingProfile } = useProfile(editingProfile?.id || null);
@@ -69,24 +67,6 @@ export const CreateEditTab = ({ onBack, editingProfile }: CreateEditTabProps) =>
   const handleSlugChange = (newSlug: string) => {
     setSlug(newSlug.toLowerCase().replace(/\s+/g, ''));
     setSlugManuallyEdited(true);
-  };
-
-  // Role handlers
-  const addRole = () => setRoles([...roles, ""]);
-  const removeRole = (index: number) => setRoles(roles.filter((_, i) => i !== index));
-  const updateRole = (index: number, value: string) => {
-    const newRoles = [...roles];
-    newRoles[index] = value;
-    setRoles(newRoles);
-  };
-
-  // Location handlers
-  const addLocation = () => setLocations([...locations, ""]);
-  const removeLocation = (index: number) => setLocations(locations.filter((_, i) => i !== index));
-  const updateLocation = (index: number, value: string) => {
-    const newLocations = [...locations];
-    newLocations[index] = value;
-    setLocations(newLocations);
   };
 
   // Load existing profile data when editing

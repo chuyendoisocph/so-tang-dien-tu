@@ -28,7 +28,6 @@ import {
   useProfileNames,
   Comment 
 } from "@/hooks/useComments";
-import * as XLSX from 'xlsx';
 
 export const CommentsTab = () => {
   const { data: comments = [], isLoading, error } = useAllComments();
@@ -50,11 +49,14 @@ export const CommentsTab = () => {
     }
   };
 
-  const handleExportData = () => {
+  const handleExportData = async () => {
     if (!comments || comments.length === 0) {
       alert("Không có dữ liệu để xuất");
       return;
     }
+
+    // Loaded on demand: the Excel library is large and only needed for export
+    const XLSX = await import('xlsx');
 
     // Prepare data for Excel export
     const excelData = commentsWithProfiles.map((comment, index) => ({

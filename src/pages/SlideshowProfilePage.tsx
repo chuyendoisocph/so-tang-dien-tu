@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Play, Pause, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAllProfilesIncludingCelebrities } from "@/hooks/useProfiles";
+import { usePlaylist } from "@/hooks/usePlaylists";
 import "../styles/slideshow.css";
 
 const SlideshowProfilePage = () => {
@@ -17,10 +18,15 @@ const SlideshowProfilePage = () => {
   const [loadedFrames, setLoadedFrames] = useState<Set<number>>(new Set());
   const [scale, setScale] = useState(1);
 
-  const intervalTime = parseInt(searchParams.get("time") || "30") * 1000;
-  const selectedProfileIds = searchParams.get("profiles")?.split(",").filter(Boolean) || [];
+  const playlistId = searchParams.get("playlist");
+  const { data: playlist, isLoading: isLoadingPlaylist } = usePlaylist(playlistId);
 
-  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfilesIncludingCelebrities();
+  // Playlist settings take priority over URL parameters
+  const intervalTime = (playlist?.slide_duration || parseInt(searchParams.get("time") || "30") || 30) * 1000;
+  const selectedProfileIds = playlist?.profile_ids || searchParams.get("profiles")?.split(",").filter(Boolean) || [];
+
+  const { data: allProfiles, isLoading: isLoadingAllProfiles } = useAllProfilesIncludingCelebrities();
+  const isLoadingProfiles = isLoadingAllProfiles || isLoadingPlaylist;
 
   // Filter to only published profiles, and optionally filter by selected IDs
   const profiles = (allProfiles || [])

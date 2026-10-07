@@ -54,7 +54,10 @@ CREATE TABLE public.comments (
   is_approved BOOLEAN DEFAULT true,
   is_public BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  CONSTRAINT comments_author_name_length CHECK (char_length(btrim(author_name)) BETWEEN 1 AND 100),
+  CONSTRAINT comments_content_length CHECK (char_length(btrim(content)) BETWEEN 1 AND 2000),
+  CONSTRAINT comments_author_email_length CHECK (author_email IS NULL OR char_length(author_email) <= 100)
 );
 
 CREATE TABLE public.playlists (
@@ -159,6 +162,31 @@ $$;
 CREATE TRIGGER revoke_employee_role_on_delete AFTER DELETE ON public.employees
   FOR EACH ROW EXECUTE FUNCTION public.revoke_employee_role();
 
+-- Chống spam: tối đa 30 lời chia buồn / phút cho mỗi hồ sơ (admin/nhân viên không bị giới hạn)
+CREATE OR REPLACE FUNCTION public.limit_comment_rate()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$
+BEGIN
+  IF public.has_valid_role() THEN
+    RETURN NEW;
+  END IF;
+
+  IF (
+    SELECT count(*) FROM public.comments
+    WHERE profile_id = NEW.profile_id
+      AND created_at > now() - interval '1 minute'
+  ) >= 30 THEN
+    RAISE EXCEPTION 'Too many comments, please try again later'
+      USING ERRCODE = 'P0001';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER limit_comment_rate_before_insert BEFORE INSERT ON public.comments
+  FOR EACH ROW EXECUTE FUNCTION public.limit_comment_rate();
+
 -- ---------- 6. Row Level Security ----------
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.photos ENABLE ROW LEVEL SECURITY;
@@ -189,8 +217,8 @@ CREATE POLICY "Staff can manage all timeline events" ON public.timeline_events
   FOR ALL TO authenticated USING (public.has_valid_role()) WITH CHECK (public.has_valid_role());
 
 -- comments: khách gửi và xem lời chia buồn công khai, admin/nhân viên quản lý
-CREATE POLICY "Anyone can view public comments" ON public.comments
-  FOR SELECT USING (is_public = true);
+CREATE POLICY "Guests can view public comments" ON public.comments
+  FOR SELECT TO anon USING (is_public = true);
 CREATE POLICY "Anyone can add comments to published profiles" ON public.comments
   FOR INSERT WITH CHECK (EXISTS (
     SELECT 1 FROM public.profiles p WHERE p.id = comments.profile_id AND p.is_published = true));
@@ -218,7 +246,10 @@ CREATE POLICY "Admins can manage all employees" ON public.employees
 -- ---------- 7. Quyền truy cập qua Data API ----------
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON public.profiles, public.photos, public.timeline_events, public.playlists TO anon;
-GRANT SELECT, INSERT ON public.comments TO anon;
+-- Khách không đọc được author_email (đang chứa số điện thoại người gửi)
+REVOKE ALL ON public.comments FROM anon;
+GRANT SELECT (id, profile_id, author_name, content, is_public, created_at) ON public.comments TO anon;
+GRANT INSERT (profile_id, author_name, author_email, content) ON public.comments TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated;
 

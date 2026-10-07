@@ -17,7 +17,7 @@ const authSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading, signIn, isAdmin, isEmployee } = useAuth();
+  const { user, loading: authLoading, signIn, signOut, isAdmin, isEmployee } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,8 +92,7 @@ const Auth = () => {
               className="w-full cursor-pointer" 
               variant="outline"
               onClick={async () => {
-                const auth = useAuth();
-                await auth.signOut();
+                await signOut();
                 window.location.reload();
               }}
             >

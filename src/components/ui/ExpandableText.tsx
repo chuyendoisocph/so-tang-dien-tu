@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface ExpandableTextProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string;
@@ -86,7 +87,10 @@ export const ExpandableText = forwardRef<HTMLDivElement, ExpandableTextProps>(
           }}
         >
           {isHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: text }} />
+            <div
+              className="[&>p:not(:last-child)]:mb-3"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}
+            />
           ) : (
             text
           )}

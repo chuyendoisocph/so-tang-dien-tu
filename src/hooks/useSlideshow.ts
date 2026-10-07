@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useAllProfiles } from '@/hooks/useProfiles';
+import { useAllProfilesIncludingCelebrities } from '@/hooks/useProfiles';
 import { usePlaylist } from '@/hooks/usePlaylists';
 
 export interface SlideshowProfile {
@@ -20,14 +20,14 @@ export const useSlideshow = () => {
   const [animationPhase, setAnimationPhase] = useState<'enter' | 'stay' | 'exit'>('stay');
 
   // Parse URL parameters
-  const intervalTime = parseInt(searchParams.get("time") || "15") * 1000;
+  const intervalTime = (parseInt(searchParams.get("time") || "15") || 15) * 1000;
   const selectedProfileIds = useMemo(() => 
     searchParams.get("profiles")?.split(",").filter(Boolean) || [], 
     [searchParams]
   );
   const playlistId = searchParams.get("playlist");
 
-  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfiles();
+  const { data: allProfiles, isLoading: isLoadingProfiles } = useAllProfilesIncludingCelebrities();
   const { data: playlist, isLoading: isLoadingPlaylist } = usePlaylist(playlistId);
 
   // Memoize playlist settings

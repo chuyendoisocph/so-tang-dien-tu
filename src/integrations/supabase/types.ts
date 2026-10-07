@@ -58,7 +58,10 @@ export type Database = {
           created_at: string | null
           death_date: string | null
           id: string
+          is_buried: boolean | null
+          is_celebrity: boolean | null
           is_published: boolean | null
+          maps_url: string | null
           name: string
           qr_code_url: string | null
           slug: string | null
@@ -72,7 +75,10 @@ export type Database = {
           created_at?: string | null
           death_date?: string | null
           id?: string
+          is_buried?: boolean | null
+          is_celebrity?: boolean | null
           is_published?: boolean | null
+          maps_url?: string | null
           name: string
           qr_code_url?: string | null
           slug?: string | null
@@ -86,10 +92,49 @@ export type Database = {
           created_at?: string | null
           death_date?: string | null
           id?: string
+          is_buried?: boolean | null
+          is_celebrity?: boolean | null
           is_published?: boolean | null
+          maps_url?: string | null
           name?: string
           qr_code_url?: string | null
           slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      playlists: {
+        Row: {
+          auto_play: boolean
+          created_at: string | null
+          description: string | null
+          id: string
+          loop: boolean
+          name: string
+          profile_ids: string[]
+          slide_duration: number
+          updated_at: string | null
+        }
+        Insert: {
+          auto_play?: boolean
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          loop?: boolean
+          name: string
+          profile_ids?: string[]
+          slide_duration?: number
+          updated_at?: string | null
+        }
+        Update: {
+          auto_play?: boolean
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          loop?: boolean
+          name?: string
+          profile_ids?: string[]
+          slide_duration?: number
           updated_at?: string | null
         }
         Relationships: []
@@ -384,7 +429,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "employee"],
     },
   },
 } as const

@@ -3,6 +3,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { COMMENT_LIMITS } from "@/hooks/useComments";
 import { BiographyScroll } from "@/components/BiographyScroll";
 import { ExpandableText } from "@/components/ui/ExpandableText";
 import lotusImage from "@/assets/Hoa sen vang.png";
@@ -43,12 +44,18 @@ function buildPublicProfileUrl(profileId: string) {
   return `${window.location.origin}/profile/${profileId}`;
 }
 
+// Honorific abbreviations that must stay uppercase
+const HONORIFICS = new Set(['NSND', 'NSƯT', 'NGND', 'NGƯT', 'GS', 'PGS', 'TS']);
+
 // Helper function to convert UPPERCASE text to Title Case
 function toTitleCase(str: string): string {
+  // Names already typed in mixed case are kept as entered
+  if (str !== str.toUpperCase()) return str;
   return str
-    .toLowerCase()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => HONORIFICS.has(word.replace(/[.,]/g, ''))
+      ? word
+      : word.charAt(0) + word.slice(1).toLowerCase())
     .join(' ');
 }
 
@@ -2101,7 +2108,7 @@ export default function MemorialProfileWeb({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
                 gap: 'clamp(12px, 3vw, 20px)'
               }}
             >
@@ -2173,7 +2180,7 @@ export default function MemorialProfileWeb({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))',
                 gap: 'clamp(12px, 3vw, 20px)',
                 marginBottom: 'clamp(16px, 4vw, 24px)'
               }}
@@ -2181,6 +2188,7 @@ export default function MemorialProfileWeb({
               <input
                 type="text"
                 placeholder="Họ và tên"
+                maxLength={COMMENT_LIMITS.name}
                 value={formData.name}
                 onChange={(e) => onChangeForm({ name: e.target.value })}
                 style={{
@@ -2189,7 +2197,7 @@ export default function MemorialProfileWeb({
                   borderRadius: 'clamp(12px, 2.5vw, 16px)',
                   border: '1px solid rgba(197, 160, 89, 0.3)',
                   backgroundColor: '#FDFCF8',
-                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  fontSize: '16px', // below 16px iOS Safari zooms the page on focus
                   outline: 'none',
                   transition: 'all 0.3s ease'
                 }}
@@ -2199,6 +2207,7 @@ export default function MemorialProfileWeb({
               <input
                 type="tel"
                 placeholder="Số điện thoại (không bắt buộc)"
+                maxLength={COMMENT_LIMITS.phone}
                 value={formData.phone}
                 onChange={(e) => onChangeForm({ phone: e.target.value })}
                 style={{
@@ -2207,7 +2216,7 @@ export default function MemorialProfileWeb({
                   borderRadius: 'clamp(12px, 2.5vw, 16px)',
                   border: '1px solid rgba(197, 160, 89, 0.3)',
                   backgroundColor: '#FDFCF8',
-                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  fontSize: '16px', // below 16px iOS Safari zooms the page on focus
                   outline: 'none',
                   transition: 'all 0.3s ease'
                 }}
@@ -2217,6 +2226,7 @@ export default function MemorialProfileWeb({
             </div>
             <textarea
               placeholder="Lời chia buồn..."
+              maxLength={COMMENT_LIMITS.message}
               value={formData.message}
               onChange={(e) => onChangeForm({ message: e.target.value })}
               rows={4}
@@ -2226,7 +2236,7 @@ export default function MemorialProfileWeb({
                 borderRadius: 'clamp(12px, 2.5vw, 16px)',
                 border: '1px solid rgba(197, 160, 89, 0.3)',
                 backgroundColor: '#FDFCF8',
-                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                fontSize: '16px',
                 outline: 'none',
                 resize: 'vertical',
                 marginBottom: 'clamp(16px, 4vw, 24px)',
@@ -2307,7 +2317,7 @@ export default function MemorialProfileWeb({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
               gap: 'clamp(12px, 3vw, 20px)'
             }}
           >
@@ -2384,6 +2394,7 @@ export default function MemorialProfileWeb({
         {/* Responsive Share Button */}
         <button
           onClick={onOpenShare}
+          aria-label="Chia sẻ hồ sơ"
           className="btn-hover transition-all duration-300"
           style={{
             position: 'fixed',

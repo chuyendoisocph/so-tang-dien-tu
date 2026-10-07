@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useBiographyScroll, needsScrolling } from '@/hooks/useBiographyScroll';
+import { sanitizeHtml } from '@/lib/sanitize';
 import '../styles/biography-scroll.css';
 
 interface BiographyScrollProps {
@@ -46,9 +47,10 @@ export const BiographyScroll: React.FC<BiographyScrollProps> = ({
   }, [biography, shouldScroll, containerHeight, shouldAnimate]);
 
   // Prepare content for seamless loop
+  const safeBiography = useMemo(() => sanitizeHtml(biography), [biography]);
   const displayContent = seamlessLoop && shouldAnimate
-    ? biography + '<div class="my-8"></div>' + biography
-    : biography;
+    ? safeBiography + '<div class="my-8"></div>' + safeBiography
+    : safeBiography;
 
   const animationStyle = shouldAnimate
     ? {

@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useAllProfiles, useDeleteProfile } from "@/hooks/useProfiles";
-import { useProfileComments } from "@/hooks/useComments";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { toPng } from "html-to-image";

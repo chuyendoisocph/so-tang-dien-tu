@@ -108,8 +108,8 @@ export function useCreateProfile() {
 
   return useMutation({
     mutationFn: async (formData: ProfileFormData) => {
-      // Generate slug from name if not provided
-      const slug = formData.slug || generateSlug(formData.name);
+      // Generate slug from name if not provided, then make sure it is not taken
+      const slug = await findAvailableSlug(formData.slug || generateSlug(formData.name));
 
       const { data, error } = await supabase
         .from('profiles')
@@ -132,13 +132,17 @@ export function useCreateProfile() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, formData) => {
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
-      toast.success('Đã tạo hồ sơ thành công!');
+      if (formData.slug && data.slug !== formData.slug) {
+        toast.success(`Đã tạo hồ sơ. Mã "${formData.slug}" đã có người dùng nên hồ sơ được cấp mã "${data.slug}".`);
+      } else {
+        toast.success('Đã tạo hồ sơ thành công!');
+      }
     },
     onError: (error) => {
       console.error('Error creating profile:', error);
-      toast.error('Lỗi khi tạo hồ sơ');
+      toast.error(isDuplicateSlugError(error) ? 'Mã hồ sơ đã tồn tại, vui lòng thử lại' : 'Lỗi khi tạo hồ sơ');
     },
   });
 }
@@ -177,7 +181,7 @@ export function useUpdateProfile() {
     },
     onError: (error) => {
       console.error('Error updating profile:', error);
-      toast.error('Lỗi khi cập nhật hồ sơ');
+      toast.error(isDuplicateSlugError(error) ? 'Mã hồ sơ này đã được dùng cho hồ sơ khác, vui lòng chọn mã khác' : 'Lỗi khi cập nhật hồ sơ');
     },
   });
 }
@@ -204,6 +208,28 @@ export function useDeleteProfile() {
       toast.error('Lỗi khi xóa hồ sơ');
     },
   });
+}
+
+// Postgres unique violation (profiles.slug is UNIQUE)
+function isDuplicateSlugError(error: unknown): boolean {
+  return (error as { code?: string } | null)?.code === '23505';
+}
+
+// Returns the slug itself, or slug2, slug3... when it is already used by another profile
+async function findAvailableSlug(slug: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('slug')
+    .like('slug', `${slug.replace(/[\\%_]/g, '\\$&')}%`);
+
+  if (error) throw error;
+
+  const taken = new Set((data || []).map((p) => p.slug));
+  if (!taken.has(slug)) return slug;
+
+  let suffix = 2;
+  while (taken.has(`${slug}${suffix}`)) suffix++;
+  return `${slug}${suffix}`;
 }
 
 // Helper function to generate slug from name

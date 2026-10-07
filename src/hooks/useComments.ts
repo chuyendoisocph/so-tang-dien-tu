@@ -10,8 +10,11 @@ export interface Comment {
   profile_id: string;
   profile_name?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
+
+// Limits mirrored by CHECK constraints on the comments table
+export const COMMENT_LIMITS = { name: 100, phone: 20, message: 2000 } as const;
 
 // Get profile names for comments
 export const useProfileNames = () => {
@@ -63,25 +66,26 @@ export const useComments = (profileId: string) => {
     error,
     addComment: async (commentData: { name: string; phone: string; message: string }) => {
       if (!profileId) throw new Error("Profile ID is required");
-      
+
       return addComment.mutateAsync({
         profile_id: profileId,
-        author_name: commentData.name,
-        author_email: commentData.phone, // Store phone in email field for now
-        content: commentData.message,
+        author_name: commentData.name.trim(),
+        author_email: commentData.phone.trim() || undefined, // Store phone in email field for now
+        content: commentData.message.trim(),
       });
     },
   };
 };
 
 // Get comments for a specific profile
+// Only public columns are selected: guests have no access to author_email (sender's phone)
 export const useProfileComments = (profileId: string) => {
   return useQuery({
     queryKey: ["comments", profileId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comments")
-        .select("*")
+        .select("id, profile_id, author_name, content, created_at")
         .eq("profile_id", profileId)
         .eq("is_public", true)   // Only show public comments
         .order("created_at", { ascending: false });
@@ -108,33 +112,33 @@ export const useCreateComment = () => {
       author_email?: string;
       content: string;
     }) => {
-      const { data, error } = await supabase
+      // No .select() here: guests cannot read back every column of the new row.
+      // is_approved / is_public use the database defaults (true).
+      const { error } = await supabase
         .from("comments")
         .insert([{
           profile_id: commentData.profile_id,
           author_name: commentData.author_name,
           author_email: commentData.author_email,
           content: commentData.content,
-          is_approved: true, // Auto-approve all comments
-          is_public: true,   // Make all comments public
-        }])
-        .select()
-        .single();
+        }]);
 
       if (error) {
         console.error("Error creating comment:", error);
         throw error;
       }
-
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments"] });
       toast.success("Đã gửi lời chia buồn thành công");
     },
-    onError: (error) => {
+    onError: (error: { code?: string }) => {
       console.error("Error creating comment:", error);
-      toast.error("Có lỗi xảy ra khi gửi lời chia buồn");
+      toast.error(
+        error?.code === "P0001"
+          ? "Đang có quá nhiều lời chia buồn được gửi, vui lòng thử lại sau ít phút"
+          : "Có lỗi xảy ra khi gửi lời chia buồn"
+      );
     },
   });
 };

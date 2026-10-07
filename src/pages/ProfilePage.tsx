@@ -11,12 +11,17 @@ import { useProfileData } from "@/hooks/useProfileData";
 import { useComments } from "@/hooks/useComments";
 import { updateMetaTags, resetMetaTags } from "@/utils/metaTags";
 
+// Minimum gap between two condolences sent from the same open page
+const SUBMIT_COOLDOWN_MS = 10_000;
+
 export default function ProfilePage() {
   const [searchParams] = useSearchParams();
   const { profileId } = useParams();
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const isSubmittingRef = useRef(false);
+  const lastSubmitRef = useRef(0);
 
   // Parse URL parameters
   const isSlideshow = searchParams.get("slideshow") === "1";
@@ -24,30 +29,19 @@ export default function ProfilePage() {
   const screenshotMode = searchParams.get("screenshot"); // 'a4' or '1080x1920'
 
   const { profile, photos, isLoading, error, actualProfileId } = useProfileData(profileId);
-  const { comments, loading: commentsLoading, addComment, error: commentsError } = useComments(actualProfileId || '');
+  const { comments, addComment } = useComments(actualProfileId || '');
 
   // Memoize transformed tributes to prevent unnecessary re-renders
   const tributes = useMemo(() => 
     comments.map(comment => ({
       id: comment.id,
       name: comment.author_name,
-      phone: comment.author_email ? comment.author_email.slice(0, 4) + "***" : "***", // Use email field for phone
+      phone: "***", // Sender's phone is never sent to public pages
       message: comment.content,
       date: new Date(comment.created_at || '').toLocaleDateString("vi-VN"),
     })), 
     [comments]
   );
-
-  // Debug logging
-  useEffect(() => {
-    console.log('ProfilePage Debug:', {
-      actualProfileId,
-      comments,
-      commentsLoading,
-      commentsError,
-      tributesLength: comments.length
-    });
-  }, [actualProfileId, comments, commentsLoading, commentsError]);
 
   // Screenshot capture effect
   useEffect(() => {
@@ -113,23 +107,33 @@ export default function ProfilePage() {
 
   const handleSubmitTribute = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.message) {
+    if (isSubmittingRef.current) return;
+    if (!formData.name.trim() || !formData.message.trim()) {
       toast.error("Vui lòng điền tên và lời chia buồn");
       return;
     }
 
+    const waitSeconds = Math.ceil((lastSubmitRef.current + SUBMIT_COOLDOWN_MS - Date.now()) / 1000);
+    if (waitSeconds > 0) {
+      toast.error(`Vui lòng chờ ${waitSeconds} giây trước khi gửi tiếp`);
+      return;
+    }
+
+    isSubmittingRef.current = true;
     try {
+      // Success/error toasts are shown by the mutation itself
       await addComment({
         name: formData.name,
         phone: formData.phone,
         message: formData.message,
       });
-      
+
+      lastSubmitRef.current = Date.now();
       setFormData({ name: "", phone: "", message: "" });
-      toast.success("Đã gửi lời chia buồn");
     } catch (error) {
       console.error('Error adding comment:', error);
-      toast.error("Có lỗi xảy ra khi gửi lời chia buồn");
+    } finally {
+      isSubmittingRef.current = false;
     }
   };
 
